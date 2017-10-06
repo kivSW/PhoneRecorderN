@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:id="@+id/setupscreenfragment"
+    >
+
+    <ScrollView
+        android:id="@+id/mainSetupUI"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Small Text"
+                android:textSize="10sp"
+                android:id="@+id/textViewIsTrialMode"
+                android:layout_gravity="right"
+                android:layout_marginRight="10dp" />
+
+            <com.kivSW.phonerecorderui.CheckBoxNoPersistentText
+                android:id="@+id/checkBoxEnabled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/enable_recording" />
+
+            <com.kivSW.phonerecorderui.CheckBoxNoPersistentText
+                android:id="@+id/checkHiddenMode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/hidden_mode" />
+
+            <com.kivSW.phonerecorderui.CheckBoxNoPersistentText
+                android:id="@+id/checkShowFileExtension"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/show_file_extension" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <com.kivSW.phonerecorderui.CheckBoxNoPersistentText
+                    android:id="@+id/checkBoxEmailEnable"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginBottom="10dp"
+                    android:text="@string/email_report"
+                    android:layout_marginTop="-5dp" />
+
+                <Button
+                    android:id="@+id/buttonEmailSetup"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/setup" />
+            </LinearLayout>
+
+            <com.kivSW.phonerecorderui.CheckBoxNoPersistentText
+                android:id="@+id/checkGiveBluetoothReport"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/give_bluetooth_report" />
+
+            <com.kivSW.phonerecorderui.CheckBoxNoPersistentText
+                android:id="@+id/checkBoxDeleteSentFiles"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/deleteSentFiles" />
+
+            <Button
+                android:id="@+id/buttonSendEmail"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="@string/sendEmail"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/dlInputValTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="10dp"
+                    android:text="@string/data_file_path" />
+
+                <TextView
+                    android:id="@+id/textViewPath"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:text="" />
+
+                <Button
+                    android:id="@+id/buttonSelDir"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/icodir" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/SoundSourcetext"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sound_source"
+                    android:layout_marginBottom="10dp"
+                    android:layout_weight="1" />
+
+                <Spinner
+                    android:id="@+id/spinnerSoundSource"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/maxFileNumberText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/max_file_amount"
+                    android:layout_marginBottom="10dp"
+                    android:layout_weight="1" />
+
+                <EditText
+                    android:id="@+id/editMaxFileNumber"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:inputType="number" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/max_data_size"
+                    android:layout_marginBottom="10dp"
+                    android:layout_weight="3" />
+
+                <EditText
+                    android:id="@+id/editMaxDataSize"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="number"
+                    android:layout_weight="2" />
+
+                <Spinner
+                    android:id="@+id/spinnerDataUnit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/phonrIdText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/phoneId"
+                    android:layout_marginBottom="10dp"
+                    android:layout_weight="1" />
+
+                <EditText
+                    android:id="@+id/editPhoneId"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:inputType="text" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/phoneSecrenNumberText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/phoneSecretNumber"
+
+                    android:layout_marginBottom="10dp"
+                    android:layout_weight="1" />
+
+                <EditText
+                    android:id="@+id/editPhoneSecretNumber"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:phoneNumber="true"
+                    />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/buttonShowJournal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/show_journal" />
+
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+
+</LinearLayout>
