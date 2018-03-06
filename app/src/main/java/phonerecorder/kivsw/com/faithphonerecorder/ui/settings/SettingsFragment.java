@@ -2,17 +2,21 @@ package phonerecorder.kivsw.com.faithphonerecorder.ui.settings;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.kivsw.mvprxdialog.BaseMvpFragment;
+import com.kivsw.mvprxdialog.Contract;
 
 import phonerecorder.kivsw.com.faithphonerecorder.R;
 
 /**
 
  */
-public class SettingsFragment extends Fragment {
+public class SettingsFragment extends BaseMvpFragment
+implements Contract.IView
+{
 
 
     public SettingsFragment() {
@@ -34,6 +38,7 @@ public class SettingsFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_setting, container, false);
     }
+
 
 
     @Override

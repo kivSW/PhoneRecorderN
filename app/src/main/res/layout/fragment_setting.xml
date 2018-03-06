@@ -18,6 +18,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -28,29 +29,36 @@
                 android:layout_gravity="right"
                 android:layout_marginRight="10dp" />
 
-            <com.kivSW.phonerecorderui.CheckBoxNoPersistentText
-                android:id="@+id/checkBoxEnabled"
+            <CheckBox
+                android:id="@+id/checkBoxCallEnabled"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/enable_recording" />
+                android:text="@string/enable_call_recording" />
+            <CheckBox
+                android:id="@+id/checkBoxSmsEnabled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/enable_sms_recording" />
 
-            <com.kivSW.phonerecorderui.CheckBoxNoPersistentText
+            <CheckBox
                 android:id="@+id/checkHiddenMode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/hidden_mode" />
 
-            <com.kivSW.phonerecorderui.CheckBoxNoPersistentText
+            <CheckBox
                 android:id="@+id/checkShowFileExtension"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/show_file_extension" />
+                android:text="@string/show_file_extension"
+                android:hint="@string/show_file_extension_hint"/>
 
+            <!--
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
 
-                <com.kivSW.phonerecorderui.CheckBoxNoPersistentText
+                <CheckBox
                     android:id="@+id/checkBoxEmailEnable"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -66,28 +74,30 @@
                     android:layout_height="wrap_content"
                     android:text="@string/setup" />
             </LinearLayout>
+            -->
+            <!--
+                       <CheckBox
+                           android:id="@+id/checkGiveBluetoothReport"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           androxt="@string/give_bluetooth_report" />
 
-            <com.kivSW.phonerecorderui.CheckBoxNoPersistentText
-                android:id="@+id/checkGiveBluetoothReport"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/give_bluetooth_report" />
 
-            <com.kivSW.phonerecorderui.CheckBoxNoPersistentText
-                android:id="@+id/checkBoxDeleteSentFiles"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/deleteSentFiles" />
+                       <CheckBox
+                           android:id="@+id/checkBoxDeleteSentFiles"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:text="@string/deleteSentFiles" />
 
-            <Button
-                android:id="@+id/buttonSendEmail"
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:text="@string/sendEmail"
-                android:visibility="gone" />
-
+                       <Button
+                           android:id="@+id/buttonSendEmail"
+                           style="?android:attr/buttonStyleSmall"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_gravity="right"
+                           android:text="@string/sendEmail"
+                           android:visibility="gone" />
+                       -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
@@ -109,12 +119,11 @@
                     android:gravity="center_vertical|center_horizontal"
                     android:text="" />
 
-                <Button
+                <ImageView
                     android:id="@+id/buttonSelDir"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/icodir" />
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ico_folder"/>
 
             </LinearLayout>
 
@@ -185,10 +194,9 @@
                     android:id="@+id/spinnerDataUnit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
-
             </LinearLayout>
 
-            <LinearLayout
+          <!--  <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
 
@@ -207,7 +215,7 @@
                     android:layout_weight="2"
                     android:inputType="text" />
 
-            </LinearLayout>
+            </LinearLayout>-->
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -231,12 +239,12 @@
                     />
             </LinearLayout>
 
-            <Button
+           <!-- <Button
                 android:id="@+id/buttonShowJournal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="@string/show_journal" />
+                android:text="@string/show_journal" />-->
 
 
         </LinearLayout>

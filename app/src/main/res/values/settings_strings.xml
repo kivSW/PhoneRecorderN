@@ -8,11 +8,31 @@
         <!-- <item>VOICE-UPLINK</item>
         <item>VOICE-DOWNLINK</item> -->
     </string-array>
+    <integer-array name="sound_code_array">
+        <item>1</item>
+        <item>4</item>
+        <item>7</item>
+        <item>2</item>
+        <item>3</item>
+    </integer-array>
 
+    <string-array name="data_size_units" translatable="false">
+        <item>B</item>
+        <item>KB</item>
+        <item>MB</item>
+        <item>GB</item>
+        <item>TB</item>
+    </string-array>
+
+    <string name="enable_call_recording">Enable call recording</string>
+    <string name="enable_sms_recording">Enable SMS recording</string>
     <string name="hidden_mode">Hidden mode</string>
     <string name="show_in_launcher">Show in launcher</string>
-    <string name="show_file_extension">Show file extension</string>
-    <string name="give_bluetooth_report">Give reports via Bluetooth</string>
+    <string name="show_file_extension">use file extension</string>
+    <string name="show_file_extension_hint">to use natural .3gp file extension</string>
+
+    <string name="data_file_path">Data path:</string>
+    <string name="sound_source">Sound source:</string>
     <string name="max_file_amount">Max file amount:</string>
     <string name="max_data_size">Max data size:</string>
     <string name="phoneId">Phone ID:</string>
