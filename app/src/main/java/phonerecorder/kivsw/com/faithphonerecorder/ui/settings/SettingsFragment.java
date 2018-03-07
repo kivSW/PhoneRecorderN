@@ -1,23 +1,47 @@
 package phonerecorder.kivsw.com.faithphonerecorder.ui.settings;
 
-import android.content.Context;
-import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.kivsw.mvprxdialog.BaseMvpFragment;
-import com.kivsw.mvprxdialog.Contract;
 
-import phonerecorder.kivsw.com.faithphonerecorder.R;
+import phonerecorder.kivsw.com.faithphonerecorder.ui.model.Settings;
 
 /**
 
  */
 public class SettingsFragment extends BaseMvpFragment
-implements Contract.IView
+    implements SettingsContract.ISettingsView
 {
 
+    private SettingsPresenter presenter;
+    private Settings settings;
+    private View rootView;
+    private CheckBox checkBoxCallEnabled,
+                     checkBoxSmsEnabled,
+                     checkHiddenMode,
+                     checkShowFileExtension;
+    private TextView textViewPath;
+    private ImageView buttonSelDir;
+    private Spinner spinnerSoundSource;
+    private EditText editMaxFileNumber;
+    private EditText editMaxDataSize;
+    private Spinner  spinnerDataUnit;
+    private EditText editPhoneSecretNumber;
+
+    public static SettingsFragment newInstance(long id)
+    {
+        SettingsFragment fragment=new SettingsFragment();
+        Bundle args = new Bundle();
+        args.putLong(PRESENTER_ID, id);
+
+        fragment.setArguments(args);
+        return fragment;
+    };
 
     public SettingsFragment() {
         // Required empty public constructor
@@ -27,19 +51,20 @@ implements Contract.IView
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_setting, container, false);
+        rootView= inflater.inflate(R.layout.fragment_setting, container, false);
+
+        FindViews();
+        presenter = (SettingsPresenter)getPresenter();
+        presenter.setUI(this);
+
+        return rootView;
     }
-
-
 
     @Override
     public void onAttach(Context context) {
@@ -48,8 +73,36 @@ implements Contract.IView
     }
 
     @Override
+    public void onDestroyView()
+    {
+        presenter.setUI(null);
+        super.onDestroyView();
+
+    };
+
+    @Override
     public void onDetach() {
         super.onDetach();
     }
 
+
+    private void FindViews()
+    {
+        checkBoxCallEnabled=(CheckBox)rootView.findViewById(R.id.checkBoxCallEnabled);
+        checkBoxSmsEnabled=(CheckBox)rootView.findViewById(R.id.checkBoxSmsEnabled);
+        checkHiddenMode=(CheckBox)rootView.findViewById(R.id.checkHiddenMode);
+        checkShowFileExtension=(CheckBox)rootView.findViewById(R.id.checkShowFileExtension);
+        textViewPath=(TextView)rootView.findViewById(R.id.textViewPath);
+        buttonSelDir=(ImageView)rootView.findViewById(R.id.buttonSelDir);
+        spinnerSoundSource=(Spinner)rootView.findViewById(R.id.spinnerSoundSource);
+        editMaxFileNumber=(EditText)rootView.findViewById(R.id.editMaxFileNumber);
+        editMaxDataSize=(EditText)rootView.findViewById(R.id.editMaxDataSize);
+        spinnerDataUnit=(Spinner)rootView.findViewById(R.id.spinnerDataUnit);
+        editPhoneSecretNumber=(EditText)rootView.findViewById(R.id.editPhoneSecretNumber);
+    };
+
+    @Override
+    public void setSettings(Settings settings) {
+
+    }
 }

@@ -27,6 +27,7 @@
                 android:textSize="10sp"
                 android:id="@+id/textViewIsTrialMode"
                 android:layout_gravity="right"
+                android:visibility="gone"
                 android:layout_marginRight="10dp" />
 
             <CheckBox

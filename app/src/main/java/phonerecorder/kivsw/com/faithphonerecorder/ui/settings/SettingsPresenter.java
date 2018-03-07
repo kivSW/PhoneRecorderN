@@ -6,6 +6,8 @@ import com.kivsw.mvprxdialog.BaseMvpPresenter;
 import com.kivsw.mvprxdialog.Contract;
 import com.kivsw.mvprxdialog.PresenterManager;
 
+import io.reactivex.annotations.NonNull;
+
 /**
  * Created by ivan on 3/1/18.
  */
@@ -32,7 +34,7 @@ public class SettingsPresenter extends BaseMvpPresenter {
     };
 
     @Override
-    public void setUI(Contract.IView view)
+    public void setUI(@NonNull Contract.IView view)
     {
         if(view instanceof SettingsFragment)
             ui= (SettingsFragment)view;
