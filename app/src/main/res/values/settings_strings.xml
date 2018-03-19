@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="settings">Settings</string>
     <!-- sound sources names and codes -->
     <string-array name="sound_source_array" translatable="false">
         <item>MIC</item>
@@ -33,7 +34,9 @@
 
     <string name="data_file_path">Data path:</string>
     <string name="sound_source">Sound source:</string>
+    <string name="limit_file_amount">Limiting file amount</string>
     <string name="max_file_amount">Max file amount:</string>
+    <string name="limit_data_size">Limiting data size</string>
     <string name="max_data_size">Max data size:</string>
     <string name="phoneId">Phone ID:</string>
     <string name="phoneSecretNumber">Phone secret number:</string>

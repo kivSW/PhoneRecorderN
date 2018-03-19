@@ -7,4 +7,10 @@
         android:icon="@drawable/icons8_settings_3"
         android:title="@string/action_settings"
         app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/action_rec_list"
+        android:orderInCategory="100"
+        android:icon="@drawable/icons8_list_filled_2"
+        android:title="@string/action_record_list"
+        app:showAsAction="ifRoom"/>
 </menu>
