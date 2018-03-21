@@ -1,34 +1,24 @@
 package phonerecorder.kivsw.com.faithphonerecorder.ui.settings;
 
-import android.content.Context;
-
 import com.kivsw.cloud.disk.IDiskRepresenter;
 import com.kivsw.mvprxdialog.Contract;
 import com.kivsw.mvprxfiledialog.MvpRxSelectDirDialogPresenter;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import io.reactivex.MaybeObserver;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import phonerecorder.kivsw.com.faithphonerecorder.model.DiskRepresentativeFactory;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
-import phonerecorder.kivsw.com.faithphonerecorder.model.settings.Settings;
 
 /**
  * Created by ivan on 3/1/18.
  */
 
 public class SettingsPresenter implements SettingsContract.ISettingsPresenter {
-    private static SettingsPresenter singleton=null;
-    public static synchronized SettingsPresenter getInstance(Context context)
-    {
-        if(singleton==null)
-        {
-            singleton = new SettingsPresenter(Settings.getInstance(context));
-        };
-        return singleton;
-    }
 
     SettingsFragment view;
     ISettings settings;
@@ -47,7 +37,8 @@ public class SettingsPresenter implements SettingsContract.ISettingsPresenter {
         return presenter;
     }*/
 
-    protected SettingsPresenter(ISettings settings)
+    @Inject
+    public SettingsPresenter(ISettings settings)
     {
         super();
         //this.context = context;

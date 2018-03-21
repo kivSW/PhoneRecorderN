@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 
 import java.io.File;
 
+import javax.inject.Inject;
+
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -16,21 +18,12 @@ import io.reactivex.subjects.Subject;
 public class Settings
 implements ISettings
 {
-    static Settings singletone=null;
-
-    synchronized static public Settings getInstance(Context cnt)
-    {
-        if(singletone==null)
-            singletone = new Settings(cnt);
-        return singletone;
-    }
-
-
     Subject<ISettings> onChangeObservable=null;
     SharedPreferences preferences;
     Context cnt;
     private final static String NAME="data";
 
+    @Inject
     protected Settings(Context cnt)
     {
         this.cnt = cnt;
@@ -120,9 +113,9 @@ implements ISettings
     @Override public String getSavingPath()
     {
         File file=cnt.getExternalFilesDir(null);
-        String defPath = "file:\\\\"+file.getAbsolutePath();
+        String defPath = "file://"+file.getAbsolutePath();
 
-        return preferences.getString(SAVING_PATH, file.getAbsolutePath());
+        return preferences.getString(SAVING_PATH, defPath);
     };
     @Override public void setSavingPath(String value)
     {

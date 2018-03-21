@@ -17,10 +17,13 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import javax.inject.Inject;
+
 import phonerecorder.kivsw.com.faithphonerecorder.R;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.DataSize;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.SoundSource;
+import phonerecorder.kivsw.com.faithphonerecorder.os.MyApplication;
 
 /**
 
@@ -28,7 +31,9 @@ import phonerecorder.kivsw.com.faithphonerecorder.model.settings.SoundSource;
 public class SettingsFragment extends Fragment
     implements SettingsContract.ISettingsView {
 
-    private SettingsPresenter presenter;
+
+    @Inject
+    protected SettingsPresenter presenter;
     private ISettings settings;
     private View rootView;
     private CheckBox checkBoxCallEnabled,
@@ -74,11 +79,16 @@ public class SettingsFragment extends Fragment
         findViews();
         //setupTitle(rootView);
         initViews();
-        presenter = (SettingsPresenter) SettingsPresenter.getInstance(getContext());
+
+        injectDependancy();
 
         return rootView;
     }
 
+    void injectDependancy()
+    {
+        MyApplication.getComponent().inject(this);
+    }
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -93,6 +103,13 @@ public class SettingsFragment extends Fragment
     public void onStart()
     {
         super.onStart();
+        presenter.setUI(this);
+    }
+    @Override
+    public void onStop()
+    {
+        presenter.removeUI();
+        super.onStop();
 
     }
 
