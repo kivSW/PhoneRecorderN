@@ -11,7 +11,6 @@ import javax.inject.Inject;
 import io.reactivex.MaybeObserver;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
-import phonerecorder.kivsw.com.faithphonerecorder.model.DiskRepresentativeFactory;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
 
 /**
@@ -22,6 +21,7 @@ public class SettingsPresenter implements SettingsContract.ISettingsPresenter {
 
     SettingsFragment view;
     ISettings settings;
+    List<IDiskRepresenter> diskList;
 
    /* public static SettingsPresenter createDialog(Context context, FragmentManager fragmentManager)
     {
@@ -38,13 +38,13 @@ public class SettingsPresenter implements SettingsContract.ISettingsPresenter {
     }*/
 
     @Inject
-    public SettingsPresenter(ISettings settings)
+    public SettingsPresenter(ISettings settings, List<IDiskRepresenter> diskList)
     {
         super();
         //this.context = context;
         this.settings = settings;//Settings.getInstance(context);
+        this.diskList = diskList;
 
-        //registerDialogPresenter();
     }
     @Override
     public Contract.IView getUI()
@@ -70,7 +70,7 @@ public class SettingsPresenter implements SettingsContract.ISettingsPresenter {
     @Override
     public void selectDataDir()
     {
-        List<IDiskRepresenter> diskList = DiskRepresentativeFactory.getDisks(view.getContext());
+        //List<IDiskRepresenter> diskList = DiskRepresentativeModule.getDisks(view.getContext());
         selDirPresenter=MvpRxSelectDirDialogPresenter.createDialog(view.getContext(), view.getFragmentManager(), diskList, settings.getSavingPath(), null);
         selDirPresenter.getMaybe()
                 .subscribe(new MaybeObserver<String>() {

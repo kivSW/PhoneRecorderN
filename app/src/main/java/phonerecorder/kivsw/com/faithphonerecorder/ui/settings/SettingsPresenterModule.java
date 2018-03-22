@@ -1,5 +1,9 @@
 package phonerecorder.kivsw.com.faithphonerecorder.ui.settings;
 
+import com.kivsw.cloud.disk.IDiskRepresenter;
+
+import java.util.List;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -16,9 +20,9 @@ public class SettingsPresenterModule {
     @Provides
     @NonNull
     @Singleton
-    public SettingsPresenter providePresenter(ISettings settings)
+    public SettingsPresenter providePresenter(ISettings settings, List<IDiskRepresenter> diskList)
     {
-        return new SettingsPresenter(settings);
+        return new SettingsPresenter(settings, diskList);
     }
 
 }

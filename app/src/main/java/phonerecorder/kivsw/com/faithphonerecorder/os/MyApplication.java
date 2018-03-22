@@ -7,6 +7,10 @@ package phonerecorder.kivsw.com.faithphonerecorder.os;
 
 public class MyApplication extends android.app.Application {
     protected static ApplicationComponent applicationComponent;
+    public static ApplicationComponent getComponent()
+    {
+        return applicationComponent;
+    };
 
     public MyApplication()
     {
@@ -24,8 +28,4 @@ public class MyApplication extends android.app.Application {
 
 
 
-    public static ApplicationComponent getComponent()
-    {
-        return applicationComponent;
-    };
 }

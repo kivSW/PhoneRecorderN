@@ -112,7 +112,8 @@ implements ISettings
     private final static String SAVING_PATH = "SAVING_PATH";
     @Override public String getSavingPath()
     {
-        File file=cnt.getExternalFilesDir(null);
+        File file=cnt.getFilesDir();//cnt.getExternalFilesDir(null);
+
         String defPath = "file://"+file.getAbsolutePath();
 
         return preferences.getString(SAVING_PATH, defPath);
