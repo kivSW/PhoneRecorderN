@@ -16,7 +16,7 @@ import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import io.reactivex.functions.Consumer;
 import phonerecorder.kivsw.com.faithphonerecorder.R;
-import phonerecorder.kivsw.com.faithphonerecorder.ui.mainscreen.RecordListFragment;
+import phonerecorder.kivsw.com.faithphonerecorder.ui.record_list.RecordListFragment;
 import phonerecorder.kivsw.com.faithphonerecorder.ui.settings.SettingsFragment;
 
 public class MainActivity extends AppCompatActivity

@@ -50,15 +50,6 @@ public class SettingsFragment extends Fragment
     private Spinner spinnerDataUnit;
     private EditText editPhoneSecretNumber;
 
-    public static SettingsFragment newInstance() {
-        SettingsFragment fragment = new SettingsFragment();
-        Bundle args = new Bundle();
-
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    ;
 
     public SettingsFragment() {
         // Required empty public constructor

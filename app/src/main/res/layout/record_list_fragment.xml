@@ -6,7 +6,52 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="phonerecorder.kivsw.com.faithphonerecorder.MainActivity"
-    >
+>
 
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/pathPanel"
+        android:background="#FFB0B000"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/pathTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:elevation="0dp"
+            android:text="@string/data_file_path"
+            app:layout_constraintLeft_toLeftOf="parent"/>
+
+        <Spinner
+            android:id="@+id/spinnerPath"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toRightOf="@+id/dlInputValTextView"
+            app:layout_constraintRight_toLeftOf="@+id/buttonSelDir"/>
+
+        <ImageView
+            android:id="@+id/buttonSelDir"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ico_folder"
+            app:layout_constraintRight_toRightOf="parent"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="384dp"
+        android:layout_height="415dp"
+        android:id="@+id/recordList"
+        app:layout_constraintBottom_toTopOf="@+id/toolbar"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pathPanel"/>
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:background="#FFF0F000"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 </android.support.constraint.ConstraintLayout>
