@@ -141,6 +141,7 @@ public class SettingsFragment extends Fragment
             @Override
             public void onClick(View v) {
                 if(ignoreChanges) return;
+                if(settings==null) return;
                 settings.setEnableCallRecording(checkBoxCallEnabled.isChecked());
             }
         });
@@ -149,6 +150,7 @@ public class SettingsFragment extends Fragment
             @Override
             public void onClick(View v) {
                 if(ignoreChanges) return;
+                if(settings==null) return;
                 settings.setEnableSmsRecording(checkBoxSmsEnabled.isChecked());
             }
         });
@@ -158,6 +160,7 @@ public class SettingsFragment extends Fragment
             public void onClick(View v)
             {
                 if(ignoreChanges) return;
+                if(settings==null) return;
                 settings.setHiddenMode(checkHiddenMode.isChecked());
             }
         });
@@ -166,6 +169,7 @@ public class SettingsFragment extends Fragment
             @Override
             public void onClick(View v) {
                 if(ignoreChanges) return;
+                if(settings==null) return;
                 settings.setUseFileExtension(checkShowFileExtension.isChecked());
             }
         });
@@ -196,7 +200,7 @@ public class SettingsFragment extends Fragment
         checkFileAmountLimitation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                userChangedFileAmountLimitation();
+                 userChangedFileAmountLimitation();
             }
         });
 
@@ -270,6 +274,7 @@ public class SettingsFragment extends Fragment
     {
         editMaxFileNumber.setEnabled(checkFileAmountLimitation.isChecked());
         if(ignoreChanges) return;
+        if(settings==null) return;
         settings.setFileAmountLimitation(checkFileAmountLimitation.isChecked());
     }
     private void userChangedDataSizeLimitation()
@@ -338,7 +343,7 @@ public class SettingsFragment extends Fragment
 
     protected void selectDir()
     {
-        presenter.selectDataDir();
+        presenter.chooseDataDir();
     };
 
 

@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:app="http://schemas.android.com/apk/res-auto"
-      xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+
+      >
 
 
-  <!--  <item
+  <!--
+
+  <item
         android:title="Item"
         app:showAsAction="always">
         <menu
@@ -23,14 +27,11 @@
     <item
         android:id="@+id/app_bar_search"
         app:actionViewClass="android.widget.SearchView"
-        android:icon="@drawable/ic_search_black_24dp"
+        android:icon="@drawable/ic_search_white_48dp"
         android:title="Search"
         app:showAsAction="always"
         />
-    <item android:id="@+id/itemDelete"
-          android:title="@string/delete"
-          android:icon="@drawable/ic_action_discard"
-          app:showAsAction="always" />
+
     <item android:id="@+id/itemSelectAll"
           android:title="@string/selectAll"
           android:icon="@drawable/ic_action_select_all"
@@ -42,9 +43,16 @@
           android:icon="@drawable/ic_action_unselect_all"
           app:showAsAction="always"/>
 
+    <item android:id="@+id/itemDelete"
+          android:title="@string/delete"
+          android:icon="@drawable/ic_action_discard"
+          app:showAsAction="always" />
+
     <item android:id="@+id/itemRefresh"
           android:title="@string/refresh"
           android:icon="@drawable/ic_action_refresh"
           app:showAsAction="always"/>
+
+
 
 </menu>

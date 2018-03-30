@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -123,14 +126,13 @@ implements ISettings
         preferences.edit()
                 .putString(SAVING_PATH, value)
                 .commit();
-        emitOnChange();
+        //emitOnChange(); // DO NOT invoke emitOnChange because of using addToPathViewHistory()
+        addToPathViewHistory(value);
     };
 
     private final static String SOUND_SOURCE = "SOUND_SOURCE";
     @Override public SoundSource getSoundSource()
     {
-        File file=cnt.getExternalFilesDir(null);
-
         int val= preferences.getInt(SOUND_SOURCE, SoundSource.MIC.ordinal());
         return SoundSource.values()[val];
     };
@@ -217,8 +219,6 @@ implements ISettings
     private final static String SECRET_NUMBER = "SECRET_NUMBER";
     public String getSecretNumber()
     {
-        File file=cnt.getExternalFilesDir(null);
-
         return preferences.getString(SECRET_NUMBER,"*#12345#");
     };
     public void setSecretNumber(String value)
@@ -228,5 +228,44 @@ implements ISettings
                 .commit();
         emitOnChange();
     };
+
+    private final static String PATH_HISTORY = "PATH_HISTORY";
+    public List<String> getPathViewHistory()
+    {
+        String [] res=preferences.getString(PATH_HISTORY,"").split("\n");
+        ArrayList list = new ArrayList(res.length);
+        list.addAll( Arrays.asList(res));
+        return list;
+    };
+    protected void setPathViewHistory(List<String> history)
+    {
+        StringBuilder res=new StringBuilder();
+        for(String item:history)
+        {
+            res.append(item);
+            res.append('\n');
+        };
+
+        preferences.edit()
+                .putString(PATH_HISTORY, res.toString())
+                .commit();
+        emitOnChange();
+    };
+    public void addToPathViewHistory(String newPath)
+    {
+        List<String> res = getPathViewHistory();
+        res.remove(newPath);
+        res.add(0,newPath);
+        setPathViewHistory(res);
+    }
+
+    String getCurrentPathView()
+    {
+        List<String> pathList=getPathViewHistory();
+        if(pathList.size()>0)
+            return pathList.get(0);
+        else
+            return getSavingPath();
+    }
 
 }

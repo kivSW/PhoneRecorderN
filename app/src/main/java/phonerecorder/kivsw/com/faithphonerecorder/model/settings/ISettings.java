@@ -1,5 +1,7 @@
 package phonerecorder.kivsw.com.faithphonerecorder.model.settings;
 
+import java.util.List;
+
 import io.reactivex.Observable;
 
 /**
@@ -45,6 +47,11 @@ public interface ISettings {
 
     String getSecretNumber();
     void setSecretNumber(String value);
+
+    List<String> getPathViewHistory();
+    //void setPathViewHistory(List<String> history);
+    void addToPathViewHistory(String newPath);
+    String getCurrentPathView();
 
 
 }

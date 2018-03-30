@@ -19,7 +19,7 @@ import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
 
 public class SettingsPresenter implements SettingsContract.ISettingsPresenter {
 
-    SettingsFragment view;
+    SettingsContract.ISettingsView view;
     ISettings settings;
     List<IDiskRepresenter> diskList;
 
@@ -56,7 +56,7 @@ public class SettingsPresenter implements SettingsContract.ISettingsPresenter {
     public void setUI(@NonNull Contract.IView view)
     {
         if(view instanceof SettingsFragment) {
-            this.view = (SettingsFragment) view;
+            this.view = (SettingsContract.ISettingsView) view;
             this.view.setSettings(settings);
         }
     }
@@ -68,7 +68,7 @@ public class SettingsPresenter implements SettingsContract.ISettingsPresenter {
 
     private MvpRxSelectDirDialogPresenter selDirPresenter;
     @Override
-    public void selectDataDir()
+    public void chooseDataDir()
     {
         //List<IDiskRepresenter> diskList = DiskRepresentativeModule.getDisks(view.getContext());
         selDirPresenter=MvpRxSelectDirDialogPresenter.createDialog(view.getContext(), view.getFragmentManager(), diskList, settings.getSavingPath(), null);
