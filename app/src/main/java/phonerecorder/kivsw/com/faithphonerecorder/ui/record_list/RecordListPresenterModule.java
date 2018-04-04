@@ -1,5 +1,7 @@
 package phonerecorder.kivsw.com.faithphonerecorder.ui.record_list;
 
+import android.content.Context;
+
 import com.kivsw.cloud.disk.IDiskRepresenter;
 
 import java.util.List;
@@ -19,8 +21,8 @@ public class RecordListPresenterModule {
     @Provides
     @NonNull
     @Singleton
-    public RecordListPresenter providePresenter(ISettings settings, List<IDiskRepresenter> diskList)
+    public RecordListPresenter providePresenter(Context appContext, ISettings settings, List<IDiskRepresenter> diskList)
     {
-        return new RecordListPresenter(settings, diskList);
+        return new RecordListPresenter(appContext, settings, diskList);
     }
 }

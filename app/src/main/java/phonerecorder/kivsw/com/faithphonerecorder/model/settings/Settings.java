@@ -24,7 +24,7 @@ implements ISettings
     Subject<ISettings> onChangeObservable=null;
     SharedPreferences preferences;
     Context cnt;
-    private final static String NAME="data";
+    private final static String NAME="date";
 
     @Inject
     protected Settings(Context cnt)
@@ -217,10 +217,12 @@ implements ISettings
 
 
     private final static String SECRET_NUMBER = "SECRET_NUMBER";
+    @Override
     public String getSecretNumber()
     {
         return preferences.getString(SECRET_NUMBER,"*#12345#");
     };
+    @Override
     public void setSecretNumber(String value)
     {
         preferences.edit()
@@ -230,7 +232,7 @@ implements ISettings
     };
 
     private final static String PATH_HISTORY = "PATH_HISTORY";
-    public List<String> getPathViewHistory()
+    @Override  public List<String> getPathViewHistory()
     {
         String [] res=preferences.getString(PATH_HISTORY,"").split("\n");
         ArrayList list = new ArrayList(res.length);
@@ -251,7 +253,7 @@ implements ISettings
                 .commit();
         emitOnChange();
     };
-    public void addToPathViewHistory(String newPath)
+    @Override  public void addToPathViewHistory(String newPath)
     {
         List<String> res = getPathViewHistory();
         res.remove(newPath);
@@ -259,7 +261,7 @@ implements ISettings
         setPathViewHistory(res);
     }
 
-    String getCurrentPathView()
+    @Override  public String getCurrentPathView()
     {
         List<String> pathList=getPathViewHistory();
         if(pathList.size()>0)

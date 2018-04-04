@@ -42,7 +42,6 @@
     <string name="phoneSecretNumber">Phone secret number:</string>
     <string name="show_journal">Show journal</string>
     <string name="journal">Journal</string>
-    <string name="error">Error</string>
     <string name="incorrect_value">Incorrect value</string>
     <string name="setup">Setup</string>
 

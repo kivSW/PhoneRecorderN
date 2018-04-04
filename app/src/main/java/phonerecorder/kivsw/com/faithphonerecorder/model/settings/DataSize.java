@@ -1,7 +1,7 @@
 package phonerecorder.kivsw.com.faithphonerecorder.model.settings;
 
 /**
- *  this class describes size of data in different units
+ *  this class describes size of date in different units
  */
 
 public class DataSize
