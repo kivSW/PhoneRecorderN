@@ -12,6 +12,8 @@ import com.kivsw.mvprxfiledialog.MvpRxSelectDirDialogPresenter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import io.reactivex.MaybeObserver;
 import io.reactivex.Single;
@@ -19,6 +21,7 @@ import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import phonerecorder.kivsw.com.faithphonerecorder.R;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
@@ -36,8 +39,8 @@ public class RecordListPresenter
     private RecordListContract.IRecordListView view;
     private List<IDiskIO.ResourceInfo> fileList;
     private Context appContext;
-    private List<IDiskIO.ResourceInfo> dirContent;
-    private List<FileNameData> filteredDirContent;
+    private List<RecordListContract.RecordFileInfo> dirContent;
+    private List<RecordListContract.RecordFileInfo> filteredDirContent;
 
     public RecordListPresenter(Context appContext, ISettings settings, List<IDiskRepresenter> diskList)
     {
@@ -115,16 +118,34 @@ public class RecordListPresenter
             cloudFile.diskRepresenter.getDiskIo()
                   .authorizeIfNecessary()
                   .andThen(cloudFile.diskRepresenter.getDiskIo().getResourceInfo(cloudFile.getPath()))
+                    .observeOn(Schedulers.io())
+                    .map(new Function<IDiskIO.ResourceInfo, List<RecordListContract.RecordFileInfo>>(){
+
+                        @Override
+                        public List<RecordListContract.RecordFileInfo> apply(IDiskIO.ResourceInfo resourceInfo) throws Exception {
+                            List<IDiskIO.ResourceInfo> fileList=resourceInfo.content();
+                            List<RecordListContract.RecordFileInfo> res = new ArrayList<>(fileList.size());
+                            Pattern p = Pattern.compile("^[0-9]{8}_[0-9]{6}_"); // this pattern filters the other app's files
+                            for(IDiskIO.ResourceInfo file:fileList)
+                            {
+                                Matcher m = p.matcher(file.name());
+                                if(!m.find()) continue;
+                                res.add( getRecordInfo(file.name()) );
+                            };
+                            return res;
+                        }
+                    })
+
                   .observeOn(AndroidSchedulers.mainThread())
-                  .subscribe(new SingleObserver<IDiskIO.ResourceInfo>(){
+                  .subscribe(new SingleObserver<List<RecordListContract.RecordFileInfo>>(){
                             @Override
                             public void onSubscribe(Disposable d) {
 
                             }
 
                             @Override
-                            public void onSuccess(IDiskIO.ResourceInfo resourceInfo) {
-                                setDirContent(resourceInfo.content());
+                            public void onSuccess(List<RecordListContract.RecordFileInfo> recordList) {
+                                setDirContent( recordList);
                                 setProgressBarVisible(false);
                             }
 
@@ -135,6 +156,13 @@ public class RecordListPresenter
                             }
                         });
     };
+    protected RecordListContract.RecordFileInfo getRecordInfo(String fileName)
+    {
+        RecordListContract.RecordFileInfo item=new RecordListContract.RecordFileInfo();
+        item.fileNameData=FileNameData.decipherFileName(fileName);
+        item. callerName = "";
+        return item;
+    }
 
     private int progressBarVisible=0;
     protected void setProgressBarVisible(boolean visible)
@@ -150,7 +178,7 @@ public class RecordListPresenter
             view.setProgressBarVisible(progressBarVisible>0);
     }
 
-    protected void setFilteredDirContent(List<FileNameData> aFilteredDirContent)
+    protected void setFilteredDirContent(List<RecordListContract.RecordFileInfo> aFilteredDirContent)
     {
         filteredDirContent = aFilteredDirContent;
         if(view!=null)
@@ -159,8 +187,8 @@ public class RecordListPresenter
         };
     }
 
-    protected void setDirContent(List<IDiskIO.ResourceInfo> dirContent) {
-       this.dirContent=dirContent;
+    protected void setDirContent(List<RecordListContract.RecordFileInfo> recordList) {
+       this.dirContent=recordList;
        filterContent();
     }
 
@@ -211,44 +239,48 @@ public class RecordListPresenter
 
     protected void filterContent()
     {
-        final List<IDiskIO.ResourceInfo> tmpDirContent = this.dirContent;
+        final List<RecordListContract.RecordFileInfo> tmpDirContent = this.dirContent;
         final String tmpFilter = filter;
 
         setProgressBarVisible(true);
 
-        Single.fromCallable(new Callable<List<FileNameData>>() {
+        Single.fromCallable(new Callable<List<RecordListContract.RecordFileInfo>>() {
             @Override
-            public List<FileNameData> call() throws Exception {
+            public List<RecordListContract.RecordFileInfo> call() throws Exception {
                 return doFilterContent(tmpDirContent, tmpFilter);
             }
         })
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Consumer<List<FileNameData>>() {
+        .subscribe(new Consumer<List<RecordListContract.RecordFileInfo>>() {
             @Override
-            public void accept(List<FileNameData> resourceInfos) throws Exception {
-                setFilteredDirContent(resourceInfos);
+            public void accept(List<RecordListContract.RecordFileInfo> recordList) throws Exception {
+                setFilteredDirContent(recordList);
                 setProgressBarVisible(false);
             }
        });
     }
 
-    protected List<FileNameData> doFilterContent(List<IDiskIO.ResourceInfo> dirContent, String filter)
+    protected List<RecordListContract.RecordFileInfo> doFilterContent(List<RecordListContract.RecordFileInfo> dirContent, String filter)
     {
-        ArrayList<FileNameData> resList=new ArrayList(dirContent.size());
+
         if(filter==null || filter.length()==0)
-        {
-            for(IDiskIO.ResourceInfo item:dirContent)
-                    resList.add( FileNameData.decipherFileName(item.name()) );
-        }
-        else {
-            for (IDiskIO.ResourceInfo item : dirContent) {
-                FileNameData fileData = FileNameData.decipherFileName(item.name());
-                if ( (fileData.phoneNumber.indexOf(filter) >= 0) )
-                    resList.add(fileData);
-            }
-        }
+            return dirContent;
+
+        ArrayList<RecordListContract.RecordFileInfo> resList=new ArrayList(dirContent.size());
+        for (RecordListContract.RecordFileInfo item : dirContent) {
+            if ( checkFilter(item, filter) )
+                resList.add(item);
+        };
         return resList;
+    }
+    protected boolean checkFilter(RecordListContract.RecordFileInfo fileData, String filter)
+    {
+        if (fileData.fileNameData.phoneNumber.indexOf(filter) >= 0) return true;
+        if (fileData.callerName.indexOf(filter) >= 0) return true;
+
+        return false;
+
     }
 
 

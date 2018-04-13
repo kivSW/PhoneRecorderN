@@ -23,7 +23,6 @@ import javax.inject.Inject;
 
 import phonerecorder.kivsw.com.faithphonerecorder.R;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
-import phonerecorder.kivsw.com.faithphonerecorder.model.utils.FileNameData;
 import phonerecorder.kivsw.com.faithphonerecorder.os.MyApplication;
 
 //import android.widget.Toolbar;
@@ -136,7 +135,7 @@ public class RecordListFragment extends Fragment
     }
 
     @Override
-    public void setRecordList(List<FileNameData> fileList) {
+    public void setRecordList(List<RecordListContract.RecordFileInfo> fileList) {
       recordListAdapter.setData(fileList);
 
     }

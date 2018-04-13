@@ -13,7 +13,7 @@ import phonerecorder.kivsw.com.faithphonerecorder.model.utils.FileNameData;
  */
 
 public class RecordListContract {
-    class FileExdata
+    static class RecordFileInfo // class holds data of a record
     {
         FileNameData fileNameData;
         boolean selected;
@@ -38,7 +38,7 @@ public class RecordListContract {
     interface IRecordListView extends com.kivsw.mvprxdialog.Contract.IView
     {
         void setSettings(ISettings settings);
-        void setRecordList(List<FileNameData> fileList);
+        void setRecordList(List<RecordListContract.RecordFileInfo> recordListList);
         void setProgressBarVisible(boolean show);
         Context getContext();
         FragmentManager getFragmentManager();

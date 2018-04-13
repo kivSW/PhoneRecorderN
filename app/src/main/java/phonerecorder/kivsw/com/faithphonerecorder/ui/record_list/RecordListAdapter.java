@@ -12,7 +12,6 @@ import android.widget.TextView;
 import java.util.List;
 
 import phonerecorder.kivsw.com.faithphonerecorder.R;
-import phonerecorder.kivsw.com.faithphonerecorder.model.utils.FileNameData;
 
 /**
  * Created by ivan on 4/3/18.
@@ -82,8 +81,8 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.It
         this.eventHandler = eventHandler;
     }
 
-    private List<FileNameData> dataSet;
-    public void setData(List<FileNameData> data) {
+    private List<RecordListContract.RecordFileInfo> dataSet;
+    public void setData(List<RecordListContract.RecordFileInfo> data) {
         this.dataSet = data;
         notifyDataSetChanged();
     };
@@ -112,19 +111,31 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.It
 
         holder.position = position;
 
-        FileNameData data = dataSet.get(position);
+        RecordListContract.RecordFileInfo data = dataSet.get(position);
 
         holder.phoneIdText.setText("");
-        holder.textViewProtected.setText( data.isProtected?"!":"");
-        holder.nameText.setText("");
-        holder.phonenumberText.setText(data.phoneNumber);
-        holder.durationText.setText("");
-        holder.dateTimeText.setText(data.date+" "+data.time);
+        holder.textViewProtected.setText( data.fileNameData.isProtected?"!":"");
+        holder.nameText.setText(data.callerName);
+        holder.phonenumberText.setText(data.fileNameData.phoneNumber);
+        holder.durationText.setText(durationToStr(data.duration));
+        holder.dateTimeText.setText(data.fileNameData.date+" "+data.fileNameData.time);
         holder.commentaryText.setText("");;
 
-        holder.checkbox.setSelected(false);
-        holder.imageViewCallDirection.setImageResource(data.income ? R.drawable.income : R.drawable.outgoing);
+        holder.checkbox.setSelected(data.selected);
 
+        holder.imageViewCallDirection.setImageResource(data.fileNameData.income ? R.drawable.income : R.drawable.outgoing);
+
+    }
+
+    protected String durationToStr(int d)
+    {
+        int m,s;
+        s=d%60;
+        d=d/60;
+
+        m=d;
+
+        return String.format("%02d:%02d", m,s);
     }
 
     // Return the size of your dataset (invoked by the layout manager)

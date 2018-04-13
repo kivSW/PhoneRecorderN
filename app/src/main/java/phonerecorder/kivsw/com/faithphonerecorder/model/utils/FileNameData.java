@@ -4,30 +4,31 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Created by ivan on 4/3/18.
+ * this class holds data from a call file name.
  */
 
 public class FileNameData {
-    /** decipher call information from file name
-     */
 
+        public String fileName;
         public String date ="", time="", phoneNumber="", soundSource="",
                 phoneId="", extension="";
         public boolean outgoing=false, income=false,
                 isSent=false, isProtected=false;
 
-
+    /** decipher call information from file name
+     */
         public static FileNameData decipherFileName(String aFileName)
         {
             int i;
+
             FileNameData fd= new FileNameData();
+            fd.fileName = aFileName;
 
             // extracts file name
             i=aFileName.lastIndexOf("/");
             if(i>=0)     aFileName = aFileName.substring(i+1);
 
             try{
-
                 // delete a file extension and "_s" flag
                 i=aFileName.lastIndexOf("_s.");
 
@@ -47,6 +48,13 @@ public class FileNameData {
                 String fileName = aFileName.substring(0, i);
 
                 String[] info=fileName.split("_");
+                if(info.length<6)
+                {
+                   String[] newInfo = new String[6];
+                   for(i=0;i<info.length; i++) newInfo[i]=info[i];
+                   for(;i<info.length; i++) newInfo[i]="";
+                   info = newInfo;
+                }
 
 
                 // sets date and time
@@ -65,7 +73,7 @@ public class FileNameData {
                 fd.isProtected = info[6].equals("1");
             }catch(Exception e)
             {
-
+               fd=null;
             };
 
 
