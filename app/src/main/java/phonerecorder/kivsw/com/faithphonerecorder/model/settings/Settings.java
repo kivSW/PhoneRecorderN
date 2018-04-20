@@ -234,7 +234,7 @@ implements ISettings
     private final static String PATH_HISTORY = "PATH_HISTORY";
     @Override  public List<String> getPathViewHistory()
     {
-        String [] res=preferences.getString(PATH_HISTORY,"").split("\n");
+        String [] res=preferences.getString(PATH_HISTORY,getSavingPath()).split("\n");
         ArrayList list = new ArrayList(res.length);
         list.addAll( Arrays.asList(res));
         return list;
@@ -269,5 +269,14 @@ implements ISettings
         else
             return getSavingPath();
     }
+
+    @Override public long getCacheSize()
+    {
+        return 1024*1024;
+    };
+    @Override public int getCacheFilesNumber()
+    {
+        return 10;
+    };
 
 }

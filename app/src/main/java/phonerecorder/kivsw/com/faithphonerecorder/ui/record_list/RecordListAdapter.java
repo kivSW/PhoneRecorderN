@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.List;
@@ -22,35 +23,38 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.It
     public interface UIEventHandler
     {
         void playItem(int position);
-        void selectPlayerItem(int position);
+        void playItemWithPlayerChoosing(int position);
         void selectItem(int position, boolean select);
+        void protectItem(int position, boolean select);
     };
 
     public class ItemViewHolder extends RecyclerView.ViewHolder
     {
-        TextView phoneIdText, textViewProtected, nameText, phonenumberText, durationText, dateTimeText, commentaryText;
+        TextView nameText, phonenumberText, durationText, dateTimeText, commentaryText, downloadPercentageText;
         ImageButton playButton;
         CheckBox checkbox;
-        ImageView imageViewCallDirection;
+        ImageView imageViewCallDirection, imageViewProtected;
+        ProgressBar downloadProgress;
         int position;
 
         public ItemViewHolder(View view)
         {
             super(view);
-            phoneIdText = (TextView)view.findViewById(R.id.phoneIdText);
-            textViewProtected= (TextView)view.findViewById(R.id.textViewProtected);
+            imageViewProtected = (ImageView)view.findViewById(R.id.imageViewProtected);
+
             nameText= (TextView)view.findViewById(R.id.nameText);
             phonenumberText= (TextView)view.findViewById(R.id.phonenumberText);
             durationText= (TextView)view.findViewById(R.id.durationText);
             dateTimeText= (TextView)view.findViewById(R.id.dateTimeText);
             commentaryText= (TextView)view.findViewById(R.id.commentaryText);
-
+            downloadProgress = (ProgressBar)view.findViewById(R.id.downloadProgress);
+            downloadPercentageText = (TextView)view.findViewById(R.id.downloadPercentageText);
 
             checkbox=(CheckBox)view.findViewById(R.id.checkbox);
             checkbox.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        selectItem(position, checkbox.isSelected());
+                        selectItem(position, checkbox.isChecked());
                     }
                 });
 
@@ -70,6 +74,13 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.It
                         return true;
                     }
                 });
+
+            imageViewProtected.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    protectItem(position, !dataSet.get(position).recordFileNameData.isProtected);
+                }
+            });
         };
 
     }
@@ -86,7 +97,6 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.It
         this.dataSet = data;
         notifyDataSetChanged();
     };
-
 
 
 
@@ -113,17 +123,55 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.It
 
         RecordListContract.RecordFileInfo data = dataSet.get(position);
 
-        holder.phoneIdText.setText("");
-        holder.textViewProtected.setText( data.fileNameData.isProtected?"!":"");
         holder.nameText.setText(data.callerName);
-        holder.phonenumberText.setText(data.fileNameData.phoneNumber);
+        holder.phonenumberText.setText(data.recordFileNameData.phoneNumber);
         holder.durationText.setText(durationToStr(data.duration));
-        holder.dateTimeText.setText(data.fileNameData.date+" "+data.fileNameData.time);
-        holder.commentaryText.setText("");;
+        holder.dateTimeText.setText(data.recordFileNameData.date+" "+data.recordFileNameData.time);
+        holder.commentaryText.setText("");
+        holder.checkbox.setChecked(data.selected);
+        holder.imageViewCallDirection.setImageResource(data.recordFileNameData.income ? R.drawable.icons_ingoing_call : R.drawable.icons_outgoing_call);
+        if(data.recordFileNameData.isProtected)
+        {
+            holder.imageViewProtected.setImageResource(R.drawable.icon_lock);
+            holder.imageViewProtected.setAlpha(1.0f);
+        }
+        else
+        {
+            holder.imageViewProtected.setImageResource( R.drawable.icon_unlock);
+            holder.imageViewProtected.setAlpha(0.5f);
+        }
+        //holder.imageViewProtected.setImageResource( data.recordFileNameData.isProtected? R.drawable.icon_lock : R.drawable.icon_unlock);
 
-        holder.checkbox.setSelected(data.selected);
+        // chooses background  colour
+        if((position&1)==0)
+        {
+            holder.itemView.setBackgroundColor(0);
+        }
+        else
+        {
+            int color=holder.nameText.getCurrentTextColor();
+            color = (color & 0x00FFFFFF) | 0x11000000;
+            holder.itemView.setBackgroundColor(color);
+        }
 
-        holder.imageViewCallDirection.setImageResource(data.fileNameData.income ? R.drawable.income : R.drawable.outgoing);
+
+        if(data.isDownloading)
+        {
+            holder.downloadPercentageText.setVisibility(View.VISIBLE);
+            holder.downloadProgress.setVisibility(View.VISIBLE);
+            holder.downloadPercentageText.setText(String.valueOf(data.percentage)+"%");
+            holder.playButton.setVisibility(View.GONE);
+        }
+        else
+        {
+            holder.downloadPercentageText.setVisibility(View.GONE);
+            holder.downloadProgress.setVisibility(View.GONE);
+            holder.playButton.setVisibility(View.VISIBLE);
+            if(data.recordFileNameData.isSMS)
+                holder.playButton.setImageResource(R.drawable.icon_message_read);
+            else
+                holder.playButton.setImageResource(R.drawable.ic_play_arrow_black_48dp);
+        }
 
     }
 
@@ -154,7 +202,7 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.It
     protected void selectPlayerItem(int position)
     {
         if(eventHandler!=null)
-            eventHandler.selectPlayerItem(position);
+            eventHandler.playItemWithPlayerChoosing(position);
     };
     protected void selectItem(int position, boolean selected)
     {
@@ -162,4 +210,9 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.It
             eventHandler.selectItem(position, selected);
     };
 
+    protected void protectItem(int position, boolean selected)
+    {
+        if(eventHandler!=null)
+            eventHandler.protectItem(position, selected);
+    };
 }

@@ -12,11 +12,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -32,13 +35,14 @@ import phonerecorder.kivsw.com.faithphonerecorder.os.MyApplication;
  * A simple {@link Fragment} subclass.
  */
 public class RecordListFragment extends Fragment
-            implements RecordListContract.IRecordListView, RecordListAdapter.UIEventHandler
+            implements RecordListContract.IRecordListView, Toolbar.OnMenuItemClickListener
 {
 
     private Menu menu;
     private View rootView;
     private TextView pathTextView;
     private Spinner spinnerPath;
+
     private ImageView buttonSelDir;
     private RecyclerView recordList;
     private RecordListAdapter recordListAdapter;
@@ -89,6 +93,7 @@ public class RecordListFragment extends Fragment
         progressBar=(ProgressBar)rootView.findViewById(R.id.progressBar);
     };
 
+
     private void initViews()
     {
         getActivity().getMenuInflater()
@@ -115,9 +120,44 @@ public class RecordListFragment extends Fragment
             }
         });
 
+        spinnerPath.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String dir=(String)spinnerPath.getAdapter().getItem(position);
+                presenter.setCurrentDir(dir);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        toolbar.setOnMenuItemClickListener(this);
+
         recordList.setHasFixedSize(false);
         recordList.setLayoutManager(new LinearLayoutManager(getContext()));
         recordListAdapter = new RecordListAdapter();
+        recordListAdapter.setUIEventHandler(new RecordListAdapter.UIEventHandler(){
+            @Override
+            public void playItem(int position) {
+                presenter.playItem(position);
+            }
+
+            @Override
+            public void playItemWithPlayerChoosing(int position) {
+                presenter.playItemWithPlayerChoosing(position);
+            }
+
+            @Override
+            public void selectItem(int position, boolean select) {
+                presenter.selectItem(position, select);
+
+            }
+
+            @Override
+            public void protectItem(int position, boolean select) {
+                presenter.setUndelitable(position, select);
+            }
+        });
         recordList.setAdapter(recordListAdapter);
 
     }
@@ -135,18 +175,40 @@ public class RecordListFragment extends Fragment
     }
 
     @Override
-    public void setRecordList(List<RecordListContract.RecordFileInfo> fileList) {
+    public void setRecordList(List<RecordListContract.RecordFileInfo> fileList, boolean scrollToBegin) {
       recordListAdapter.setData(fileList);
-
+      if(scrollToBegin)
+          recordList.scrollToPosition(0);
+      updateMenu();
+      updatePathList();
     }
 
     @Override
-    public void setProgressBarVisible(boolean show) {
-        if(show)  progressBar.setVisibility(View.VISIBLE);
-        else      progressBar.setVisibility(View.GONE);
-    }
+    public void setRecListProgressBarVisible(boolean show) {
+        int visibility;
+        if(show)  visibility=(View.VISIBLE);
+        else      visibility=(View.GONE);
+        progressBar.setVisibility(visibility);
+    };
+
     @Override
-    public boolean onContextItemSelected(MenuItem item)
+    public void onRecordListChanged()
+    {
+        //recordList.invalidateItemDecorations();
+        recordList.getAdapter().notifyDataSetChanged();
+        updateMenu();
+    }
+
+    @Override
+    public void onRecordChanged(int index) {
+        recordList.getAdapter().notifyItemChanged(index);
+        updateMenu();
+    }
+
+    ;
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item)
     {
         switch(item.getItemId())
         {
@@ -160,25 +222,32 @@ public class RecordListFragment extends Fragment
                 presenter.deleteSelectedItems();
                 return true;
             case R.id.itemRefresh:
-                presenter.updateDir();
+                presenter.updateDir(true);
                 return true;
         };
         return super.onContextItemSelected(item);
     }
 
-
-    @Override
-    public void playItem(int position) {
-       presenter.playItem(position);
+    private void updateMenu()
+    {
+        boolean hasSelectedRecords=presenter.hasSelectedItem(false);
+        boolean hasDelitable = presenter.hasSelectedItem(true);
+        Menu menu=toolbar.getMenu();
+        menu.findItem(R.id.itemUnselectAll).setVisible(hasSelectedRecords);
+        menu.findItem(R.id.itemDelete).setVisible(hasDelitable);
+        toolbar.invalidate();
     }
+    private void updatePathList()
+    {
+        List<String> paths;
+        if(settings!=null)  paths=settings.getPathViewHistory();
+        else paths=new ArrayList();
 
-    @Override
-    public void selectPlayerItem(int position) {
-        presenter.selectPlayerItem(position);
-    }
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, paths);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerPath.setAdapter(arrayAdapter);
+        spinnerPath.setSelection(0);
 
-    @Override
-    public void selectItem(int position, boolean select) {
-        presenter.selectItem(position, select);
-    }
+    };
+
 }

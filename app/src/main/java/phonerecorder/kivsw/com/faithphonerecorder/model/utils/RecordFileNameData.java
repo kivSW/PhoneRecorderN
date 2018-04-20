@@ -7,22 +7,23 @@ import java.util.Date;
  * this class holds data from a call file name.
  */
 
-public class FileNameData {
+public class RecordFileNameData {
 
-        public String fileName;
+        public String origFileName;
         public String date ="", time="", phoneNumber="", soundSource="",
                 phoneId="", extension="";
         public boolean outgoing=false, income=false,
-                isSent=false, isProtected=false;
+                isSent=false, isProtected=false,
+                isSMS=false;
 
     /** decipher call information from file name
      */
-        public static FileNameData decipherFileName(String aFileName)
+        public static RecordFileNameData decipherFileName(String aFileName)
         {
             int i;
 
-            FileNameData fd= new FileNameData();
-            fd.fileName = aFileName;
+            RecordFileNameData fd= new RecordFileNameData();
+            fd.origFileName = aFileName;
 
             // extracts file name
             i=aFileName.lastIndexOf("/");
@@ -71,6 +72,7 @@ public class FileNameData {
                 fd.soundSource = info[4];
                 fd.phoneId = info[5];
                 fd.isProtected = info[6].equals("1");
+                fd.isSMS = fd.extension.toLowerCase().equals("sms");
             }catch(Exception e)
             {
                fd=null;
@@ -80,13 +82,13 @@ public class FileNameData {
             return fd;
         }
 
-        public static FileNameData generateNew(String phoneNumber, boolean income, String soundSource,String extension)
+        public static RecordFileNameData generateNew(String phoneNumber, boolean income, String soundSource, String extension)
         {
 
             SimpleDateFormat sdfD = new SimpleDateFormat("dd.MM.yyyy"),
                     sdfT = new SimpleDateFormat("HH:mm:ss");
             Date date= new Date();
-            FileNameData fd= new FileNameData();
+            RecordFileNameData fd= new RecordFileNameData();
 
             fd.date =sdfD.format(date);
             fd.time=sdfT.format(date);
@@ -101,7 +103,7 @@ public class FileNameData {
             return fd;
         }
 
-        public String getFileName()
+        public String buildFileName()
         {
             StringBuilder sb=new StringBuilder();
 		  /*sb.append(path);

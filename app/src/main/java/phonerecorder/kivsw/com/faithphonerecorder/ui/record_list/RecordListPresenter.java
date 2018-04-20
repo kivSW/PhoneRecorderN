@@ -5,27 +5,41 @@ import android.content.Context;
 import com.kivsw.cloud.disk.IDiskIO;
 import com.kivsw.cloud.disk.IDiskRepresenter;
 import com.kivsw.cloud.disk.StorageUtils;
+import com.kivsw.cloudcache.CloudCache;
+import com.kivsw.cloudcache.data.CacheFileInfo;
 import com.kivsw.mvprxdialog.Contract;
 import com.kivsw.mvprxdialog.messagebox.MvpMessageBoxBuilder;
+import com.kivsw.mvprxdialog.messagebox.MvpMessageBoxPresenter;
 import com.kivsw.mvprxfiledialog.MvpRxSelectDirDialogPresenter;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import io.reactivex.CompletableObserver;
+import io.reactivex.CompletableSource;
 import io.reactivex.MaybeObserver;
+import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
+import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 import phonerecorder.kivsw.com.faithphonerecorder.R;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
-import phonerecorder.kivsw.com.faithphonerecorder.model.utils.FileNameData;
+import phonerecorder.kivsw.com.faithphonerecorder.model.utils.RecordFileNameData;
+import phonerecorder.kivsw.com.faithphonerecorder.os.SimpleFileReader;
+import phonerecorder.kivsw.com.faithphonerecorder.os.player.IPlayer;
 
 /**
  * Created by ivan on 3/27/18.
@@ -35,19 +49,22 @@ public class RecordListPresenter
         implements RecordListContract.IRecordListPresenter
 {
     private ISettings settings;
+    private IPlayer player;
     private List<IDiskRepresenter> diskList;
     private RecordListContract.IRecordListView view;
-    private List<IDiskIO.ResourceInfo> fileList;
+    private CloudCache cloudCache;
     private Context appContext;
     private List<RecordListContract.RecordFileInfo> dirContent;
-    private List<RecordListContract.RecordFileInfo> filteredDirContent;
+    private List<RecordListContract.RecordFileInfo> visibleDirContent;
 
-    public RecordListPresenter(Context appContext, ISettings settings, List<IDiskRepresenter> diskList)
+    public RecordListPresenter(Context appContext, ISettings settings, IPlayer player, List<IDiskRepresenter> diskList,CloudCache cloudCache )
     {
         this.settings = settings;
+        this.player = player;
         this.diskList = diskList;
         this.appContext = appContext;
-    }
+        this.cloudCache = cloudCache;
+    };
 
     @Override
     public Contract.IView getUI() {
@@ -57,9 +74,10 @@ public class RecordListPresenter
     @Override
     public void setUI(Contract.IView view) {
         this.view = (RecordListContract.IRecordListView)view;
+        this.view.setSettings(settings);
         updateViewProgressBarVisible();
-        if(filteredDirContent!=null)  setFilteredDirContent(filteredDirContent);
-        else updateDir();
+        if(visibleDirContent !=null)  setVisibleDirContent(visibleDirContent, false);
+        else updateDir(true);
 
     }
 
@@ -81,7 +99,6 @@ public class RecordListPresenter
 
     @Override
     public void chooseCurrentDir() {
-        String path=settings.getCurrentPathView();
         MvpRxSelectDirDialogPresenter selDirPresenter = MvpRxSelectDirDialogPresenter
                 .createDialog(view.getContext(), view.getFragmentManager(), diskList, settings.getSavingPath(), null);
 
@@ -91,8 +108,7 @@ public class RecordListPresenter
 
             @Override
             public void onSuccess(String filePath) {
-                 settings.addToPathViewHistory(filePath);
-                 updateDir();
+                setCurrentDir(filePath);
             };
 
             @Override
@@ -105,21 +121,37 @@ public class RecordListPresenter
         });
 
     }
+    @Override
+    public void setCurrentDir(String filePath)
+    {
+        if(settings.getCurrentPathView().equals( filePath)  )
+            return;
+         settings.addToPathViewHistory(filePath);
+         updateDir(true);
+    };
+
+    protected StorageUtils.CloudFile getCloudFile()
+    {
+        String filePath = settings.getCurrentPathView();
+        StorageUtils.CloudFile cloudFile
+                =StorageUtils.parseFileName(filePath, diskList);
+        return cloudFile;
+    }
+    protected IDiskIO getCurrectDiskIO()
+    {
+        return getCloudFile().diskRepresenter.getDiskIo();
+    }
 
     @Override
-    public void updateDir()
+    public void updateDir(final boolean scrollToBegin)
     {
-            setProgressBarVisible(true);
-            String filePath = settings.getCurrentPathView();
+        setProgressBarVisible(true);
 
-            final StorageUtils.CloudFile cloudFile
-                    =StorageUtils.parseFileName(filePath, diskList);
-
-            cloudFile.diskRepresenter.getDiskIo()
+        getCurrectDiskIO()
                   .authorizeIfNecessary()
-                  .andThen(cloudFile.diskRepresenter.getDiskIo().getResourceInfo(cloudFile.getPath()))
-                    .observeOn(Schedulers.io())
-                    .map(new Function<IDiskIO.ResourceInfo, List<RecordListContract.RecordFileInfo>>(){
+                  .andThen(getCurrectDiskIO().getResourceInfo(getCloudFile().getPath()))
+                  .observeOn(Schedulers.io())
+                  .map(new Function<IDiskIO.ResourceInfo, List<RecordListContract.RecordFileInfo>>(){
 
                         @Override
                         public List<RecordListContract.RecordFileInfo> apply(IDiskIO.ResourceInfo resourceInfo) throws Exception {
@@ -128,10 +160,17 @@ public class RecordListPresenter
                             Pattern p = Pattern.compile("^[0-9]{8}_[0-9]{6}_"); // this pattern filters the other app's files
                             for(IDiskIO.ResourceInfo file:fileList)
                             {
+                                if(!file.isFile()) continue;
                                 Matcher m = p.matcher(file.name());
                                 if(!m.find()) continue;
                                 res.add( getRecordInfo(file.name()) );
                             };
+                            Collections.sort(res, new Comparator<RecordListContract.RecordFileInfo>(){
+                                @Override
+                                public int compare(RecordListContract.RecordFileInfo o1, RecordListContract.RecordFileInfo o2) {
+                                    return o2.recordFileNameData.origFileName.compareTo(o1.recordFileNameData.origFileName);
+                                }
+                            });
                             return res;
                         }
                     })
@@ -145,7 +184,7 @@ public class RecordListPresenter
 
                             @Override
                             public void onSuccess(List<RecordListContract.RecordFileInfo> recordList) {
-                                setDirContent( recordList);
+                                setDirContent(recordList, scrollToBegin);
                                 setProgressBarVisible(false);
                             }
 
@@ -159,7 +198,7 @@ public class RecordListPresenter
     protected RecordListContract.RecordFileInfo getRecordInfo(String fileName)
     {
         RecordListContract.RecordFileInfo item=new RecordListContract.RecordFileInfo();
-        item.fileNameData=FileNameData.decipherFileName(fileName);
+        item.recordFileNameData = RecordFileNameData.decipherFileName(fileName);
         item. callerName = "";
         return item;
     }
@@ -175,21 +214,26 @@ public class RecordListPresenter
     protected void updateViewProgressBarVisible()
     {
         if(view!=null)
-            view.setProgressBarVisible(progressBarVisible>0);
+            view.setRecListProgressBarVisible(progressBarVisible>0);
     }
 
-    protected void setFilteredDirContent(List<RecordListContract.RecordFileInfo> aFilteredDirContent)
+    protected void setVisibleDirContent(List<RecordListContract.RecordFileInfo> aFilteredDirContent, boolean scrollToBegin)
     {
-        filteredDirContent = aFilteredDirContent;
+        visibleDirContent = aFilteredDirContent;
+        int i=0;
+
+        for(RecordListContract.RecordFileInfo item:aFilteredDirContent)
+            item.visiblePosition=i++;
+
         if(view!=null)
         {
-            view.setRecordList(filteredDirContent);
+            view.setRecordList(visibleDirContent, scrollToBegin);
         };
     }
 
-    protected void setDirContent(List<RecordListContract.RecordFileInfo> recordList) {
+    protected void setDirContent(List<RecordListContract.RecordFileInfo> recordList, boolean scrollToBegin) {
        this.dirContent=recordList;
-       filterContent();
+       filterContent(scrollToBegin);
     }
 
     private String filter;
@@ -197,47 +241,256 @@ public class RecordListPresenter
     public void setFilter(final String aFilter)
     {
         this.filter = aFilter;
-        filterContent();
+        filterContent(true);
     }
 
     @Override
-    public void setUndelitable(int pos, boolean selected) {
+    public void setUndelitable(int pos, boolean isProtected) {
 
+       final RecordListContract.RecordFileInfo recordFileInfo=visibleDirContent.get(pos);
+
+       String oldPath = getCloudFile().getPath() + recordFileInfo.recordFileNameData.origFileName;
+       recordFileInfo.recordFileNameData.isProtected = isProtected;
+       final String newFileName=recordFileInfo.recordFileNameData.buildFileName();
+       String newPath = getCloudFile().getPath() + newFileName;
+       notifyRecordChange(recordFileInfo);
+
+       getCurrectDiskIO()
+       .renameFile(oldPath, newPath)
+       .subscribe(new CompletableObserver() {
+                   @Override
+                   public void onSubscribe(Disposable d) {
+
+                   };
+
+                   @Override
+                   public void onComplete() {
+                       notifyRecordChange(recordFileInfo);
+                       recordFileInfo.recordFileNameData.origFileName = newFileName;
+                   };
+
+                   @Override
+                   public void onError(Throwable e) {
+                       RecordListPresenter.this.onError(e.toString());
+                       notifyRecordChange(recordFileInfo);
+                   };
+               });
     }
 
     @Override
     public void playItem(int pos) {
+        final RecordListContract.RecordFileInfo recordFileInfo = visibleDirContent.get(pos);
+        getCachedFile(recordFileInfo)
+                .subscribe(new SingleObserver<CacheFileInfo>() {
+                    @Override public void onSubscribe(Disposable d) {}
+
+                    @Override
+                    public void onSuccess(CacheFileInfo cacheFileInfo) {
+                            if(recordFileInfo.recordFileNameData.isSMS)
+                                showSMS(recordFileInfo, cacheFileInfo.localName);
+                            else
+                                if(view!=null)
+                                   player.play(view.getContext(), cacheFileInfo.localName);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {}// error is processed in getCachedFile()
+                });
 
     }
 
     @Override
-    public void selectPlayerItem(int pos) {
+    public void playItemWithPlayerChoosing(int pos) {
+        final RecordListContract.RecordFileInfo recordFileInfo = visibleDirContent.get(pos);
+        getCachedFile(recordFileInfo)
+                .subscribe(new SingleObserver<CacheFileInfo>() {
+                    @Override public void onSubscribe(Disposable d) {}
+
+                    @Override
+                    public void onSuccess(CacheFileInfo cacheFileInfo) {
+                        if(recordFileInfo.recordFileNameData.isSMS)
+                            showSMS(recordFileInfo, cacheFileInfo.localName);
+                        else
+                            if(view!=null)
+                                player.playItemWithChooser(view.getContext(),cacheFileInfo.localName);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {}// error is processed in getCachedFile()
+                });
+    }
+
+    protected Single<CacheFileInfo> getCachedFile(final RecordListContract.RecordFileInfo recordFileInfo)
+    {
+        String filePath = settings.getCurrentPathView() + recordFileInfo.recordFileNameData.origFileName;
+        recordFileInfo.percentage=0;
+        recordFileInfo.isDownloading=true;
+        notifyRecordChange(recordFileInfo);
+
+        Observable res= cloudCache.getFileFromCache(filePath)
+                .filter(new Predicate() {
+                    @Override
+                    public boolean test(Object event) throws Exception {
+                        if(event instanceof Integer) {
+                            recordFileInfo.percentage=(((Integer) event).intValue());
+                            notifyRecordChange(recordFileInfo);
+                        }
+                        return event instanceof CacheFileInfo;
+                    }
+                })
+                .doOnComplete(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        recordFileInfo.isDownloading=false;
+                        notifyRecordChange(recordFileInfo);
+                    }
+                })
+                .doOnError(new Consumer<Throwable>() {
+                    public void accept(@NonNull Throwable t)
+                    {
+                        recordFileInfo.isDownloading=false;
+                        notifyRecordChange(recordFileInfo);
+                        RecordListPresenter.this.onError(t.toString());
+                    }
+                });
+
+        return Single.fromObservable(res);
+
+    }
+    protected void notifyRecordChange(RecordListContract.RecordFileInfo recordFileInfo)
+    {
+        if (view != null)
+                            view.onRecordChanged(recordFileInfo.visiblePosition);
+    }
+
+    private void showSMS(RecordListContract.RecordFileInfo recordFileInfo, String localFileName)
+    {
+        if(view==null)
+            return;
+
+        String title, text;
+        if(recordFileInfo.recordFileNameData.income)
+            title = appContext.getText(R.string.from) + recordFileInfo.recordFileNameData.phoneNumber + " "+recordFileInfo.callerName;
+        else
+            title = appContext.getText(R.string.to) + recordFileInfo.recordFileNameData.phoneNumber + " "+recordFileInfo.callerName;
+        text = SimpleFileReader.readFile(localFileName);
+
+
+        MvpMessageBoxBuilder.newInstance()
+                .setText(title, text)
+                .build(view.getFragmentManager());
 
     }
 
     @Override
     public void unselectAll() {
+        for(RecordListContract.RecordFileInfo item: visibleDirContent)
+            item.selected=false;
 
+        if(view!=null) view.onRecordListChanged();
     }
 
     @Override
     public void selectAll() {
-
+        for(RecordListContract.RecordFileInfo item: visibleDirContent)
+            item.selected=true;
+        if(view!=null) view.onRecordListChanged();
     }
 
     @Override
     public void selectItem(int pos, boolean selected) {
+        RecordListContract.RecordFileInfo item=visibleDirContent.get(pos);
+        item.selected = selected;
+        notifyRecordChange(item);
+    }
 
+    @Override
+    public boolean hasSelectedItem(boolean excludeProtected)
+    {
+        for(RecordListContract.RecordFileInfo item: visibleDirContent)
+        {
+            if(excludeProtected && item.recordFileNameData.isProtected)
+                continue;
+            if(item.selected)
+                return true;
+        };
+        return false;
+    };
+
+    List<RecordListContract.RecordFileInfo> getSelectedItems(boolean excludeProtected)
+    {
+        ArrayList<RecordListContract.RecordFileInfo> res = new ArrayList<>(visibleDirContent.size());
+        for(RecordListContract.RecordFileInfo item: visibleDirContent)
+        {
+            if(excludeProtected && item.recordFileNameData.isProtected)
+                continue;
+            if(item.selected)
+                res.add(item);
+        }
+        return res;
     }
 
     @Override
     public void deleteSelectedItems() {
 
+        final List<RecordListContract.RecordFileInfo> selectedFiles=getSelectedItems(true);
+        if(selectedFiles.size()==0)
+            return;
+
+        MvpMessageBoxBuilder.newInstance()
+                .setText(appContext.getText(R.string.confirmation),
+                         String.format(Locale.US, appContext.getText(R.string.deleteConfirmation).toString(), selectedFiles.size()) )
+                .setOkButton(appContext.getText(R.string.yes))
+                .setCancelButton(appContext.getText(R.string.no))
+                .build(view.getFragmentManager())
+                .getSingle()
+                .subscribe(new Consumer<Integer>() {
+                    @Override
+                    public void accept(Integer btnNum) throws Exception {
+                        if(btnNum.intValue()==MvpMessageBoxPresenter.OK_BUTTON)
+                            doDelete(selectedFiles);
+                    }
+                });
+    };
+
+    protected void  doDelete(List<RecordListContract.RecordFileInfo> selectedFiles)
+    {
+        StorageUtils.CloudFile cloudFile = getCloudFile();
+        final String path=cloudFile.getPath();
+        final IDiskIO diskIo=cloudFile.diskRepresenter.getDiskIo();
+//        AsyncOperationCounter fileCounter = new AsyncOperationCounter();
+        setProgressBarVisible(true);
+
+        Observable.fromIterable(selectedFiles)
+                .observeOn(Schedulers.io())
+                .flatMapCompletable(new Function<RecordListContract.RecordFileInfo, CompletableSource>() {
+                    @Override
+                    public CompletableSource apply(RecordListContract.RecordFileInfo recordFileInfo) throws Exception {
+                        return diskIo.deleteFile(path+recordFileInfo.recordFileNameData.origFileName);
+                    }
+                })
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) { }
+
+                    @Override
+                    public void onComplete() {
+                        updateDir(false);
+                        setProgressBarVisible(false);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        setProgressBarVisible(false);
+                        RecordListPresenter.this.onError(e.toString());
+                    }
+                });
+
+
     }
 
-    ;
-
-    protected void filterContent()
+    protected void filterContent(final boolean scrollToBegin)
     {
         final List<RecordListContract.RecordFileInfo> tmpDirContent = this.dirContent;
         final String tmpFilter = filter;
@@ -255,7 +508,7 @@ public class RecordListPresenter
         .subscribe(new Consumer<List<RecordListContract.RecordFileInfo>>() {
             @Override
             public void accept(List<RecordListContract.RecordFileInfo> recordList) throws Exception {
-                setFilteredDirContent(recordList);
+                setVisibleDirContent(recordList,scrollToBegin);
                 setProgressBarVisible(false);
             }
        });
@@ -276,11 +529,10 @@ public class RecordListPresenter
     }
     protected boolean checkFilter(RecordListContract.RecordFileInfo fileData, String filter)
     {
-        if (fileData.fileNameData.phoneNumber.indexOf(filter) >= 0) return true;
+        if (fileData.recordFileNameData.phoneNumber.indexOf(filter) >= 0) return true;
         if (fileData.callerName.indexOf(filter) >= 0) return true;
 
         return false;
-
     }
 
 

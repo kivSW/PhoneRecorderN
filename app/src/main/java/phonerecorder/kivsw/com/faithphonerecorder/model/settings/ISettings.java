@@ -53,5 +53,8 @@ public interface ISettings {
     void addToPathViewHistory(String newPath);
     String getCurrentPathView();
 
+    long getCacheSize();
+    int getCacheFilesNumber();
+
 
 }
