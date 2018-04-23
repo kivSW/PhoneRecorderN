@@ -138,7 +138,7 @@ implements ISettings
     };
     @Override public void setSoundSource(SoundSource value)
     {
-        if(value==getSoundSource())  return;
+        if(value.equals(getSoundSource()))  return;
 
         preferences.edit()
                 .putInt(SOUND_SOURCE, value.ordinal())

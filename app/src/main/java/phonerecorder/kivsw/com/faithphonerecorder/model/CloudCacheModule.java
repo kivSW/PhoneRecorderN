@@ -22,6 +22,6 @@ public class CloudCacheModule {
     @Provides
     CloudCache provideCloudCache(Context context, List<IDiskRepresenter> disks, ISettings settings)
     {
-        return CloudCache.newInstance(context, disks, settings.getCacheSize(), settings.getCacheFilesNumber());
+        return CloudCache.newInstance(context, context.getExternalCacheDir(), disks, settings.getCacheSize(), settings.getCacheFilesNumber());
     }
 }

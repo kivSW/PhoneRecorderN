@@ -1,6 +1,10 @@
 package phonerecorder.kivsw.com.faithphonerecorder.ui.record_list;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.ContactsContract;
 
 import com.kivsw.cloud.disk.IDiskIO;
 import com.kivsw.cloud.disk.IDiskRepresenter;
@@ -199,7 +203,7 @@ public class RecordListPresenter
     {
         RecordListContract.RecordFileInfo item=new RecordListContract.RecordFileInfo();
         item.recordFileNameData = RecordFileNameData.decipherFileName(fileName);
-        item. callerName = "";
+        item. callerName = getNameFromNumber(item.recordFileNameData.phoneNumber);
         return item;
     }
 
@@ -520,6 +524,8 @@ public class RecordListPresenter
         if(filter==null || filter.length()==0)
             return dirContent;
 
+        filter = filter.toLowerCase();
+
         ArrayList<RecordListContract.RecordFileInfo> resList=new ArrayList(dirContent.size());
         for (RecordListContract.RecordFileInfo item : dirContent) {
             if ( checkFilter(item, filter) )
@@ -530,11 +536,33 @@ public class RecordListPresenter
     protected boolean checkFilter(RecordListContract.RecordFileInfo fileData, String filter)
     {
         if (fileData.recordFileNameData.phoneNumber.indexOf(filter) >= 0) return true;
-        if (fileData.callerName.indexOf(filter) >= 0) return true;
+        if (fileData.callerName.toLowerCase().indexOf(filter) >= 0) return true;
 
         return false;
     }
 
+    /** finds and returns name that corresponds phoneNumber
+     * @return name or null
+     * */
+    public String getNameFromNumber(String phoneNumber)
+    {
+        String res = null;
+        try {
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
+            ContentResolver resolver = appContext.getContentResolver();
+            Cursor cur = resolver.query(uri, new String[]{ContactsContract.PhoneLookup.NUMBER, ContactsContract.PhoneLookup.DISPLAY_NAME}, null, null, null);
+
+            if (cur != null) {
+                if (cur.moveToFirst())
+                    res = cur.getString(1);
+
+                if (!cur.isClosed()) cur.close();
+            }
+        }catch(Exception e)
+        {}
+        if (res == null) res = "";
+        return res;
+    };
 
 
 }

@@ -94,8 +94,11 @@ public class MainActivity extends AppCompatActivity
     {
         RxPermissions rxPermissions = new RxPermissions(this); // where this is an Activity instance
         rxPermissions
-                .request(Manifest.permission.READ_PHONE_STATE, Manifest.permission.INTERNET,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
+                .request(Manifest.permission.READ_PHONE_STATE,
+                         Manifest.permission.INTERNET,
+                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                         Manifest.permission.READ_EXTERNAL_STORAGE,
+                         Manifest.permission.READ_CONTACTS)
                 .subscribe(new Consumer<Boolean>() {
                         @Override
                         public void accept(Boolean granted) throws Exception {
