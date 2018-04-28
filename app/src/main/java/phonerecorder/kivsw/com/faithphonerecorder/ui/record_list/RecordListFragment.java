@@ -48,7 +48,9 @@ public class RecordListFragment extends Fragment
     private RecordListAdapter recordListAdapter;
     private Toolbar toolbar;
     private ISettings settings;
+
     private ProgressBar progressBar;
+
 
     @Inject
     protected RecordListPresenter presenter;
@@ -56,12 +58,20 @@ public class RecordListFragment extends Fragment
 
     public RecordListFragment() {
         // Required empty public constructor
+
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         setHasOptionsMenu(true);
         rootView = inflater.inflate(R.layout.record_list_fragment, container, false);
         findViews();
@@ -84,6 +94,12 @@ public class RecordListFragment extends Fragment
         super.onStop();
 
     }
+    @Override
+    public void onDestroyView() {
+        presenter.removeUI();
+        super.onDestroyView();
+    };
+
     private void findViews() {
         pathTextView = (TextView) rootView.findViewById(R.id.checkBoxCallEnabled);
         spinnerPath=(Spinner)rootView.findViewById(R.id.spinnerPath);
@@ -123,7 +139,7 @@ public class RecordListFragment extends Fragment
         spinnerPath.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String dir=(String)spinnerPath.getAdapter().getItem(position);
+                String dir =(String)spinnerPath.getAdapter().getItem(position);
                 presenter.setCurrentDir(dir);
             }
 
@@ -170,7 +186,6 @@ public class RecordListFragment extends Fragment
     @Override
     public void setSettings(ISettings settings) {
         this.settings = settings;
-
 
     }
 

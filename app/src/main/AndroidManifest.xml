@@ -7,6 +7,11 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
+
+
 
     <application
         android:name=".os.MyApplication"
@@ -27,6 +32,20 @@
                 android:resource="@xml/provider_paths"/>
         </provider>
 
+        <receiver android:name="phonerecorder.kivsw.com.faithphonerecorder.os.Receiver"
+                  android:enabled="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE" />
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </receiver>
+
+        <service android:name="phonerecorder.kivsw.com.faithphonerecorder.os.Service"
+            android:exported="false"/>
 
         <activity
             android:name=".ui.MainActivity"

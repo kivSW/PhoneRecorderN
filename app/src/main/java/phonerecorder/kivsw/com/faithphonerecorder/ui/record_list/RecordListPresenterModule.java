@@ -13,7 +13,7 @@ import dagger.Module;
 import dagger.Provides;
 import io.reactivex.annotations.NonNull;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
-import phonerecorder.kivsw.com.faithphonerecorder.os.player.IPlayer;
+import phonerecorder.kivsw.com.faithphonerecorder.model.player.IPlayer;
 
 /**
  * Created by ivan on 3/27/18.

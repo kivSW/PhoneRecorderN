@@ -26,6 +26,7 @@ public interface ISettings {
 
     String getSavingPath();
     void setSavingPath(String value);
+    String getInternalTempPath();
 
     SoundSource getSoundSource();
     void setSoundSource(SoundSource value);
@@ -55,6 +56,5 @@ public interface ISettings {
 
     long getCacheSize();
     int getCacheFilesNumber();
-
 
 }

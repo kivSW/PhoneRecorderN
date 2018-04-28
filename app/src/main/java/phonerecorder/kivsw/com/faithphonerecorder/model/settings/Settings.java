@@ -130,6 +130,14 @@ implements ISettings
         addToPathViewHistory(value);
     };
 
+    @Override public String getInternalTempPath()
+    {
+        String res= cnt.getFilesDir().getAbsolutePath();
+        if(res.charAt(res.length()-1)!= File.separatorChar)
+            res = res + File.separatorChar;
+        return res;
+    };
+
     private final static String SOUND_SOURCE = "SOUND_SOURCE";
     @Override public SoundSource getSoundSource()
     {

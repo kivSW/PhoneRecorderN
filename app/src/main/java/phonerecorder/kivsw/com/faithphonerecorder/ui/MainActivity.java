@@ -1,6 +1,8 @@
 package phonerecorder.kivsw.com.faithphonerecorder.ui;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -98,7 +100,11 @@ public class MainActivity extends AppCompatActivity
                          Manifest.permission.INTERNET,
                          Manifest.permission.WRITE_EXTERNAL_STORAGE,
                          Manifest.permission.READ_EXTERNAL_STORAGE,
-                         Manifest.permission.READ_CONTACTS)
+                         Manifest.permission.READ_CONTACTS,
+                         Manifest.permission.RECEIVE_BOOT_COMPLETED,
+                         Manifest.permission.RECORD_AUDIO,
+                         Manifest.permission.PROCESS_OUTGOING_CALLS
+                        )
                 .subscribe(new Consumer<Boolean>() {
                         @Override
                         public void accept(Boolean granted) throws Exception {
@@ -137,19 +143,28 @@ public class MainActivity extends AppCompatActivity
     }
 
     protected class  OnChangePage implements ViewPager.OnPageChangeListener {
-    @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+             invalidateOptionsMenu();
+        }
     }
 
-    @Override
-    public void onPageSelected(int position) {
-
+    //---------------------------------------------------------------------------------
+    public static void showActivity(Context context)
+    {
+        Intent i=new Intent(Intent.ACTION_VIEW, null, context, MainActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        context.startActivity(i);
     }
-
-    @Override
-    public void onPageScrollStateChanged(int state) {
-         invalidateOptionsMenu();
-    }
-}
 }

@@ -31,10 +31,10 @@ import phonerecorder.kivsw.com.faithphonerecorder.os.MyApplication;
 public class SettingsFragment extends Fragment
     implements SettingsContract.ISettingsView {
 
+    @Inject protected SettingsPresenter presenter;
 
-    @Inject
-    protected SettingsPresenter presenter;
     private ISettings settings;
+
     private View rootView;
     private CheckBox checkBoxCallEnabled,
             checkBoxSmsEnabled,
@@ -53,6 +53,7 @@ public class SettingsFragment extends Fragment
 
     public SettingsFragment() {
         // Required empty public constructor
+
     }
 
 
@@ -106,11 +107,9 @@ public class SettingsFragment extends Fragment
 
     @Override
     public void onDestroyView() {
-        presenter.setUI(null);
+        presenter.removeUI();
         super.onDestroyView();
-    }
-
-    ;
+    };
 
     @Override
     public void onDetach() {
@@ -309,7 +308,11 @@ public class SettingsFragment extends Fragment
     public void setSettings(ISettings settings) {
         this.settings = settings;
         readAllSettings();
+
+
     }
+
+
     @Override
     public void updateSavePath()
     {

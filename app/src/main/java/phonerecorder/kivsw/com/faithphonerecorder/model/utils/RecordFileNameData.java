@@ -9,6 +9,8 @@ import java.util.Date;
 
 public class RecordFileNameData {
 
+        public final static String PATTERN="^[0-9]{8}_[0-9]{6}_";
+
         public String origFileName;
         public String date ="", time="", phoneNumber="", soundSource="",
                 phoneId="", extension="";

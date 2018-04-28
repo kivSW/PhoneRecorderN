@@ -1,4 +1,4 @@
-package phonerecorder.kivsw.com.faithphonerecorder.os.player;
+package phonerecorder.kivsw.com.faithphonerecorder.model.player;
 
 import javax.inject.Singleton;
 

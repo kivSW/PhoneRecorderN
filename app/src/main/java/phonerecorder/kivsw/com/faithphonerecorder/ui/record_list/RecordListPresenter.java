@@ -25,6 +25,8 @@ import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
+
 import io.reactivex.CompletableObserver;
 import io.reactivex.CompletableSource;
 import io.reactivex.MaybeObserver;
@@ -40,10 +42,10 @@ import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 import phonerecorder.kivsw.com.faithphonerecorder.R;
+import phonerecorder.kivsw.com.faithphonerecorder.model.player.IPlayer;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
 import phonerecorder.kivsw.com.faithphonerecorder.model.utils.RecordFileNameData;
-import phonerecorder.kivsw.com.faithphonerecorder.os.SimpleFileReader;
-import phonerecorder.kivsw.com.faithphonerecorder.os.player.IPlayer;
+import phonerecorder.kivsw.com.faithphonerecorder.model.utils.SimpleFileReader;
 
 /**
  * Created by ivan on 3/27/18.
@@ -61,6 +63,10 @@ public class RecordListPresenter
     private List<RecordListContract.RecordFileInfo> dirContent;
     private List<RecordListContract.RecordFileInfo> visibleDirContent;
 
+    private String lastUpdatedDir;
+    private Disposable settingsDisposable;
+
+    @Inject
     public RecordListPresenter(Context appContext, ISettings settings, IPlayer player, List<IDiskRepresenter> diskList,CloudCache cloudCache )
     {
         this.settings = settings;
@@ -68,26 +74,50 @@ public class RecordListPresenter
         this.diskList = diskList;
         this.appContext = appContext;
         this.cloudCache = cloudCache;
+        settingsDisposable=null;
+        lastUpdatedDir = "";
     };
 
     @Override
     public Contract.IView getUI() {
-        return null;
+        return view;
     }
 
     @Override
     public void setUI(Contract.IView view) {
         this.view = (RecordListContract.IRecordListView)view;
         this.view.setSettings(settings);
+        subscribeSettings();
         updateViewProgressBarVisible();
         if(visibleDirContent !=null)  setVisibleDirContent(visibleDirContent, false);
         else updateDir(true);
-
     }
 
     @Override
     public void removeUI() {
+        unsubscribeSettings();
         this.view = null;
+    }
+
+    protected void subscribeSettings()
+    {
+        unsubscribeSettings();
+        settingsDisposable =
+                settings.getObservable()
+                        .subscribe(new Consumer<ISettings>() {
+                            @Override
+                            public void accept(ISettings iSettings) throws Exception {
+                                if(!iSettings.getCurrentPathView().equals(lastUpdatedDir)) {
+                                    updateDir(true);
+                                }
+                            }
+                        });
+    }
+    protected void unsubscribeSettings()
+    {
+        if(settingsDisposable!=null)
+            settingsDisposable.dispose();
+        settingsDisposable=null;
     }
 
     @Override
@@ -161,7 +191,7 @@ public class RecordListPresenter
                         public List<RecordListContract.RecordFileInfo> apply(IDiskIO.ResourceInfo resourceInfo) throws Exception {
                             List<IDiskIO.ResourceInfo> fileList=resourceInfo.content();
                             List<RecordListContract.RecordFileInfo> res = new ArrayList<>(fileList.size());
-                            Pattern p = Pattern.compile("^[0-9]{8}_[0-9]{6}_"); // this pattern filters the other app's files
+                            Pattern p = Pattern.compile(RecordFileNameData.PATTERN);//"^[0-9]{8}_[0-9]{6}_"); // this pattern filters the other app's files
                             for(IDiskIO.ResourceInfo file:fileList)
                             {
                                 if(!file.isFile()) continue;

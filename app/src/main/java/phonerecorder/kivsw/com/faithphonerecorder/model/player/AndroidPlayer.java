@@ -1,4 +1,4 @@
-package phonerecorder.kivsw.com.faithphonerecorder.os.player;
+package phonerecorder.kivsw.com.faithphonerecorder.model.player;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -23,8 +23,7 @@ public class AndroidPlayer implements IPlayer{
     private Uri createURI(Context context, String filePath)
     {
         File file=new File(filePath);
-        //Uri photoURI = Uri.fromFile(file);
-//Uri uri = Uri.parse("file://"+filePath);
+
         Uri uri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", file);
         return uri;
     }
@@ -45,17 +44,15 @@ public class AndroidPlayer implements IPlayer{
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.addCategory(Intent.CATEGORY_DEFAULT);
         Uri uri = createURI(activity, filePath);//Uri.parse("file://"+filePath);
-        //i.setData(uri);
+
         i.setDataAndType (uri, "audio/3gp");
         i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        // Always use string resources for UI text.
-        // This says something like "Share this photo with"
+
         String title = activity.getResources().getString(R.string.chooser_title);
         // Create intent to show chooser
         Intent chooser = Intent.createChooser(i, title);
-        activity.startActivity(chooser);//!!!
-        // Verify the intent will resolve to at least one activity
-		/*if (i.resolveActivity(context.getPackageManager()) != null)
-			context.startActivity(i);*/
+        if (i.resolveActivity(activity.getPackageManager()) != null)
+            activity.startActivity(chooser);
+
     }
 }
