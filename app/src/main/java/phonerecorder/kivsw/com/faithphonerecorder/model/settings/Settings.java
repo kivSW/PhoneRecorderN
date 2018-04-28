@@ -171,7 +171,7 @@ implements ISettings
     };
 
     private final static String MAX_FILE_AMOUNT = "MAX_FILE_AMOUNT";
-    @Override public int maxKeptFile(){return 1024*1024;};
+    @Override public int maxKeptFileAmount(){return 1024*1024;};
     @Override public int getKeptFileAmount()
     {
         return preferences.getInt(MAX_FILE_AMOUNT, 1000);

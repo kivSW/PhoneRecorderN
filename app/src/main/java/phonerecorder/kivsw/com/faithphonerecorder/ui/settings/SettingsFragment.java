@@ -216,7 +216,7 @@ public class SettingsFragment extends Fragment
                 if(settings==null) return;
                 try {
                     int v = Integer.parseInt(s.toString());
-                    if ((v < 1) || (v > settings.maxKeptFile())) throw new Exception();
+                    if ((v < 1) || (v > settings.maxKeptFileAmount())) throw new Exception();
                     settings.setKeptFileAmount(v);
                 } catch (Exception e) {
                     editMaxFileNumber.setError(getText(R.string.incorrect_value));

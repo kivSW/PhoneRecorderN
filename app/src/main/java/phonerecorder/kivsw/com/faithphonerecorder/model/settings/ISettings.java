@@ -35,7 +35,7 @@ public interface ISettings {
     boolean getFileAmountLimitation();
     void setFileAmountLimitation(boolean value);
 
-    int maxKeptFile();
+    int maxKeptFileAmount();
     int getKeptFileAmount();
     void setKeptFileAmount(int value);
 
