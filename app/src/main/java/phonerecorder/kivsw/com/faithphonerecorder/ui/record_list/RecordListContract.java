@@ -25,7 +25,6 @@ public class RecordListContract {
     }
     interface IRecordListPresenter  extends com.kivsw.mvprxdialog.Contract.IPresenter
     {
-        void onError(String message);
         void chooseCurrentDir();
         void setCurrentDir(String dir);
         void updateDir(boolean scrollToBegin);

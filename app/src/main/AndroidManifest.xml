@@ -32,7 +32,7 @@
                 android:resource="@xml/provider_paths"/>
         </provider>
 
-        <receiver android:name="phonerecorder.kivsw.com.faithphonerecorder.os.Receiver"
+        <receiver android:name="phonerecorder.kivsw.com.faithphonerecorder.os.AppReceiver"
                   android:enabled="true" >
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
@@ -44,7 +44,7 @@
             </intent-filter>
         </receiver>
 
-        <service android:name="phonerecorder.kivsw.com.faithphonerecorder.os.Service"
+        <service android:name="phonerecorder.kivsw.com.faithphonerecorder.os.AppService"
             android:exported="false"/>
 
         <activity
@@ -55,11 +55,25 @@
             android:theme="@style/AppTheme.NoActionBar">
 
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.OPEN"/>
+                <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
+        <activity-alias
+            android:icon="@drawable/ear"
+            android:name=".MainActivityAlias"
+            android:targetActivity=".ui.MainActivity"
+            android:label="@string/activity_name"
+            android:enabled="true"
+
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
     </application>
 
 </manifest>

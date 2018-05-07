@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import javax.inject.Inject;
 
+import phonerecorder.kivsw.com.faithphonerecorder.model.ErrorProcessor.IErrorProcessor;
 import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IPersistentData;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
 import phonerecorder.kivsw.com.faithphonerecorder.model.utils.MyConfiguration;
@@ -19,7 +20,7 @@ import phonerecorder.kivsw.com.faithphonerecorder.ui.MainActivity;
  * Created by ivan on 4/23/18.
  */
 
-public class Receiver extends android.content.BroadcastReceiver{
+public class AppReceiver extends android.content.BroadcastReceiver{
 
     @Inject
     ISettings settings;
@@ -29,6 +30,9 @@ public class Receiver extends android.content.BroadcastReceiver{
 
     @Inject
     TaskExecutor taskExecutor;
+
+    @Inject
+    IErrorProcessor errorProcessor;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -40,7 +44,7 @@ public class Receiver extends android.content.BroadcastReceiver{
             processIntent(context, intent);
         }catch(Throwable t)
         {
-            persistentData.journalAdd(t);
+            errorProcessor.onError(t);
         }
     };
 
@@ -53,6 +57,7 @@ public class Receiver extends android.content.BroadcastReceiver{
                 break;
             case Intent.ACTION_BOOT_COMPLETED:
                 setLauncherIcon(context, intent);
+                setWatchdogTimer(context);
                 break;
             case ConnectivityManager.CONNECTIVITY_ACTION:
                 doDataSave(context, intent);
@@ -60,17 +65,29 @@ public class Receiver extends android.content.BroadcastReceiver{
             case TelephonyManager.ACTION_PHONE_STATE_CHANGED:
                 phoneStateChanged(context, intent);
                 break;
+            case WatchdogTimer.ACTION_WATCHDOG_TIMER:
+                doDataSave(context, intent);
+                break;
         }
     }
 
     protected void doDataSave(Context context, Intent intent)
     {
         taskExecutor.startFileSending();
+        setWatchdogTimer(context);
     };
     protected void setLauncherIcon(Context context, Intent intent)
     {
 
+        boolean visible= !settings.getHiddenMode();
+        LauncherIcon.setVisibility(context, visible);
     }
+
+    protected void setWatchdogTimer(Context context)
+    {
+        WatchdogTimer.setTimer(context);
+    };
+
     protected void phoneStateChanged(Context context, Intent intent)
     {
         if (!settings.getEnableCallRecording())

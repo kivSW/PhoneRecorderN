@@ -24,8 +24,8 @@ public interface ISettings {
     boolean getUseFileExtension();
     void setUseFileExtension(boolean value);
 
-    String getSavingPath();
-    void setSavingPath(String value);
+    String getSavingUrlPath();
+    void setSavingUrlPath(String value);
     String getInternalTempPath();
 
     SoundSource getSoundSource();
@@ -49,10 +49,10 @@ public interface ISettings {
     String getSecretNumber();
     void setSecretNumber(String value);
 
-    List<String> getPathViewHistory();
+    List<String> getViewUrlPathHistory();
     //void setPathViewHistory(List<String> history);
-    void addToPathViewHistory(String newPath);
-    String getCurrentPathView();
+    void addToViewUrlPathHistory(String newUrlPath);
+    String getCurrentViewUrlPath();
 
     long getCacheSize();
     int getCacheFilesNumber();

@@ -14,7 +14,7 @@ import phonerecorder.kivsw.com.faithphonerecorder.model.tasks.ITask;
  * this service is used just to indicate to the framework that we have some background work
  */
 
-public class Service extends android.app.Service {
+public class AppService extends android.app.Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -106,7 +106,7 @@ public class Service extends android.app.Service {
 
     protected static void startService(Context context, String action, boolean start)
     {
-        Intent intent=new Intent(context, Service.class);
+        Intent intent=new Intent(context, AppService.class);
         intent.setAction(action);
         intent.putExtra(EXTRA_START, start);
         context.startService(intent);

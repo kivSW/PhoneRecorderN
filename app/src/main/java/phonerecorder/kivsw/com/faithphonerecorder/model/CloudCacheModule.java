@@ -2,10 +2,8 @@ package phonerecorder.kivsw.com.faithphonerecorder.model;
 
 import android.content.Context;
 
-import com.kivsw.cloud.disk.IDiskRepresenter;
+import com.kivsw.cloud.DiskContainer;
 import com.kivsw.cloudcache.CloudCache;
-
-import java.util.List;
 
 import javax.inject.Singleton;
 
@@ -20,8 +18,8 @@ import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
 public class CloudCacheModule {
     @Singleton
     @Provides
-    CloudCache provideCloudCache(Context context, List<IDiskRepresenter> disks, ISettings settings)
+    CloudCache provideCloudCache(Context context, DiskContainer disks, ISettings settings)
     {
-        return CloudCache.newInstance(context, context.getExternalCacheDir(), disks, settings.getCacheSize(), settings.getCacheFilesNumber());
+        return CloudCache.newInstance(context, context.getExternalCacheDir(), disks.getDiskList(), settings.getCacheSize(), settings.getCacheFilesNumber());
     }
 }

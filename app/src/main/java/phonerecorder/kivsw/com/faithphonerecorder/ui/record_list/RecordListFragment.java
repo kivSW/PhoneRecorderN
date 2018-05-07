@@ -255,7 +255,7 @@ public class RecordListFragment extends Fragment
     private void updatePathList()
     {
         List<String> paths;
-        if(settings!=null)  paths=settings.getPathViewHistory();
+        if(settings!=null)  paths=settings.getViewUrlPathHistory();
         else paths=new ArrayList();
 
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, paths);

@@ -1,11 +1,9 @@
 package phonerecorder.kivsw.com.faithphonerecorder.model.tasks;
 
 import android.content.Context;
-import android.net.Uri;
 
+import com.kivsw.cloud.DiskContainer;
 import com.kivsw.cloud.disk.IDiskIO;
-import com.kivsw.cloud.disk.IDiskRepresenter;
-import com.kivsw.cloud.disk.StorageUtils;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -13,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,42 +29,73 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import phonerecorder.kivsw.com.faithphonerecorder.R;
+import phonerecorder.kivsw.com.faithphonerecorder.model.ErrorProcessor.IErrorProcessor;
 import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IPersistentData;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
 import phonerecorder.kivsw.com.faithphonerecorder.model.task_executor.TaskExecutor;
 import phonerecorder.kivsw.com.faithphonerecorder.model.utils.RecordFileNameData;
+import phonerecorder.kivsw.com.faithphonerecorder.os.NotificationShower;
+import phonerecorder.kivsw.com.faithphonerecorder.os.WatchdogTimer;
 
 /**
  * Move records from the temp directory to the storage directory
  */
 
 public class RecordSender implements ITask {
-    Context context;
-    ISettings settings;
-    IPersistentData persistentData;
-    List<IDiskRepresenter> diskList;
-    TaskExecutor taskExecutor;
+    private Context context;
+    private ISettings settings;
+    private IPersistentData persistentData;
+    private IErrorProcessor errorProcessor;
+    private DiskContainer disks;
+    private TaskExecutor taskExecutor;
+    private NotificationShower notification;
 
 
     @Inject
-    public RecordSender(Context context, ISettings settings, IPersistentData persistentData, List<IDiskRepresenter> diskList, TaskExecutor taskExecutor) {
+    public RecordSender(Context context, ISettings settings, IPersistentData persistentData, DiskContainer disks, TaskExecutor taskExecutor,
+                        NotificationShower notification, IErrorProcessor errorProcessor) {
         this.settings = settings;
         this.persistentData = persistentData;
-        this.diskList = diskList;
+        this.disks = disks;
         this.taskExecutor = taskExecutor;
         this.context = context;
+        this.notification = notification;
+        this.errorProcessor = errorProcessor;
+    }
+
+    class NotificationInfo {
+        String name;
+        int totalFileCount=0, currentFileNumber=0;
+
+        void updateNotification()
+        {
+            int percent=-1;
+            if(totalFileCount>0)
+                percent = currentFileNumber*100/totalFileCount;
+            String txt=String.format(Locale.US, name, totalFileCount, currentFileNumber);
+            notification.show(txt, percent);
+        };
     }
 
     @Override
     public void startTask() {
+
+        WatchdogTimer.setTimer(context); // TODO check for reentrance
+
+        final NotificationInfo notificationInfo=new NotificationInfo();
+        notificationInfo.name = context.getText(R.string.rec_sending).toString();
+
         final String srcPath=settings.getInternalTempPath();
-        final String dstPath= Uri.parse(settings.getSavingPath()).getPath();
-        final IDiskIO diskIO = getDiskIO();
+        final String dstPath= settings.getSavingUrlPath();
 
         Single.fromCallable(new Callable<String[]>() {
             @Override
             public String[] call() throws Exception {
                 String[] fileList = getRecordFileList(srcPath);
+                notificationInfo.totalFileCount = fileList.length;
+                notificationInfo.currentFileNumber=0;
+                notificationInfo.updateNotification();
                 return fileList;
             }
         })
@@ -79,15 +109,18 @@ public class RecordSender implements ITask {
         .flatMap(new Function<String, ObservableSource<Integer>>(){
             @Override
             public ObservableSource<Integer> apply(String file) throws Exception {
+                notificationInfo.currentFileNumber++;
+                notificationInfo.updateNotification();
+
                 final String source =srcPath + file;
                 String destination = dstPath + file;
-                return createUploadObservable(diskIO, source, destination);
+                return createUploadObservable(source, destination);
             };
         })
         .concatMap(new Function<Integer, ObservableSource<Integer>>() {
             @Override
             public ObservableSource<Integer> apply(Integer integer) throws Exception {
-                return createDeleteOldFilesCompletable(diskIO, dstPath).toObservable();
+                return createDeleteOldFilesCompletable(dstPath).toObservable();
             }
         })
         .subscribeOn(AndroidSchedulers.mainThread())
@@ -100,13 +133,15 @@ public class RecordSender implements ITask {
 
             @Override
             public void onError(Throwable e) {
-                persistentData.journalAdd(e);
+                errorProcessor.onError(e);
                 taskExecutor.stopFileSending();
+
             }
 
             @Override
             public void onComplete() {
                 taskExecutor.stopFileSending();
+                WatchdogTimer.cancelTimer(context);
             }
         });
 
@@ -116,6 +151,7 @@ public class RecordSender implements ITask {
     @Override
     public void stopTask() {
       // do nothing because RecordSender stops itself
+        notification.hide();
     }
 
     protected String[] getRecordFileList(String LocalDir)
@@ -134,10 +170,10 @@ public class RecordSender implements ITask {
         return fileList;
     }
 
-    protected Observable<Integer> createUploadObservable(IDiskIO diskIO, final String source, String destination)
+    protected Observable<Integer> createUploadObservable(final String source, String destination)
     {
         return
-            diskIO.uploadFile(destination, source)
+            disks.uploadFile(destination, source)
                     .doOnComplete(new Action() {
                         @Override
                         public void run() throws Exception {
@@ -148,16 +184,19 @@ public class RecordSender implements ITask {
                     .onErrorResumeNext(new Function<Throwable, Observable<Integer>>(){
                         @Override
                         public Observable<Integer> apply(Throwable throwable) throws Exception {
-                            persistentData.journalAdd(throwable);
+                            errorProcessor.onError(throwable);
                             return Observable.empty();
                         }
                     });
     };
 
-    protected Completable createDeleteOldFilesCompletable(final IDiskIO diskIO, final String dstPath)
+    protected Completable createDeleteOldFilesCompletable(final String dstPath)
     {
+        final NotificationInfo notificationInfo=new NotificationInfo();
+        notificationInfo.name = context.getText(R.string.rec_deleting).toString();
+
         return
-        diskIO.getResourceInfo(dstPath)
+        disks.getResourceInfo(dstPath)
         .observeOn(Schedulers.io())
         .flatMapObservable(new Function<IDiskIO.ResourceInfo, Observable<String>>(){
 
@@ -165,13 +204,18 @@ public class RecordSender implements ITask {
                 public Observable<String> apply(IDiskIO.ResourceInfo resourceInfo) throws Exception {
                     List<IDiskIO.ResourceInfo> recordList=filterRecordFileList(resourceInfo);
                     List<String> deletableFileList = getDeletableList(recordList);
+                    notificationInfo.totalFileCount = deletableFileList.size();
+
                     return Observable.fromIterable(deletableFileList);
             }
             })
             .flatMapCompletable(new Function<String, CompletableSource>() {
                 @Override
                 public CompletableSource apply(String fileName) throws Exception {
-                    return diskIO.deleteFile(dstPath+fileName);
+                    notificationInfo.currentFileNumber++;
+                    notificationInfo.updateNotification();
+
+                    return disks.deleteFile(dstPath+fileName);
                 }
             })
             .observeOn(AndroidSchedulers.mainThread());
@@ -240,9 +284,9 @@ public class RecordSender implements ITask {
 
     };
 
-    protected StorageUtils.CloudFile getCloudFile()
+   /* protected StorageUtils.CloudFile getCloudFile()
     {
-        String filePath = settings.getSavingPath();
+        String filePath = settings.getSavingUrlPath();
         StorageUtils.CloudFile cloudFile
                 =StorageUtils.parseFileName(filePath, diskList);
         return cloudFile;
@@ -250,5 +294,5 @@ public class RecordSender implements ITask {
     protected IDiskIO getDiskIO()
     {
         return getCloudFile().diskRepresenter.getDiskIo();
-    }
+    }*/
 }

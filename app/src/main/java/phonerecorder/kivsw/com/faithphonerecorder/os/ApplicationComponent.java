@@ -5,6 +5,7 @@ import javax.inject.Singleton;
 import dagger.Component;
 import phonerecorder.kivsw.com.faithphonerecorder.model.CloudCacheModule;
 import phonerecorder.kivsw.com.faithphonerecorder.model.DiskRepresentativeModule;
+import phonerecorder.kivsw.com.faithphonerecorder.model.ErrorProcessor.ErrorProcessorModule;
 import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.PersistentDataModule;
 import phonerecorder.kivsw.com.faithphonerecorder.model.player.AndroidPlayerModule;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.SettingsModule;
@@ -24,13 +25,13 @@ import phonerecorder.kivsw.com.faithphonerecorder.ui.settings.SettingsPresenterM
 @Component(modules={SettingsPresenterModule.class, RecordListPresenterModule.class, SettingsModule.class,
            ApplicationModule.class, DiskRepresentativeModule.class, AndroidPlayerModule.class,
            CloudCacheModule.class, PersistentDataModule.class, TaskExecutorModule.class,
-           TaskModule.class})
+           TaskModule.class, NotificationShowerModule.class, ErrorProcessorModule.class})
 @Singleton
 public interface ApplicationComponent {
     void inject(SettingsFragment fragment);
     void inject(RecordListFragment fragment);
-    void inject(Receiver receiever);
-    void inject(Service service);
+    void inject(AppReceiver receiever);
+    void inject(AppService service);
 
     CallRecorder getCallRecorder();
     RecordSender getRecordSender();

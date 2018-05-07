@@ -113,7 +113,7 @@ implements ISettings
     };
 
     private final static String SAVING_PATH = "SAVING_PATH";
-    @Override public String getSavingPath()
+    @Override public String getSavingUrlPath()
     {
         File file=cnt.getFilesDir();//cnt.getExternalFilesDir(null);
 
@@ -121,13 +121,13 @@ implements ISettings
 
         return preferences.getString(SAVING_PATH, defPath);
     };
-    @Override public void setSavingPath(String value)
+    @Override public void setSavingUrlPath(String value)
     {
         preferences.edit()
                 .putString(SAVING_PATH, value)
                 .commit();
-        //emitOnChange(); // DO NOT invoke emitOnChange because of using addToPathViewHistory()
-        addToPathViewHistory(value);
+        //emitOnChange(); // DO NOT invoke emitOnChange because of using addToViewUrlPathHistory()
+        addToViewUrlPathHistory(value);
     };
 
     @Override public String getInternalTempPath()
@@ -240,9 +240,9 @@ implements ISettings
     };
 
     private final static String PATH_HISTORY = "PATH_HISTORY";
-    @Override  public List<String> getPathViewHistory()
+    @Override  public List<String> getViewUrlPathHistory()
     {
-        String [] res=preferences.getString(PATH_HISTORY,getSavingPath()).split("\n");
+        String [] res=preferences.getString(PATH_HISTORY, getSavingUrlPath()).split("\n");
         ArrayList list = new ArrayList(res.length);
         list.addAll( Arrays.asList(res));
         return list;
@@ -261,21 +261,21 @@ implements ISettings
                 .commit();
         emitOnChange();
     };
-    @Override  public void addToPathViewHistory(String newPath)
+    @Override  public void addToViewUrlPathHistory(String newUrlPath)
     {
-        List<String> res = getPathViewHistory();
-        res.remove(newPath);
-        res.add(0,newPath);
+        List<String> res = getViewUrlPathHistory();
+        res.remove(newUrlPath);
+        res.add(0, newUrlPath);
         setPathViewHistory(res);
     }
 
-    @Override  public String getCurrentPathView()
+    @Override  public String getCurrentViewUrlPath()
     {
-        List<String> pathList=getPathViewHistory();
+        List<String> pathList= getViewUrlPathHistory();
         if(pathList.size()>0)
             return pathList.get(0);
         else
-            return getSavingPath();
+            return getSavingUrlPath();
     }
 
     @Override public long getCacheSize()

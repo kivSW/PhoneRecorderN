@@ -316,7 +316,7 @@ public class SettingsFragment extends Fragment
     @Override
     public void updateSavePath()
     {
-        textViewPath.setText(settings.getSavingPath());
+        textViewPath.setText(settings.getSavingUrlPath());
     };
     protected void readAllSettings()
     {

@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.kivsw.mvprxdialog.messagebox.MvpMessageBoxBuilder;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import io.reactivex.functions.Consumer;
@@ -25,6 +26,8 @@ public class MainActivity extends AppCompatActivity
 {
     private ViewPager pager;
     private final int SETTINGS_PAGE=1, REC_LIST_PAGE=0;
+    protected static final String SHOW_ERROR_MESSAGE="MainActivity.SHOW_ERROR_MESSAGE",
+                                  MESSAGE="MESSAGE";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,8 +46,24 @@ public class MainActivity extends AppCompatActivity
         pager.addOnPageChangeListener(new OnChangePage());
 
         askForPermission();
-
+        processIntent(getIntent ());
     }
+    @Override
+    public void onNewIntent (Intent intent)
+    {
+        processIntent(intent);
+    };
+
+    protected void processIntent(Intent intent)
+    {
+        String msg = intent.getStringExtra(MESSAGE);
+        if(msg!=null)
+        {
+            MvpMessageBoxBuilder.newInstance()
+                    .setText(getText(R.string.error).toString(),msg )
+                    .build(getSupportFragmentManager());
+        }
+    };
 
     @Override
     public void onBackPressed() {
@@ -167,4 +186,13 @@ public class MainActivity extends AppCompatActivity
         i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         context.startActivity(i);
     }
+    public static void showErrorMessage(Context context, String message)
+    {
+        Intent i=new Intent(SHOW_ERROR_MESSAGE, null, context, MainActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        i.putExtra(MESSAGE, message);
+        context.startActivity(i);
+    };
 }
