@@ -6,7 +6,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IPersistentData;
+import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IJournal;
 
 /**
  * Created by ivan on 5/7/18.
@@ -15,8 +15,10 @@ import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IPersist
 public class ErrorProcessorModule {
     @Provides
     @Singleton
-    IErrorProcessor provideErrorProcessor(Context context, IPersistentData data)
+    IErrorProcessor provideErrorProcessor(Context context, IJournal data)
     {
-        return new ErrorProcessor(context, data);
+        IErrorProcessor res= new ErrorProcessor(context, data);
+        data.setErrorProcessor(res);
+        return res;
     }
 }

@@ -6,4 +6,5 @@ package phonerecorder.kivsw.com.faithphonerecorder.model.ErrorProcessor;
 
 public interface IErrorProcessor {
     void onError(Throwable exception);
+    void onError(Throwable exception, boolean writeToJournal);
 }

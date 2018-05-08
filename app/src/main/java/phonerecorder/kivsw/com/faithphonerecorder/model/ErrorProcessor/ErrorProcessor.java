@@ -5,7 +5,7 @@ import android.content.Context;
 import java.util.List;
 
 import io.reactivex.exceptions.CompositeException;
-import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IPersistentData;
+import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IJournal;
 import phonerecorder.kivsw.com.faithphonerecorder.ui.MainActivity;
 
 /**
@@ -14,16 +14,22 @@ import phonerecorder.kivsw.com.faithphonerecorder.ui.MainActivity;
 
 public class ErrorProcessor implements IErrorProcessor {
     Context context;
-    IPersistentData persistentData;
+    IJournal persistentData;
 
-    ErrorProcessor(Context context, IPersistentData persistentData)
+    ErrorProcessor(Context context, IJournal persistentData)
     {
         this.context = context;
         this.persistentData = persistentData;
+
     }
 
     @Override
     public void onError(Throwable exception)
+    {
+        onError(exception, true);
+    };
+    @Override
+    public void onError(Throwable exception, boolean writeToJournal)
     {
         if(exception instanceof CompositeException)
         {
@@ -33,7 +39,9 @@ public class ErrorProcessor implements IErrorProcessor {
             return;
         }
 
-        persistentData.journalAdd(exception);
+        if(writeToJournal)
+           persistentData.journalAdd(exception);
+
         MainActivity.showErrorMessage(context, exception.getMessage());
     };
 }

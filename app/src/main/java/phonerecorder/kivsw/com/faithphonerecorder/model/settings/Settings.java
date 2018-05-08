@@ -110,6 +110,20 @@ implements ISettings
                 .putBoolean(USE_FILE_EXTENSION, value)
                 .commit();
         emitOnChange();
+    }
+
+    private final static String JOURNAL_EXPORTING= "JOURNAL_EXPORTING";
+    @Override
+    public boolean getJournalExporting() {
+        return preferences.getBoolean(USE_FILE_EXTENSION,true);
+    }
+
+    @Override
+    public void setJournalExporting(boolean value) {
+        preferences.edit()
+                .putBoolean(JOURNAL_EXPORTING, value)
+                .commit();
+        emitOnChange();
     };
 
     private final static String SAVING_PATH = "SAVING_PATH";

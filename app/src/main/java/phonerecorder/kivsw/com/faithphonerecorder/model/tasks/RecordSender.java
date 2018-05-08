@@ -31,7 +31,8 @@ import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import phonerecorder.kivsw.com.faithphonerecorder.R;
 import phonerecorder.kivsw.com.faithphonerecorder.model.ErrorProcessor.IErrorProcessor;
-import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IPersistentData;
+import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IJournal;
+import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.Journal;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
 import phonerecorder.kivsw.com.faithphonerecorder.model.task_executor.TaskExecutor;
 import phonerecorder.kivsw.com.faithphonerecorder.model.utils.RecordFileNameData;
@@ -45,7 +46,7 @@ import phonerecorder.kivsw.com.faithphonerecorder.os.WatchdogTimer;
 public class RecordSender implements ITask {
     private Context context;
     private ISettings settings;
-    private IPersistentData persistentData;
+    private IJournal persistentData;
     private IErrorProcessor errorProcessor;
     private DiskContainer disks;
     private TaskExecutor taskExecutor;
@@ -53,7 +54,7 @@ public class RecordSender implements ITask {
 
 
     @Inject
-    public RecordSender(Context context, ISettings settings, IPersistentData persistentData, DiskContainer disks, TaskExecutor taskExecutor,
+    public RecordSender(Context context, ISettings settings, IJournal persistentData, DiskContainer disks, TaskExecutor taskExecutor,
                         NotificationShower notification, IErrorProcessor errorProcessor) {
         this.settings = settings;
         this.persistentData = persistentData;
@@ -157,7 +158,11 @@ public class RecordSender implements ITask {
     protected String[] getRecordFileList(String LocalDir)
     {
         File dir=new File(LocalDir);
-        final Pattern p = Pattern.compile(RecordFileNameData.PATTERN);
+        String pattern;
+        if(settings.getJournalExporting()) pattern = "("+RecordFileNameData.RECORD_PATTERN+"|^"+Journal.JOURNAL_FILE_NAME+")";
+        else            pattern = RecordFileNameData.RECORD_PATTERN;
+
+        final Pattern p = Pattern.compile(pattern);
         String[] fileList = dir.list(new FilenameFilter(){
             @Override
             public boolean accept(File dir, String name) {
@@ -177,6 +182,8 @@ public class RecordSender implements ITask {
                     .doOnComplete(new Action() {
                         @Override
                         public void run() throws Exception {
+                            if(source.indexOf(Journal.JOURNAL_FILE_NAME)>=0) // do not delete journal file
+                                return;
                             File file = new File(source);
                             file.delete();
                         }
@@ -228,7 +235,7 @@ public class RecordSender implements ITask {
                 fileList=resourceInfo.content(),
                 res = new ArrayList<>(fileList.size());
 
-        Pattern p = Pattern.compile(RecordFileNameData.PATTERN);//"^[0-9]{8}_[0-9]{6}_"); // this pattern filters the other app's files
+        Pattern p = Pattern.compile(RecordFileNameData.RECORD_PATTERN);//"^[0-9]{8}_[0-9]{6}_"); // this pattern filters the other app's files
         for(IDiskIO.ResourceInfo file:fileList)
         {
             if(!file.isFile()) continue;

@@ -10,10 +10,11 @@ import android.widget.Toast;
 import javax.inject.Inject;
 
 import phonerecorder.kivsw.com.faithphonerecorder.model.ErrorProcessor.IErrorProcessor;
-import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IPersistentData;
+import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.ICallInfoKeeper;
+import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IJournal;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
-import phonerecorder.kivsw.com.faithphonerecorder.model.utils.MyConfiguration;
 import phonerecorder.kivsw.com.faithphonerecorder.model.task_executor.TaskExecutor;
+import phonerecorder.kivsw.com.faithphonerecorder.model.utils.MyConfiguration;
 import phonerecorder.kivsw.com.faithphonerecorder.ui.MainActivity;
 
 /**
@@ -26,7 +27,10 @@ public class AppReceiver extends android.content.BroadcastReceiver{
     ISettings settings;
 
     @Inject
-    IPersistentData persistentData;
+    IJournal journal;
+
+    @Inject
+    ICallInfoKeeper callInfoKeeper;
 
     @Inject
     TaskExecutor taskExecutor;
@@ -39,7 +43,7 @@ public class AppReceiver extends android.content.BroadcastReceiver{
         MyConfiguration.waitForDebugger();  // for debugging process
         MyApplication.getComponent().inject(this);
 
-        persistentData.journalAdd(intent);
+        journal.journalAdd(intent);
         try {
             processIntent(context, intent);
         }catch(Throwable t)
@@ -106,7 +110,7 @@ public class AppReceiver extends android.content.BroadcastReceiver{
 
             case TelephonyManager.CALL_STATE_RINGING: // saves the income phone number
                 String phoneNumber=intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER );
-                persistentData.setCallInfo(phoneNumber, true);
+                callInfoKeeper.setCallInfo(phoneNumber, true);
                 break;
         };
 
@@ -128,7 +132,7 @@ public class AppReceiver extends android.content.BroadcastReceiver{
 
         if (settings.getEnableCallRecording()) {
             // saves the outgoing phone number
-            persistentData.setCallInfo(phoneNumber, false);
+            callInfoKeeper.setCallInfo(phoneNumber, false);
 
         }
 
@@ -136,14 +140,14 @@ public class AppReceiver extends android.content.BroadcastReceiver{
 
     protected void startRecording(Context context)
     {
-        IPersistentData.CallInfo callInfo = persistentData.getCallInfo();
+        ICallInfoKeeper.CallInfo callInfo = callInfoKeeper.getCallInfo();
         Toast.makeText(context, callInfo.toString(), Toast.LENGTH_LONG)
                 .show();
         taskExecutor.startCallRecording();
     };
     protected void stopRecording(Context context)
     {
-        IPersistentData.CallInfo callInfo = persistentData.getCallInfo();
+        ICallInfoKeeper.CallInfo callInfo = callInfoKeeper.getCallInfo();
         Toast.makeText(context, callInfo.toString(), Toast.LENGTH_LONG)
                 .show();
         taskExecutor.stopCallRecording();

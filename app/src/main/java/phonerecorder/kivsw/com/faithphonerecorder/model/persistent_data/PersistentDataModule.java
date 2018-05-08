@@ -6,6 +6,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
 
 /**
  * Created by ivan on 4/26/18.
@@ -14,8 +15,15 @@ import dagger.Provides;
 public class PersistentDataModule {
     @Provides
     @Singleton
-    IPersistentData provideSettings(Context cntx)
+    IJournal provideJournal(Context cntx, ISettings settings)
     {
-        return new PersistentData(cntx);
+        return new Journal(cntx, settings);
+    }
+
+    @Provides
+    @Singleton
+    ICallInfoKeeper provideCallInfoKeeper(Context cntx)
+    {
+        return new CallInfoKeeper(cntx);
     }
 }

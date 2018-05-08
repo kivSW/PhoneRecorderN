@@ -12,6 +12,7 @@ public interface ISettings {
 
     Observable<ISettings> getObservable();
 
+
     boolean getEnableCallRecording();
     void setEnableCallRecording(boolean value);
 
@@ -23,6 +24,9 @@ public interface ISettings {
 
     boolean getUseFileExtension();
     void setUseFileExtension(boolean value);
+
+    boolean getJournalExporting();
+    void setJournalExporting(boolean value);
 
     String getSavingUrlPath();
     void setSavingUrlPath(String value);

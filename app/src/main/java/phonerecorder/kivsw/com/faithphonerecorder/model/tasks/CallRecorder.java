@@ -10,7 +10,7 @@ import javax.inject.Inject;
 
 import phonerecorder.kivsw.com.faithphonerecorder.R;
 import phonerecorder.kivsw.com.faithphonerecorder.model.ErrorProcessor.IErrorProcessor;
-import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IPersistentData;
+import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.ICallInfoKeeper;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.SoundSource;
 import phonerecorder.kivsw.com.faithphonerecorder.model.task_executor.TaskExecutor;
@@ -25,7 +25,7 @@ public class CallRecorder implements ITask {
 
     private Context context;
     private ISettings settings;
-    private IPersistentData persistentData;
+    private ICallInfoKeeper callInfoKeeper;
     private IErrorProcessor errorProcessor;
     private TaskExecutor taskExecutor;
     private NotificationShower notification;
@@ -33,10 +33,10 @@ public class CallRecorder implements ITask {
     private String tempFileName, recordFileName;
 
     @Inject
-    public CallRecorder(Context context, ISettings settings, IPersistentData persistentData, TaskExecutor taskExecutor, NotificationShower notification, IErrorProcessor errorProcessor) {
+    public CallRecorder(Context context, ISettings settings, ICallInfoKeeper callInfoKeeper, TaskExecutor taskExecutor, NotificationShower notification, IErrorProcessor errorProcessor) {
         this.context = context;
         this.settings = settings;
-        this.persistentData = persistentData;
+        this.callInfoKeeper = callInfoKeeper;
         this.taskExecutor = taskExecutor;
         this.notification = notification;
         this.errorProcessor = errorProcessor;
@@ -45,6 +45,8 @@ public class CallRecorder implements ITask {
     @Override
     public void startTask() {
         notification.show(context.getText(R.string.recording_call).toString());
+        if(isRecording())
+            stopRecording();
         startRecording();
     }
 
@@ -52,6 +54,7 @@ public class CallRecorder implements ITask {
     public void stopTask() {
         notification.hide();
         stopRecording();
+        taskExecutor.startFileSending();
     }
 
     private int getAudioSource()
@@ -70,7 +73,7 @@ public class CallRecorder implements ITask {
     protected boolean startRecording()
     {
 
-        if(recorder!=null) return isRecording();
+        if(isRecording()) return true;
 
         tempFileName = settings.getInternalTempPath() + "temp~";
         recordFileName = createFileName();
@@ -98,7 +101,6 @@ public class CallRecorder implements ITask {
 
     protected void stopRecording()
     {
-
         if(recorder==null) return;
 
         try{
@@ -108,14 +110,13 @@ public class CallRecorder implements ITask {
             file.renameTo(new File(recordFileName));
         }catch(Exception e)
         {
-            e.getMessage();
+            errorProcessor.onError(e);
         };
 
         recorder.release();
         recorder=null;
         recordFileName=null;
 
-        taskExecutor.startFileSending();
     }
 
     protected boolean isRecording()
@@ -125,7 +126,7 @@ public class CallRecorder implements ITask {
 
     protected String createFileName()
     {
-        IPersistentData.CallInfo callInfo=persistentData.getCallInfo();
+        ICallInfoKeeper.CallInfo callInfo=callInfoKeeper.getCallInfo();
         return  settings.getInternalTempPath() +
                 RecordFileNameData.generateNew(callInfo.number, callInfo.isIncome, soundSourceToStr(), getExtension())
                 .buildFileName();

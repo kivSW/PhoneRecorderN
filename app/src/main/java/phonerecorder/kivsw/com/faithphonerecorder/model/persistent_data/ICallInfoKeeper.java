@@ -1,12 +1,10 @@
 package phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data;
 
-import android.content.Intent;
-
 /**
- * Created by ivan on 4/26/18.
+ * Created by ivan on 5/8/18.
  */
 
-public interface IPersistentData {
+public interface ICallInfoKeeper {
     class CallInfo
     {
         public String number;
@@ -17,9 +15,4 @@ public interface IPersistentData {
 
     void setCallInfo(String number, boolean isIncome);
     CallInfo getCallInfo();
-
-    void journalAdd(String data);
-    void journalAdd(Throwable throwable);
-    void journalAdd(Intent intent);
-
 }

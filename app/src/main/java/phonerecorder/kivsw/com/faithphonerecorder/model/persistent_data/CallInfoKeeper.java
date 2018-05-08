@@ -1,34 +1,32 @@
 package phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.SystemClock;
 
-import javax.inject.Inject;
-
 /**
- * Created by ivan on 4/26/18.
+ * Class holds information about the current call
  */
 
-public class PersistentData implements IPersistentData{
+public class CallInfoKeeper implements ICallInfoKeeper {
+    private final static String PHONE_NUMBER="PHONE_NUMBER",
+            IS_INCOME="IS_INCOME",
+            CALL_TIME="CALL_TIME";
+    private final static String NAME="call_info";
 
     SharedPreferences preferences;
     Context cnt;
 
-    private final static String NAME="call_info";
-
-    @Inject
-    public PersistentData(Context context) {
+    CallInfoKeeper(Context context)
+    {
         cnt = context;
         preferences = cnt.getSharedPreferences(NAME, Context.MODE_PRIVATE);
     }
 
-    final String PHONE_NUMBER="PHONE_NUMBER",
-                 IS_INCOME="IS_INCOME",
-                 CALL_TIME="CALL_TIME";
     @Override
     public void setCallInfo(String number, boolean isIncome) {
+        if(number==null)
+            number="";
         preferences.edit()
                 .putString(PHONE_NUMBER, number)
                 .putBoolean(IS_INCOME, isIncome)
@@ -46,22 +44,4 @@ public class PersistentData implements IPersistentData{
 
         return callInfo;
     }
-
-    @Override
-    public void journalAdd(String data)
-    {
-
-    };
-
-    @Override
-    public void journalAdd(Throwable throwable)
-    {
-
-    };
-
-    @Override
-    public void journalAdd(Intent intent)
-    {
-
-    };
 }

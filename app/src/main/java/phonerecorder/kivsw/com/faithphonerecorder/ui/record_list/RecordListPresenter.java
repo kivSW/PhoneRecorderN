@@ -190,7 +190,7 @@ public class RecordListPresenter
                     public List<RecordListContract.RecordFileInfo> apply(IDiskIO.ResourceInfo resourceInfo) throws Exception {
                         List<IDiskIO.ResourceInfo> fileList=resourceInfo.content();
                         List<RecordListContract.RecordFileInfo> res = new ArrayList<>(fileList.size());
-                        Pattern p = Pattern.compile(RecordFileNameData.PATTERN);//"^[0-9]{8}_[0-9]{6}_"); // this pattern filters the other app's files
+                        Pattern p = Pattern.compile(RecordFileNameData.RECORD_PATTERN);//"^[0-9]{8}_[0-9]{6}_"); // this pattern filters the other app's files
                         for(IDiskIO.ResourceInfo file:fileList)
                         {
                             if(!file.isFile()) continue;
