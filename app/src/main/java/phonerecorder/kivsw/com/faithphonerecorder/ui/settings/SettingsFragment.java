@@ -31,7 +31,7 @@ import phonerecorder.kivsw.com.faithphonerecorder.os.MyApplication;
 public class SettingsFragment extends Fragment
     implements SettingsContract.ISettingsView {
 
-    @Inject protected SettingsPresenter presenter;
+    @Inject protected SettingsContract.ISettingsPresenter presenter;
 
     private ISettings settings;
 

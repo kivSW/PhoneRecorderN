@@ -53,7 +53,7 @@ public class RecordListFragment extends Fragment
 
 
     @Inject
-    protected RecordListPresenter presenter;
+    protected RecordListContract.IRecordListPresenter presenter;
 
 
     public RecordListFragment() {
@@ -186,7 +186,7 @@ public class RecordListFragment extends Fragment
     @Override
     public void setSettings(ISettings settings) {
         this.settings = settings;
-
+        updatePathList();
     }
 
     @Override

@@ -27,6 +27,7 @@ public class RecordListContract {
     {
         void chooseCurrentDir();
         void setCurrentDir(String dir);
+
         void updateDir(boolean scrollToBegin);
         void setFilter(String filter);
         void setUndelitable(int pos, boolean isProtected);

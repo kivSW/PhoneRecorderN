@@ -29,6 +29,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 import phonerecorder.kivsw.com.faithphonerecorder.R;
 import phonerecorder.kivsw.com.faithphonerecorder.model.ErrorProcessor.IErrorProcessor;
 import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IJournal;
@@ -79,10 +81,20 @@ public class RecordSender implements ITask {
         };
     }
 
-    @Override
-    public void startTask() {
 
-        WatchdogTimer.setTimer(context); // TODO check for reentrance
+    private boolean isSending=false, tryToSendAgain=false;
+    private int sentFileCount=0;
+    @Override
+    public boolean startTask() {
+
+        if(isSending) {
+            tryToSendAgain=true;
+            return false;
+        }
+        isSending=true;
+        sentFileCount=0;
+
+        WatchdogTimer.setTimer(context);
 
         final NotificationInfo notificationInfo=new NotificationInfo();
         notificationInfo.name = context.getText(R.string.rec_sending).toString();
@@ -134,25 +146,33 @@ public class RecordSender implements ITask {
 
             @Override
             public void onError(Throwable e) {
+                isSending=false;
                 errorProcessor.onError(e);
                 taskExecutor.stopFileSending();
+                if(tryToSendAgain)
+                    taskExecutor.startFileSending();
 
             }
 
             @Override
             public void onComplete() {
+                isSending=false;
                 taskExecutor.stopFileSending();
-                WatchdogTimer.cancelTimer(context);
+                if(tryToSendAgain)
+                    taskExecutor.startFileSending();
+                //WatchdogTimer.cancelTimer(context);
             }
         });
 
-
+        return true;
     }
 
     @Override
     public void stopTask() {
       // do nothing because RecordSender stops itself
         notification.hide();
+        if(sentFileCount>0)
+           copyObservable.onNext("");
     }
 
     protected String[] getRecordFileList(String LocalDir)
@@ -184,6 +204,7 @@ public class RecordSender implements ITask {
                         public void run() throws Exception {
                             if(source.indexOf(Journal.JOURNAL_FILE_NAME)>=0) // do not delete journal file
                                 return;
+                            sentFileCount++;
                             File file = new File(source);
                             file.delete();
                         }
@@ -291,15 +312,13 @@ public class RecordSender implements ITask {
 
     };
 
-   /* protected StorageUtils.CloudFile getCloudFile()
+    Subject<Object> copyObservable= PublishSubject.create();
+    /**
+     * emitts on start and stop recording
+     * @return
+     */
+    public Observable<Object> getOnRecSentObservable()
     {
-        String filePath = settings.getSavingUrlPath();
-        StorageUtils.CloudFile cloudFile
-                =StorageUtils.parseFileName(filePath, diskList);
-        return cloudFile;
+        return copyObservable;
     }
-    protected IDiskIO getDiskIO()
-    {
-        return getCloudFile().diskRepresenter.getDiskIo();
-    }*/
 }

@@ -11,7 +11,7 @@ import android.support.v4.app.NotificationCompat;
 
 import phonerecorder.kivsw.com.faithphonerecorder.R;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
-import phonerecorder.kivsw.com.faithphonerecorder.ui.MainActivity;
+import phonerecorder.kivsw.com.faithphonerecorder.ui.main_activity.MainActivity;
 
 public class NotificationShower {
 

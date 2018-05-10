@@ -1,26 +1,24 @@
 package phonerecorder.kivsw.com.faithphonerecorder.model.ErrorProcessor;
 
-import android.content.Context;
-
 import java.util.List;
 
 import io.reactivex.exceptions.CompositeException;
 import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IJournal;
-import phonerecorder.kivsw.com.faithphonerecorder.ui.MainActivity;
+import phonerecorder.kivsw.com.faithphonerecorder.ui.main_activity.MainActivityContract;
 
 /**
  * Created by ivan on 5/7/18.
  */
 
 public class ErrorProcessor implements IErrorProcessor {
-    Context context;
-    IJournal persistentData;
 
-    ErrorProcessor(Context context, IJournal persistentData)
+    private IJournal persistentData;
+    private MainActivityContract.IMainActivityPresenter mainActivityPresenter;
+
+    ErrorProcessor(IJournal persistentData, MainActivityContract.IMainActivityPresenter mainActivityPresenter)
     {
-        this.context = context;
         this.persistentData = persistentData;
-
+        this.mainActivityPresenter = mainActivityPresenter;
     }
 
     @Override
@@ -42,6 +40,6 @@ public class ErrorProcessor implements IErrorProcessor {
         if(writeToJournal)
            persistentData.journalAdd(exception);
 
-        MainActivity.showErrorMessage(context, exception.getMessage());
+        mainActivityPresenter.showErrorMessage(exception.getMessage());
     };
 }

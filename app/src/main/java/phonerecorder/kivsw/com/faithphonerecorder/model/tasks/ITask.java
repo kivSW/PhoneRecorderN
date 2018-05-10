@@ -6,6 +6,6 @@ package phonerecorder.kivsw.com.faithphonerecorder.model.tasks;
  */
 
 public interface ITask {
-    void startTask();
+    boolean startTask(); // return true if a new task has been started
     void stopTask();
 }

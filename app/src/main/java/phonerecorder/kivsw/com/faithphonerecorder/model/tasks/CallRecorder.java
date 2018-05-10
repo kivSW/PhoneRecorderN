@@ -43,11 +43,22 @@ public class CallRecorder implements ITask {
     }
 
     @Override
-    public void startTask() {
+    protected void finalize() throws Throwable {
+        stopRecording();
+        super.finalize();
+    }
+
+    @Override
+    public boolean startTask() {
+        boolean newTask=true;
         notification.show(context.getText(R.string.recording_call).toString());
-        if(isRecording())
+        if(isRecording()) {
             stopRecording();
+            newTask=false;
+        }
         startRecording();
+
+        return newTask;
     }
 
     @Override
@@ -108,6 +119,7 @@ public class CallRecorder implements ITask {
 
             File file=new File(tempFileName);
             file.renameTo(new File(recordFileName));
+
         }catch(Exception e)
         {
             errorProcessor.onError(e);
@@ -157,4 +169,6 @@ public class CallRecorder implements ITask {
             return ".3gp";
         return ".dat";
     }
+
+
 }

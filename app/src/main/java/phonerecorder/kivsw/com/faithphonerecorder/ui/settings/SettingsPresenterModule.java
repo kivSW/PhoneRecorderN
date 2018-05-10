@@ -20,7 +20,7 @@ public class SettingsPresenterModule {
     @Provides
     @NonNull
     @Singleton
-    public SettingsPresenter providePresenter(ISettings settings, DiskContainer diskList, TaskExecutor taskExecutor, IErrorProcessor errorProcessor)
+    public SettingsContract.ISettingsPresenter providePresenter(ISettings settings, DiskContainer diskList, TaskExecutor taskExecutor, IErrorProcessor errorProcessor)
     {
         return new SettingsPresenter(settings, diskList, taskExecutor, errorProcessor);
     }

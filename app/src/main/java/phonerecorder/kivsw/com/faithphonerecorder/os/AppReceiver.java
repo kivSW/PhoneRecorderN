@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.telephony.PhoneNumberUtils;
 import android.telephony.TelephonyManager;
-import android.widget.Toast;
 
 import javax.inject.Inject;
 
@@ -15,7 +14,7 @@ import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IJournal
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
 import phonerecorder.kivsw.com.faithphonerecorder.model.task_executor.TaskExecutor;
 import phonerecorder.kivsw.com.faithphonerecorder.model.utils.MyConfiguration;
-import phonerecorder.kivsw.com.faithphonerecorder.ui.MainActivity;
+import phonerecorder.kivsw.com.faithphonerecorder.ui.main_activity.MainActivity;
 
 /**
  * Created by ivan on 4/23/18.
@@ -141,15 +140,13 @@ public class AppReceiver extends android.content.BroadcastReceiver{
     protected void startRecording(Context context)
     {
         ICallInfoKeeper.CallInfo callInfo = callInfoKeeper.getCallInfo();
-        Toast.makeText(context, callInfo.toString(), Toast.LENGTH_LONG)
-                .show();
+
         taskExecutor.startCallRecording();
     };
     protected void stopRecording(Context context)
     {
         ICallInfoKeeper.CallInfo callInfo = callInfoKeeper.getCallInfo();
-        Toast.makeText(context, callInfo.toString(), Toast.LENGTH_LONG)
-                .show();
+
         taskExecutor.stopCallRecording();
     };
 }

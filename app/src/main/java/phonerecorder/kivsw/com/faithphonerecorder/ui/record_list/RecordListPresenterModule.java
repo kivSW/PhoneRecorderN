@@ -13,6 +13,7 @@ import io.reactivex.annotations.NonNull;
 import phonerecorder.kivsw.com.faithphonerecorder.model.ErrorProcessor.IErrorProcessor;
 import phonerecorder.kivsw.com.faithphonerecorder.model.player.IPlayer;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
+import phonerecorder.kivsw.com.faithphonerecorder.model.tasks.RecordSender;
 
 /**
  * Created by ivan on 3/27/18.
@@ -22,8 +23,8 @@ public class RecordListPresenterModule {
     @Provides
     @NonNull
     @Singleton
-    public RecordListPresenter providePresenter(Context appContext, ISettings settings, IPlayer player, DiskContainer disks, CloudCache cloudCache, IErrorProcessor errorProcessor)
+    public RecordListContract.IRecordListPresenter providePresenter(Context appContext, ISettings settings, IPlayer player, DiskContainer disks, CloudCache cloudCache, IErrorProcessor errorProcessor, RecordSender recordSender)
     {
-        return new RecordListPresenter(appContext, settings, player,  disks, cloudCache,  errorProcessor);
+        return new RecordListPresenter(appContext, settings, player,  disks, cloudCache,  errorProcessor, recordSender);
     }
 }

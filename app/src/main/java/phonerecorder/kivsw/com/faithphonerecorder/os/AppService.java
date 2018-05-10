@@ -61,8 +61,8 @@ public class AppService extends android.app.Service {
         {
             if(start)
             {
-                task.startTask();
-                addTask(action);
+                if(task.startTask())
+                  addTask(action);
             }
             else
             {

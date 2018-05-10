@@ -30,6 +30,7 @@ import io.reactivex.CompletableObserver;
 import io.reactivex.CompletableSource;
 import io.reactivex.MaybeObserver;
 import io.reactivex.Observable;
+import io.reactivex.Observer;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.SingleSource;
@@ -45,6 +46,7 @@ import phonerecorder.kivsw.com.faithphonerecorder.R;
 import phonerecorder.kivsw.com.faithphonerecorder.model.ErrorProcessor.IErrorProcessor;
 import phonerecorder.kivsw.com.faithphonerecorder.model.player.IPlayer;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
+import phonerecorder.kivsw.com.faithphonerecorder.model.tasks.RecordSender;
 import phonerecorder.kivsw.com.faithphonerecorder.model.utils.RecordFileNameData;
 import phonerecorder.kivsw.com.faithphonerecorder.model.utils.SimpleFileReader;
 
@@ -61,6 +63,7 @@ public class RecordListPresenter
     private RecordListContract.IRecordListView view;
     private CloudCache cloudCache;
     private IErrorProcessor errorProcessor;
+    private RecordSender recordSender;
     private Context appContext;
     private List<RecordListContract.RecordFileInfo> dirContent;
     private List<RecordListContract.RecordFileInfo> visibleDirContent;
@@ -69,7 +72,7 @@ public class RecordListPresenter
     private Disposable settingsDisposable;
 
     @Inject
-    public RecordListPresenter(Context appContext, ISettings settings, IPlayer player, DiskContainer disks, CloudCache cloudCache, IErrorProcessor errorProcessor)
+    public RecordListPresenter(Context appContext, ISettings settings, IPlayer player, DiskContainer disks, CloudCache cloudCache, IErrorProcessor errorProcessor, RecordSender recordSender)
     {
         this.settings = settings;
         this.player = player;
@@ -77,10 +80,27 @@ public class RecordListPresenter
         this.appContext = appContext;
         this.cloudCache = cloudCache;
         this.errorProcessor = errorProcessor;
+        this.recordSender = recordSender;
 
         settingsDisposable=null;
         lastUpdatedDir = "";
+
+        if(recordSender!=null)
+            recordSender.getOnRecSentObservable()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Observer<Object>() {
+                @Override  public void onSubscribe(Disposable d) { }
+
+                @Override  public void onNext(Object aBoolean) {
+                    lazyUpdateDir();
+                }
+
+                @Override  public void onError(Throwable e) { }
+
+                @Override public void onComplete() {}
+            });
     };
+
 
     @Override
     public Contract.IView getUI() {
@@ -157,17 +177,13 @@ public class RecordListPresenter
          updateDir(true);
     };
 
- /*   protected StorageUtils.CloudFile getCloudFile()
+    protected void lazyUpdateDir()
     {
-        String filePath = settings.getCurrentViewUrlPath();
-        StorageUtils.CloudFile cloudFile
-                =StorageUtils.parseFileName(filePath, diskList);
-        return cloudFile;
-    }
-    protected IDiskIO getCurrectDiskIO()
-    {
-        return getCloudFile().diskRepresenter.getDiskIo();
-    }*/
+        if(view==null)
+            visibleDirContent = null;
+        else
+            updateDir(false);
+    };
 
     @Override
     public void updateDir(final boolean scrollToBegin)

@@ -1,4 +1,4 @@
-package phonerecorder.kivsw.com.faithphonerecorder.ui;
+package phonerecorder.kivsw.com.faithphonerecorder.ui.main_activity;
 
 import android.Manifest;
 import android.content.Context;
@@ -14,20 +14,30 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.kivsw.mvprxdialog.Contract;
 import com.kivsw.mvprxdialog.messagebox.MvpMessageBoxBuilder;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
+import javax.inject.Inject;
+
 import io.reactivex.functions.Consumer;
 import phonerecorder.kivsw.com.faithphonerecorder.R;
+import phonerecorder.kivsw.com.faithphonerecorder.os.MyApplication;
 import phonerecorder.kivsw.com.faithphonerecorder.ui.record_list.RecordListFragment;
 import phonerecorder.kivsw.com.faithphonerecorder.ui.settings.SettingsFragment;
 
 public class MainActivity extends AppCompatActivity
+    implements Contract.IView
 {
     private ViewPager pager;
     private final int SETTINGS_PAGE=1, REC_LIST_PAGE=0;
-    protected static final String SHOW_ERROR_MESSAGE="MainActivity.SHOW_ERROR_MESSAGE",
+    protected static final String ACTION_SHOW_ERROR_MESSAGE ="MainActivity.ACTION_SHOW_ERROR_MESSAGE",
                                   MESSAGE="MESSAGE";
+    Intent intentToBeProcessed;
+
+    @Inject
+    MainActivityContract.IMainActivityPresenter presenter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,26 +55,53 @@ public class MainActivity extends AppCompatActivity
         pager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
         pager.addOnPageChangeListener(new OnChangePage());
 
+        MyApplication.getComponent().inject(this);
+
         askForPermission();
-        processIntent(getIntent ());
+        intentToBeProcessed = getIntent ();
+
     }
     @Override
     public void onNewIntent (Intent intent)
     {
-        processIntent(intent);
+        intentToBeProcessed = intent;
+
     };
 
-    protected void processIntent(Intent intent)
+    protected void processIntent()
     {
-        String msg = intent.getStringExtra(MESSAGE);
-        if(msg!=null)
-        {
-            MvpMessageBoxBuilder.newInstance()
-                    .setText(getText(R.string.error).toString(),msg )
-                    .build(getSupportFragmentManager());
+        if(intentToBeProcessed==null) return;
+
+        if(intentToBeProcessed.getAction().equals(ACTION_SHOW_ERROR_MESSAGE)) {
+            String msg = intentToBeProcessed.getStringExtra(MESSAGE);
+            if (msg != null) {
+                MvpMessageBoxBuilder.newInstance()
+                        .setText(getText(R.string.error).toString(), msg)
+                        .build(getSupportFragmentManager());
+            }
         }
+
+        intentToBeProcessed=null;
     };
 
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+        presenter.setUI(this);
+    };
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        presenter.removeUI();
+    };
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        processIntent();
+    }
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -188,7 +225,7 @@ public class MainActivity extends AppCompatActivity
     }
     public static void showErrorMessage(Context context, String message)
     {
-        Intent i=new Intent(SHOW_ERROR_MESSAGE, null, context, MainActivity.class);
+        Intent i=new Intent(ACTION_SHOW_ERROR_MESSAGE, null, context, MainActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
