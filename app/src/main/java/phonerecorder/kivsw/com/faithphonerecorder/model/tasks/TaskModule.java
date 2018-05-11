@@ -13,7 +13,7 @@ import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.ICallInf
 import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IJournal;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
 import phonerecorder.kivsw.com.faithphonerecorder.model.task_executor.TaskExecutor;
-import phonerecorder.kivsw.com.faithphonerecorder.os.NotificationShower;
+import phonerecorder.kivsw.com.faithphonerecorder.ui.notification.NotificationShower;
 
 /**
  * Created by ivan on 4/26/18.

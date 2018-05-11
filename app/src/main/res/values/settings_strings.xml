@@ -45,4 +45,6 @@
     <string name="incorrect_value">Incorrect value</string>
     <string name="setup">Setup</string>
 
+    <string name="showNotification">Permanent notification</string>
+
 </resources>

@@ -220,6 +220,7 @@ public class MainActivity extends AppCompatActivity
     {
         Intent i=new Intent(Intent.ACTION_VIEW, null, context, MainActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         context.startActivity(i);
     }
@@ -232,4 +233,5 @@ public class MainActivity extends AppCompatActivity
         i.putExtra(MESSAGE, message);
         context.startActivity(i);
     };
+
 }

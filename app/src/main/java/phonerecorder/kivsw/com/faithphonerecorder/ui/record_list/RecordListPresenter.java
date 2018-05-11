@@ -46,6 +46,7 @@ import phonerecorder.kivsw.com.faithphonerecorder.R;
 import phonerecorder.kivsw.com.faithphonerecorder.model.ErrorProcessor.IErrorProcessor;
 import phonerecorder.kivsw.com.faithphonerecorder.model.player.IPlayer;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
+import phonerecorder.kivsw.com.faithphonerecorder.model.settings.Settings;
 import phonerecorder.kivsw.com.faithphonerecorder.model.tasks.RecordSender;
 import phonerecorder.kivsw.com.faithphonerecorder.model.utils.RecordFileNameData;
 import phonerecorder.kivsw.com.faithphonerecorder.model.utils.SimpleFileReader;
@@ -128,11 +129,15 @@ public class RecordListPresenter
         unsubscribeSettings();
         settingsDisposable =
                 settings.getObservable()
-                        .subscribe(new Consumer<ISettings>() {
+                        .subscribe(new Consumer<String>() {
                             @Override
-                            public void accept(ISettings iSettings) throws Exception {
-                                if(!iSettings.getCurrentViewUrlPath().equals(lastUpdatedDir)) {
-                                    updateDir(true);
+                            public void accept(String id) throws Exception {
+                                switch(id) {
+                                    case Settings.PATH_HISTORY:
+                                            if (!settings.getCurrentViewUrlPath().equals(lastUpdatedDir)) {
+                                                updateDir(true);
+                                            }
+                                            break;
                                 }
                             }
                         });
@@ -147,7 +152,7 @@ public class RecordListPresenter
     @Override
     public void chooseCurrentDir() {
         MvpRxSelectDirDialogPresenter selDirPresenter = MvpRxSelectDirDialogPresenter
-                .createDialog(view.getContext(), view.getFragmentManager(), disks.getDiskList(), settings.getSavingUrlPath(), null);
+                .createDialog(view.getContext(), view.getFragmentManager(), disks, settings.getSavingUrlPath(), null);
 
         selDirPresenter.getMaybe().subscribe(new MaybeObserver<String>() {
             @Override
@@ -191,6 +196,7 @@ public class RecordListPresenter
         setProgressBarVisible(true);
 
         final String dirPath = settings.getCurrentViewUrlPath();
+        lastUpdatedDir = dirPath;
         disks.authorizeIfNecessary(dirPath)
              .andThen(Single.just("") )
              .flatMap(new Function<String, SingleSource<IDiskIO.ResourceInfo>>() {
@@ -608,7 +614,9 @@ public class RecordListPresenter
                 if (!cur.isClosed()) cur.close();
             }
         }catch(Exception e)
-        {}
+        {
+            e.toString();
+        }
         if (res == null) res = "";
         return res;
     };

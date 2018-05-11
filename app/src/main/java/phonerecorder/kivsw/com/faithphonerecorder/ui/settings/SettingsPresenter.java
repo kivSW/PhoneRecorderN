@@ -14,8 +14,10 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import phonerecorder.kivsw.com.faithphonerecorder.model.ErrorProcessor.IErrorProcessor;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
+import phonerecorder.kivsw.com.faithphonerecorder.model.settings.Settings;
 import phonerecorder.kivsw.com.faithphonerecorder.model.task_executor.TaskExecutor;
 import phonerecorder.kivsw.com.faithphonerecorder.os.LauncherIcon;
+import phonerecorder.kivsw.com.faithphonerecorder.ui.notification.AntiTaskKillerNotification;
 
 /**
  * Created by ivan on 3/1/18.
@@ -23,12 +25,14 @@ import phonerecorder.kivsw.com.faithphonerecorder.os.LauncherIcon;
 
 public class SettingsPresenter implements SettingsContract.ISettingsPresenter {
 
+    protected Context  context;
     protected SettingsContract.ISettingsView view;
     protected ISettings settings;
     private Disposable settingsDisposable;
     protected DiskContainer disks;
     protected TaskExecutor taskExecutor;
     protected IErrorProcessor errorProcessor;
+    protected AntiTaskKillerNotification antiTaskKillerNotification;
 
    /* public static SettingsPresenter createDialog(Context context, FragmentManager fragmentManager)
     {
@@ -45,15 +49,16 @@ public class SettingsPresenter implements SettingsContract.ISettingsPresenter {
     }*/
 
     @Inject
-    public SettingsPresenter(ISettings settings, DiskContainer disks, TaskExecutor taskExecutor, IErrorProcessor errorProcessor)
+    public SettingsPresenter(Context  context, ISettings settings, DiskContainer disks, TaskExecutor taskExecutor, IErrorProcessor errorProcessor, AntiTaskKillerNotification antiTaskKillerNotification)
     {
         super();
-        //this.context = context;
+        this.context = context;
         settingsDisposable=null;
         this.settings = settings;//Settings.getInstance(context);
         this.disks = disks;
         this.taskExecutor = taskExecutor;
         this.errorProcessor = errorProcessor;
+        this.antiTaskKillerNotification=antiTaskKillerNotification;
 
     }
     @Override
@@ -83,14 +88,10 @@ public class SettingsPresenter implements SettingsContract.ISettingsPresenter {
         unsubscribeSettings();
         settingsDisposable =
                 settings.getObservable()
-                        .subscribe(new Consumer<ISettings>() {
+                        .subscribe(new Consumer<String>() {
                             @Override
-                            public void accept(ISettings iSettings) throws Exception {
-                                Context cnt = view.getContext();
-                                boolean visible = ! iSettings.getHiddenMode();
-                                if(visible != LauncherIcon.getVisibility(cnt)) {
-                                    LauncherIcon.setVisibility(cnt, visible);
-                                }
+                            public void accept(String id) throws Exception {
+                                onChangeSettings(id);
                             }
                         });
     }
@@ -101,13 +102,30 @@ public class SettingsPresenter implements SettingsContract.ISettingsPresenter {
         settingsDisposable=null;
     }
 
+    protected void onChangeSettings(String id)
+    {
+        switch(id) {
+            case Settings.HIDDEN_MODE:
+                boolean visible = !settings.getHiddenMode();
+                LauncherIcon.setVisibility(context, visible);
+                break;
+
+
+            case Settings.ANTI_TASK_KILLER_NOTOFICATION:
+                    if (settings.getAntiTaskKillerNotification().visible)
+                        antiTaskKillerNotification.show();
+                    else
+                        antiTaskKillerNotification.hide();
+                    break;
+        }
+    }
 
     private MvpRxSelectDirDialogPresenter selDirPresenter;
     @Override
     public void chooseDataDir()
     {
         //List<IDiskRepresenter> diskList = DiskRepresentativeModule.getDisks(view.getContext());
-        selDirPresenter=MvpRxSelectDirDialogPresenter.createDialog(view.getContext(), view.getFragmentManager(), disks.getDiskList(), settings.getSavingUrlPath(), null);
+        selDirPresenter=MvpRxSelectDirDialogPresenter.createDialog(view.getContext(), view.getFragmentManager(), disks, settings.getSavingUrlPath(), null);
         selDirPresenter.getMaybe()
                 .subscribe(new MaybeObserver<String>() {
                     @Override  public void onSubscribe(Disposable d) {}
@@ -125,6 +143,5 @@ public class SettingsPresenter implements SettingsContract.ISettingsPresenter {
 
                 });
     };
-
 
 }

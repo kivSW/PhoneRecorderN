@@ -4,6 +4,8 @@ import android.content.Context;
 
 import com.kivsw.mvprxdialog.Contract;
 
+import javax.inject.Inject;
+
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
 
 /**
@@ -15,6 +17,8 @@ public class MainActivityPresenter implements MainActivityContract.IMainActivity
     private Context context;
     private ISettings settings;
     MainActivity view;
+
+    @Inject
     protected MainActivityPresenter(Context context, ISettings settings)
     {
         this.context = context;
@@ -44,4 +48,12 @@ public class MainActivityPresenter implements MainActivityContract.IMainActivity
                return;
            MainActivity.showErrorMessage(context, msg);
     }
+
+    @Override
+    public void showActivity()
+    {
+        if(settings.getHiddenMode() && view==null)
+            return;
+        MainActivity.showActivity(context);
+    };
 }

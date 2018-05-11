@@ -20,10 +20,12 @@ import android.widget.TextView;
 import javax.inject.Inject;
 
 import phonerecorder.kivsw.com.faithphonerecorder.R;
+import phonerecorder.kivsw.com.faithphonerecorder.model.settings.AntiTaskKillerNotificationParam;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.DataSize;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.SoundSource;
 import phonerecorder.kivsw.com.faithphonerecorder.os.MyApplication;
+import phonerecorder.kivsw.com.faithphonerecorder.ui.notification.AntiTaskKillerNotification;
 
 /**
 
@@ -49,6 +51,10 @@ public class SettingsFragment extends Fragment
     private EditText editMaxDataSize;
     private Spinner spinnerDataUnit;
     private EditText editPhoneSecretNumber;
+
+    private CheckBox checkBoxShowNotification;
+    private Spinner spinnerNotificationIcon;
+    //private EditText editNotificationTitle;
 
 
     public SettingsFragment() {
@@ -131,6 +137,9 @@ public class SettingsFragment extends Fragment
         editMaxDataSize = (EditText) rootView.findViewById(R.id.editMaxDataSize);
         spinnerDataUnit = (Spinner) rootView.findViewById(R.id.spinnerDataUnit);
         editPhoneSecretNumber = (EditText) rootView.findViewById(R.id.editPhoneSecretNumber);
+        checkBoxShowNotification = (CheckBox) rootView.findViewById(R.id.checkBoxShowNotification);
+        spinnerNotificationIcon = (Spinner) rootView.findViewById(R.id.spinnerNotificationIcon);
+        //editNotificationTitle = (EditText) rootView.findViewById(R.id.editNotificationTitle);
     }
     ;
 
@@ -266,6 +275,37 @@ public class SettingsFragment extends Fragment
                 settings.setSecretNumber(s.toString());
             }
         });
+
+        checkBoxShowNotification.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                userChangedPermanentNotification();
+            }
+        });
+        /*editNotificationTitle.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                userChangedPermanentNotification();
+            }
+        });*/
+
+        IconSpinnerAdapter iconSpinnerAdapter=IconSpinnerAdapter.create(getContext(), AntiTaskKillerNotification.notificationIcons);
+        spinnerNotificationIcon.setAdapter(iconSpinnerAdapter);
+        spinnerNotificationIcon.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                userChangedPermanentNotification();
+            }
+
+            @Override public void onNothingSelected(AdapterView<?> parent) { }
+        });
+
     }
 
 
@@ -302,14 +342,24 @@ public class SettingsFragment extends Fragment
         }
     }
 
+    private void userChangedPermanentNotification()
+    {
+        if(ignoreChanges) return;
+        if(settings==null) return;
+
+        settings.setAntTaskKillerNotification(new AntiTaskKillerNotificationParam(
+                checkBoxShowNotification.isChecked(),
+                //editNotificationTitle.getText().toString(),
+                spinnerNotificationIcon.getSelectedItemPosition()
+        ));
+
+    };
 
 
     @Override
     public void setSettings(ISettings settings) {
         this.settings = settings;
         readAllSettings();
-
-
     }
 
 
@@ -342,6 +392,11 @@ public class SettingsFragment extends Fragment
         spinnerDataUnit.setSelection(dataSize.getUnit().ordinal());
         editPhoneSecretNumber.setText(settings.getSecretNumber());
         ignoreChanges=false;
+
+        AntiTaskKillerNotificationParam antiTaskKillerNotificationParam=settings.getAntiTaskKillerNotification();
+        checkBoxShowNotification.setChecked(antiTaskKillerNotificationParam.visible);
+        spinnerNotificationIcon.setSelection(antiTaskKillerNotificationParam.iconNum);
+
     }
 
     protected void selectDir()

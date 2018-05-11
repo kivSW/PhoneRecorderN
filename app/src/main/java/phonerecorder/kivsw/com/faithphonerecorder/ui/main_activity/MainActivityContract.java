@@ -8,6 +8,7 @@ public interface MainActivityContract {
     interface IMainActivityPresenter  extends com.kivsw.mvprxdialog.Contract.IPresenter
     {
         void showErrorMessage(String msg);
+        void showActivity();
     }
 
 

@@ -1,13 +1,15 @@
 /** this class shows and hides Notofication
  *
  */
-package phonerecorder.kivsw.com.faithphonerecorder.os;
+package phonerecorder.kivsw.com.faithphonerecorder.ui.notification;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
+
+import javax.inject.Inject;
 
 import phonerecorder.kivsw.com.faithphonerecorder.R;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
@@ -20,7 +22,8 @@ public class NotificationShower {
 	ISettings settings;
 
 	//---------------------------------------------------------------------------------
-	public NotificationShower(Context context, ISettings settings, int notificationId)
+	@Inject
+	NotificationShower(Context context, ISettings settings, int notificationId)
 	{
 		this.notificationId = notificationId;
 		this.context = context;
@@ -51,7 +54,7 @@ public class NotificationShower {
 		if(settings.getHiddenMode()) return;
 
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
-		mBuilder.setSmallIcon(R.drawable.ear);
+		mBuilder.setSmallIcon(R.drawable.ic_notification_small_ear);
 		//mBuilder.setLargeIcon( BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_phonerecorder) );
 		mBuilder.setContentTitle(context.getText(R.string.app_name).toString());
 		mBuilder.setContentText(text);

@@ -15,6 +15,8 @@ import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
 import phonerecorder.kivsw.com.faithphonerecorder.model.task_executor.TaskExecutor;
 import phonerecorder.kivsw.com.faithphonerecorder.model.utils.MyConfiguration;
 import phonerecorder.kivsw.com.faithphonerecorder.ui.main_activity.MainActivity;
+import phonerecorder.kivsw.com.faithphonerecorder.ui.main_activity.MainActivityPresenter;
+import phonerecorder.kivsw.com.faithphonerecorder.ui.notification.AntiTaskKillerNotification;
 
 /**
  * Created by ivan on 4/23/18.
@@ -22,20 +24,13 @@ import phonerecorder.kivsw.com.faithphonerecorder.ui.main_activity.MainActivity;
 
 public class AppReceiver extends android.content.BroadcastReceiver{
 
-    @Inject
-    ISettings settings;
 
-    @Inject
-    IJournal journal;
-
-    @Inject
-    ICallInfoKeeper callInfoKeeper;
-
-    @Inject
-    TaskExecutor taskExecutor;
-
-    @Inject
-    IErrorProcessor errorProcessor;
+    @Inject ISettings settings;
+    @Inject IJournal journal;
+    @Inject ICallInfoKeeper callInfoKeeper;
+    @Inject TaskExecutor taskExecutor;
+    @Inject IErrorProcessor errorProcessor;
+    @Inject MainActivityPresenter mainActivityPresenter;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -70,6 +65,9 @@ public class AppReceiver extends android.content.BroadcastReceiver{
                 break;
             case WatchdogTimer.ACTION_WATCHDOG_TIMER:
                 doDataSave(context, intent);
+                break;
+            case AntiTaskKillerNotification.NOTIFICATION_CLICK_ACTION:
+                onNotificationClick();
                 break;
         }
     }
@@ -148,5 +146,10 @@ public class AppReceiver extends android.content.BroadcastReceiver{
         ICallInfoKeeper.CallInfo callInfo = callInfoKeeper.getCallInfo();
 
         taskExecutor.stopCallRecording();
+    };
+
+    protected void onNotificationClick()
+    {
+        mainActivityPresenter.showActivity();
     };
 }

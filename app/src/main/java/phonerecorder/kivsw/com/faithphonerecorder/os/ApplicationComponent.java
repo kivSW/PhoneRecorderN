@@ -15,6 +15,7 @@ import phonerecorder.kivsw.com.faithphonerecorder.model.tasks.RecordSender;
 import phonerecorder.kivsw.com.faithphonerecorder.model.tasks.TaskModule;
 import phonerecorder.kivsw.com.faithphonerecorder.ui.main_activity.MainActivity;
 import phonerecorder.kivsw.com.faithphonerecorder.ui.main_activity.MainActivityModule;
+import phonerecorder.kivsw.com.faithphonerecorder.ui.notification.NotificationShowerModule;
 import phonerecorder.kivsw.com.faithphonerecorder.ui.record_list.RecordListFragment;
 import phonerecorder.kivsw.com.faithphonerecorder.ui.record_list.RecordListPresenterModule;
 import phonerecorder.kivsw.com.faithphonerecorder.ui.settings.SettingsFragment;
@@ -35,8 +36,10 @@ public interface ApplicationComponent {
     void inject(RecordListFragment fragment);
     void inject(AppReceiver receiver);
     void inject(AppService service);
+    void inject(MyApplication app);
 
     CallRecorder getCallRecorder();
     RecordSender getRecordSender();
+
 
 }

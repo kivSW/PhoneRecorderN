@@ -10,7 +10,7 @@ import io.reactivex.Observable;
 
 public interface ISettings {
 
-    Observable<ISettings> getObservable();
+    Observable<String> getObservable();
 
 
     boolean getEnableCallRecording();
@@ -61,4 +61,6 @@ public interface ISettings {
     long getCacheSize();
     int getCacheFilesNumber();
 
+    AntiTaskKillerNotificationParam getAntiTaskKillerNotification();
+    void setAntTaskKillerNotification(AntiTaskKillerNotificationParam param);
 }

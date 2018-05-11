@@ -197,15 +197,31 @@
                     />
             </LinearLayout>
 
-            <!-- <Button
-                android:id="@+id/buttonShowJournal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="@string/show_journal" />-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <CheckBox
+                    android:id="@+id/checkBoxShowNotification"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="20dp"
+                    android:text="@string/showNotification"/>
+
+                <Spinner
+                    android:id="@+id/spinnerNotificationIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    />
+
+
+
+            </LinearLayout>
 
 
         </LinearLayout>
+
 
 
     </ScrollView>

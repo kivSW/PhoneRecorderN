@@ -15,19 +15,19 @@ import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
 /**
- * Created by ivan on 3/1/18.
+ * 
  */
 
 public class Settings
 implements ISettings
 {
-    Subject<ISettings> onChangeObservable=null;
-    SharedPreferences preferences;
-    Context cnt;
+    private Subject<String> onChangeObservable=null;
+    private SharedPreferences preferences;
+    private Context cnt;
     private final static String NAME="date";
 
     @Inject
-    protected Settings(Context cnt)
+    Settings(Context cnt)
     {
         this.cnt = cnt;
         onChangeObservable = PublishSubject.create();
@@ -36,18 +36,18 @@ implements ISettings
     }
 
     /**
-     * Emitts whenever an option was changed
-     * @return
+     *
+     * @return observable that emitts whenever an option was changed
      */
     @Override
-    public Observable<ISettings> getObservable()
+    public Observable<String> getObservable()
     {
         return onChangeObservable;
     }
 
-    private void emitOnChange()
+    private void emitOnChange(String id)
     {
-        onChangeObservable.onNext(this);
+        onChangeObservable.onNext(id);
     }
 
     /**
@@ -59,57 +59,57 @@ implements ISettings
     public boolean getEnableCallRecording()
     {
         return preferences.getBoolean(ENABLE_CALL_RECORDING,false);
-    };
+    }
     @Override
     public void setEnableCallRecording(boolean value)
     {
         preferences.edit()
                 .putBoolean(ENABLE_CALL_RECORDING, value)
-                .commit();
-        emitOnChange();
-    };
+                .apply();
+        emitOnChange(ENABLE_CALL_RECORDING);
+    }
 
     private final static String ENABLE_SMS_RECORDING = "ENABLE_SMS_RECORDING";
     @Override
     public boolean getEnableSmsRecording()
     {
         return preferences.getBoolean(ENABLE_SMS_RECORDING,false);
-    };
+    }
     @Override
     public void setEnableSmsRecording(boolean value)
     {
         preferences.edit()
                 .putBoolean(ENABLE_SMS_RECORDING, value)
-                .commit();
-        emitOnChange();
-    };
+                .apply();
+        emitOnChange(ENABLE_SMS_RECORDING);
+    }
 
-    private final static String HIDDEN_MODE = "HIDDEN_MODE";
+    public final static String HIDDEN_MODE = "HIDDEN_MODE";
     @Override
     public boolean getHiddenMode()
     {
         return preferences.getBoolean(HIDDEN_MODE,false);
-    };
+    }
     @Override
     public void setHiddenMode(boolean value)
     {
         preferences.edit()
                 .putBoolean(HIDDEN_MODE, value)
-                .commit();
-        emitOnChange();
-    };
+                .apply();
+        emitOnChange(HIDDEN_MODE);
+    }
 
     private final static String USE_FILE_EXTENSION = "USE_FILE_EXTENSION";
     @Override public boolean getUseFileExtension()
     {
         return preferences.getBoolean(USE_FILE_EXTENSION,false);
-    };
+    }
     @Override public void setUseFileExtension(boolean value)
     {
         preferences.edit()
                 .putBoolean(USE_FILE_EXTENSION, value)
-                .commit();
-        emitOnChange();
+                .apply();
+        emitOnChange(USE_FILE_EXTENSION);
     }
 
     private final static String JOURNAL_EXPORTING= "JOURNAL_EXPORTING";
@@ -122,9 +122,9 @@ implements ISettings
     public void setJournalExporting(boolean value) {
         preferences.edit()
                 .putBoolean(JOURNAL_EXPORTING, value)
-                .commit();
-        emitOnChange();
-    };
+                .apply();
+        emitOnChange(JOURNAL_EXPORTING);
+    }
 
     private final static String SAVING_PATH = "SAVING_PATH";
     @Override public String getSavingUrlPath()
@@ -134,15 +134,15 @@ implements ISettings
         String defPath = "file://"+file.getAbsolutePath();
 
         return preferences.getString(SAVING_PATH, defPath);
-    };
+    }
     @Override public void setSavingUrlPath(String value)
     {
         preferences.edit()
                 .putString(SAVING_PATH, value)
-                .commit();
+                .apply();
         //emitOnChange(); // DO NOT invoke emitOnChange because of using addToViewUrlPathHistory()
         addToViewUrlPathHistory(value);
-    };
+    }
 
     @Override public String getInternalTempPath()
     {
@@ -150,29 +150,29 @@ implements ISettings
         if(res.charAt(res.length()-1)!= File.separatorChar)
             res = res + File.separatorChar;
         return res;
-    };
+    }
 
     private final static String SOUND_SOURCE = "SOUND_SOURCE";
     @Override public SoundSource getSoundSource()
     {
         int val= preferences.getInt(SOUND_SOURCE, SoundSource.MIC.ordinal());
         return SoundSource.values()[val];
-    };
+    }
     @Override public void setSoundSource(SoundSource value)
     {
         if(value.equals(getSoundSource()))  return;
 
         preferences.edit()
                 .putInt(SOUND_SOURCE, value.ordinal())
-                .commit();
-        emitOnChange();
-    };
+                .apply();
+        emitOnChange(SOUND_SOURCE);
+    }
 
     private final static String FILE_AMOUNT_LIMITATION="FILE_AMOUNT_LIMITATION";
     @Override public boolean getFileAmountLimitation()
     {
         return preferences.getBoolean(FILE_AMOUNT_LIMITATION, true);
-    };
+    }
     @Override public void setFileAmountLimitation(boolean value)
     {
         if(getFileAmountLimitation() == value)
@@ -180,16 +180,16 @@ implements ISettings
 
         preferences.edit()
                 .putBoolean(FILE_AMOUNT_LIMITATION, value)
-                .commit();
-        emitOnChange();
-    };
+                .apply();
+        emitOnChange(FILE_AMOUNT_LIMITATION);
+    }
 
     private final static String MAX_FILE_AMOUNT = "MAX_FILE_AMOUNT";
-    @Override public int maxKeptFileAmount(){return 1024*1024;};
+    @Override public int maxKeptFileAmount(){return 1024*1024;}
     @Override public int getKeptFileAmount()
     {
         return preferences.getInt(MAX_FILE_AMOUNT, 1000);
-    };
+    }
     @Override public void setKeptFileAmount(int value)
     {
         if(getKeptFileAmount() == value)
@@ -197,14 +197,14 @@ implements ISettings
 
         preferences.edit()
                 .putInt(MAX_FILE_AMOUNT, value)
-                .commit();
-        emitOnChange();
-    };
+                .apply();
+        emitOnChange(MAX_FILE_AMOUNT);
+    }
 
     private final static String DATA_SIZE_LIMITATION="DATA_SIZE_LIMITATION";
     @Override public boolean getDataSizeLimitation(){
         return preferences.getBoolean(DATA_SIZE_LIMITATION, false);
-    };
+    }
     @Override public void setDataSizeLimitation(boolean value)
     {
         if(getDataSizeLimitation() == value)
@@ -212,19 +212,19 @@ implements ISettings
 
         preferences.edit()
                 .putBoolean(DATA_SIZE_LIMITATION, value)
-                .commit();
-        emitOnChange();
-    };
+                .apply();
+        emitOnChange(DATA_SIZE_LIMITATION);
+    }
 
     private final static String MAX_DATA_SIZE = "MAX_DATA_SIZE";
     private final static String MAX_DATA_UNIT = "MAX_DATA_UNIT";
-    @Override public long maxFileDataSize(){return 1024l*1024*1024*1024;};
+    @Override public long maxFileDataSize(){return 1024L*1024*1024*1024;}
     @Override public DataSize getFileDataSize()
     {
         long sz = preferences.getLong(MAX_DATA_SIZE, 64);
         int order = preferences.getInt(MAX_DATA_UNIT, 2);
         return new DataSize(sz, order);
-    };
+    }
 
     @Override public void setFileDataSize(DataSize dataSize)
     {
@@ -233,9 +233,9 @@ implements ISettings
         preferences.edit()
                 .putLong(MAX_DATA_SIZE, dataSize.getUnitSize())
                 .putInt(MAX_DATA_UNIT, dataSize.getUnit().ordinal())
-                .commit();
-        emitOnChange();
-    };
+                .apply();
+        emitOnChange(MAX_DATA_SIZE);
+    }
 
 
     private final static String SECRET_NUMBER = "SECRET_NUMBER";
@@ -243,38 +243,42 @@ implements ISettings
     public String getSecretNumber()
     {
         return preferences.getString(SECRET_NUMBER,"*#12345#");
-    };
+    }
     @Override
     public void setSecretNumber(String value)
     {
         preferences.edit()
                 .putString(SECRET_NUMBER, value)
-                .commit();
-        emitOnChange();
-    };
+                .apply();
+        emitOnChange(SECRET_NUMBER);
+    }
 
-    private final static String PATH_HISTORY = "PATH_HISTORY";
+    public final static String PATH_HISTORY = "PATH_HISTORY";
     @Override  public List<String> getViewUrlPathHistory()
     {
-        String [] res=preferences.getString(PATH_HISTORY, getSavingUrlPath()).split("\n");
-        ArrayList list = new ArrayList(res.length);
+        String [] res=preferences.getString(PATH_HISTORY, getSavingUrlPath())
+                .split("\n");
+
+        ArrayList<String> list = new ArrayList(res.length);
         list.addAll( Arrays.asList(res));
         return list;
-    };
+    }
     protected void setPathViewHistory(List<String> history)
     {
         StringBuilder res=new StringBuilder();
         for(String item:history)
         {
+            if(item.equals("    "))
+                throw new RuntimeException("    ");
             res.append(item);
             res.append('\n');
-        };
+        }
 
         preferences.edit()
                 .putString(PATH_HISTORY, res.toString())
-                .commit();
-        emitOnChange();
-    };
+                .apply();
+        emitOnChange(PATH_HISTORY);
+    }
     @Override  public void addToViewUrlPathHistory(String newUrlPath)
     {
         List<String> res = getViewUrlPathHistory();
@@ -295,10 +299,33 @@ implements ISettings
     @Override public long getCacheSize()
     {
         return 1024*1024;
-    };
+    }
     @Override public int getCacheFilesNumber()
     {
         return 10;
-    };
+    }
+
+    public final static String ANTI_TASK_KILLER_NOTOFICATION = "ANTI_TASK_KILLER_NOTOFICATION";
+                                //ANTI_TASK_KILLER_NOTOFICATION_TEXT = "ANTI_TASK_KILLER_NOTOFICATION_TEXT",
+    private final static String ANTI_TASK_KILLER_NOTOFICATION_ICON = "ANTI_TASK_KILLER_NOTOFICATION_ICON";
+    @Override public AntiTaskKillerNotificationParam getAntiTaskKillerNotification()
+    {
+        return
+                new AntiTaskKillerNotificationParam( preferences.getBoolean(ANTI_TASK_KILLER_NOTOFICATION,false),
+                                                //preferences.getString(ANTI_TASK_KILLER_NOTOFICATION_TEXT, cnt.getText(R.string.app_name).toString()),
+                                                preferences.getInt(ANTI_TASK_KILLER_NOTOFICATION_ICON, 0) );
+    }
+    @Override public void setAntTaskKillerNotification(AntiTaskKillerNotificationParam param)
+    {
+        if(getAntiTaskKillerNotification().equals(param))    return;
+
+        preferences.edit()
+                .putBoolean(ANTI_TASK_KILLER_NOTOFICATION, param.visible)
+                //.putString(ANTI_TASK_KILLER_NOTOFICATION_TEXT, param.text)
+                .putInt(ANTI_TASK_KILLER_NOTOFICATION_ICON, param.iconNum)
+                .apply();
+        emitOnChange(ANTI_TASK_KILLER_NOTOFICATION);
+    }
+
 
 }
