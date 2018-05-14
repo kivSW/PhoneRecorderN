@@ -125,7 +125,7 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.It
 
         holder.nameText.setText(data.callerName);
         holder.phonenumberText.setText(data.recordFileNameData.phoneNumber);
-        holder.durationText.setText(durationToStr(data.duration));
+        holder.durationText.setText(durationToStr(data.recordFileNameData.duration));
         holder.dateTimeText.setText(data.recordFileNameData.date+" "+data.recordFileNameData.time);
         holder.commentaryText.setText("");
         holder.checkbox.setChecked(data.selected);
@@ -177,6 +177,8 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.It
 
     protected String durationToStr(int d)
     {
+        if(d<=0)
+            return "--:--";
         int m,s;
         s=d%60;
         d=d/60;

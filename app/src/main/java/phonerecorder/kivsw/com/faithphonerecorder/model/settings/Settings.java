@@ -261,6 +261,13 @@ implements ISettings
 
         ArrayList<String> list = new ArrayList(res.length);
         list.addAll( Arrays.asList(res));
+
+        for(int i=res.length-1; // because of the bag: https://issuetracker.google.com/issues/37032278#c6
+            i>=0 && list.get(i).trim().length()==0 ;
+            i--)
+        {
+            list.remove(i);
+        };
         return list;
     }
     protected void setPathViewHistory(List<String> history)
@@ -268,11 +275,11 @@ implements ISettings
         StringBuilder res=new StringBuilder();
         for(String item:history)
         {
-            if(item.equals("    "))
-                throw new RuntimeException("    ");
             res.append(item);
             res.append('\n');
         }
+        if(res.length()>0)
+        res.setLength(res.length()-1); // remove the last '\n' because of the bag: https://issuetracker.google.com/issues/37032278#c6
 
         preferences.edit()
                 .putString(PATH_HISTORY, res.toString())

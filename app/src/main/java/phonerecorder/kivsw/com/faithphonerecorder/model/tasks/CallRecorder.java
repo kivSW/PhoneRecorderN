@@ -2,6 +2,7 @@ package phonerecorder.kivsw.com.faithphonerecorder.model.tasks;
 
 import android.content.Context;
 import android.media.MediaRecorder;
+import android.os.SystemClock;
 
 import java.io.File;
 import java.util.HashMap;
@@ -30,7 +31,10 @@ public class CallRecorder implements ITask {
     private TaskExecutor taskExecutor;
     private NotificationShower notification;
     private MediaRecorder recorder = null;
-    private String tempFileName, recordFileName;
+    private String tempFileName;
+
+    private long startTime;
+    private RecordFileNameData recordFileNameData;
 
     @Inject
     public CallRecorder(Context context, ISettings settings, ICallInfoKeeper callInfoKeeper, TaskExecutor taskExecutor, NotificationShower notification, IErrorProcessor errorProcessor) {
@@ -83,29 +87,28 @@ public class CallRecorder implements ITask {
     }
     protected boolean startRecording()
     {
-
         if(isRecording()) return true;
-
         tempFileName = settings.getInternalTempPath() + "temp~";
-        recordFileName = createFileName();
+        createRecordFileName();
 
-            try{
-                recorder = new MediaRecorder();
-                recorder.reset();
-                recorder.setAudioSource(getAudioSource());
+        try{
 
-                recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-                recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-                recorder.setAudioChannels(1);
-                recorder.setOutputFile(tempFileName);
+            recorder = new MediaRecorder();
+            recorder.reset();
+            recorder.setAudioSource(getAudioSource());
 
-                recorder.prepare();
-                recorder.start();   // Recording is now started
-            }catch(Exception e)
-            {
-                errorProcessor.onError(e);
-                stopRecording();
-            }
+            recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+            recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+            recorder.setAudioChannels(1);
+            recorder.setOutputFile(tempFileName);
+
+            recorder.prepare();
+            recorder.start();   // Recording is now started
+        }catch(Exception e)
+        {
+            errorProcessor.onError(e);
+            stopRecording();
+        }
 
         return isRecording();
     };
@@ -114,12 +117,11 @@ public class CallRecorder implements ITask {
     {
         if(recorder==null) return;
 
+        String recordFileName = generateRecordFileName();
         try{
             recorder.stop();
-
             File file=new File(tempFileName);
             file.renameTo(new File(recordFileName));
-
         }catch(Exception e)
         {
             errorProcessor.onError(e);
@@ -127,8 +129,7 @@ public class CallRecorder implements ITask {
 
         recorder.release();
         recorder=null;
-        recordFileName=null;
-
+        recordFileNameData=null;
     }
 
     protected boolean isRecording()
@@ -136,14 +137,17 @@ public class CallRecorder implements ITask {
 		return recorder!=null;
 	}
 
-    protected String createFileName()
+    protected void createRecordFileName()
     {
         ICallInfoKeeper.CallInfo callInfo=callInfoKeeper.getCallInfo();
-        return  settings.getInternalTempPath() +
-                RecordFileNameData.generateNew(callInfo.number, callInfo.isIncome, soundSourceToStr(), getExtension())
-                .buildFileName();
-
+        recordFileNameData = RecordFileNameData.generateNew(callInfo.number, callInfo.isIncome, soundSourceToStr(), getExtension());
+        startTime = SystemClock.elapsedRealtime();
     };
+    protected String generateRecordFileName()
+    {
+        recordFileNameData.duration = (int)((SystemClock.elapsedRealtime()-startTime+500L)/1000L);
+        return settings.getInternalTempPath() + recordFileNameData.buildFileName();
+    }
 
     static HashMap<Integer,String> callSources;
     {

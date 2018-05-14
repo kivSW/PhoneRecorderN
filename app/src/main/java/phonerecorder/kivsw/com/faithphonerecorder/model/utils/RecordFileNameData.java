@@ -12,6 +12,7 @@ public class RecordFileNameData {
         public final static String RECORD_PATTERN ="^[0-9]{8}_[0-9]{6}_";
 
         public String origFileName;
+        public int duration;
         public String date ="", time="", phoneNumber="", soundSource="",
                 phoneId="", extension="";
         public boolean outgoing=false, income=false,
@@ -45,20 +46,20 @@ public class RecordFileNameData {
                 {
                     fd.isSent = true;
                     fd.extension=aFileName.substring(i+3,aFileName.length());
-                }
-
+                };
 
                 String fileName = aFileName.substring(0, i);
 
                 String[] info=fileName.split("_");
-                if(info.length<6)
+                if(info.length<8)
                 {
-                   String[] newInfo = new String[6];
+                   String[] newInfo = new String[8];
                    for(i=0;i<info.length; i++) newInfo[i]=info[i];
-                   for(;i<info.length; i++) newInfo[i]="";
+                   for(;i<info.length; i++) newInfo[i]="0";
                    info = newInfo;
                 }
 
+                fd.isSMS = fd.extension.toLowerCase().equals("sms");
 
                 // sets date and time
                 fd.date = info[0].substring(6, 8)+"."+info[0].substring(4, 6)+"."+info[0].substring(0, 4);
@@ -74,10 +75,13 @@ public class RecordFileNameData {
                 fd.soundSource = info[4];
                 fd.phoneId = info[5];
                 fd.isProtected = info[6].equals("1");
-                fd.isSMS = fd.extension.toLowerCase().equals("sms");
+                fd.duration = 0;
+                fd.duration = Integer.parseInt(info[7]);
+                fd.hashCode();
+
             }catch(Exception e)
             {
-               fd=null;
+
             };
 
 
@@ -101,6 +105,7 @@ public class RecordFileNameData {
             fd.income = income;
             fd.outgoing = !income;
             fd.isSent=false;
+            fd.duration = 0;
 
             return fd;
         }
@@ -136,7 +141,9 @@ public class RecordFileNameData {
             sb.append("_");
 
             sb.append(isProtected?"1":"0");//6
+            sb.append("_");
 
+            sb.append(String.valueOf(duration));//7
 
             if(isSent) sb.append("_s"); // should be before the file extension
 

@@ -18,7 +18,7 @@ public class RecordListContract {
         RecordFileNameData recordFileNameData;
         boolean selected;
         String callerName;
-        int duration;
+        //int duration;
         boolean isDownloading;
         int percentage;
         int visiblePosition;
