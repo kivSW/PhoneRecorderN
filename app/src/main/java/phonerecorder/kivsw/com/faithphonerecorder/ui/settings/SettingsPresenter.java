@@ -111,7 +111,7 @@ public class SettingsPresenter implements SettingsContract.ISettingsPresenter {
                 break;
 
 
-            case Settings.ANTI_TASK_KILLER_NOTOFICATION:
+            case Settings.ANTI_TASKKILLER_NOTOFICATION:
                     if (settings.getAntiTaskKillerNotification().visible)
                         antiTaskKillerNotification.show();
                     else

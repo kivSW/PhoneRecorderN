@@ -25,6 +25,11 @@ public interface ISettings {
     boolean getUseFileExtension();
     void setUseFileExtension(boolean value);
 
+    boolean getUsingMobileInternet();
+    void setUsingMobileInternet(boolean value);
+    boolean getSendInRoaming();
+    void setSendInRoaming(boolean value);
+
     boolean getJournalExporting();
     void setJournalExporting(boolean value);
 

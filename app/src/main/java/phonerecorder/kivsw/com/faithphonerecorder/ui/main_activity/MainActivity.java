@@ -159,7 +159,8 @@ public class MainActivity extends AppCompatActivity
                          Manifest.permission.READ_CONTACTS,
                          Manifest.permission.RECEIVE_BOOT_COMPLETED,
                          Manifest.permission.RECORD_AUDIO,
-                         Manifest.permission.PROCESS_OUTGOING_CALLS
+                         Manifest.permission.PROCESS_OUTGOING_CALLS,
+                         Manifest.permission.ACCESS_NETWORK_STATE
                         )
                 .subscribe(new Consumer<Boolean>() {
                         @Override

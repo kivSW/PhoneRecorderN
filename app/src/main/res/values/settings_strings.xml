@@ -29,8 +29,10 @@
     <string name="enable_sms_recording">Enable SMS recording</string>
     <string name="hidden_mode">Hidden mode</string>
     <string name="show_in_launcher">Show in launcher</string>
-    <string name="show_file_extension">use file extension</string>
-    <string name="show_file_extension_hint">to use natural .3gp file extension</string>
+    <string name="show_file_extension">Use file extension</string>
+    <string name="show_file_extension_hint">Use natural .3gp file extension</string>
+    <string name="allow_mobile_internet">Allow using mobile internet</string>
+    <string name="allow_mobile_internet_when_roaming">Allow using mobile internet when roaming</string>
 
     <string name="data_file_path">Data path:</string>
     <string name="sound_source">Sound source:</string>

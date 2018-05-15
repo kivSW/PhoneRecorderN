@@ -1,6 +1,8 @@
 package phonerecorder.kivsw.com.faithphonerecorder.model.tasks;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import com.kivsw.cloud.DiskContainer;
 import com.kivsw.cloud.disk.IDiskIO;
@@ -38,8 +40,8 @@ import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.Journal;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
 import phonerecorder.kivsw.com.faithphonerecorder.model.task_executor.TaskExecutor;
 import phonerecorder.kivsw.com.faithphonerecorder.model.utils.RecordFileNameData;
-import phonerecorder.kivsw.com.faithphonerecorder.ui.notification.NotificationShower;
 import phonerecorder.kivsw.com.faithphonerecorder.os.WatchdogTimer;
+import phonerecorder.kivsw.com.faithphonerecorder.ui.notification.NotificationShower;
 
 /**
  * Move records from the temp directory to the storage directory
@@ -91,17 +93,20 @@ public class RecordSender implements ITask {
             tryToSendAgain=true;
             return false;
         }
-        isSending=true;
-        sentFileCount=0;
 
         WatchdogTimer.setTimer(context);
-
-        final NotificationInfo notificationInfo=new NotificationInfo();
-        notificationInfo.name = context.getText(R.string.rec_sending).toString();
 
         final String srcPath=settings.getInternalTempPath();
         final String dstPath= settings.getSavingUrlPath();
 
+        if(!checkSendCondition(dstPath))
+            return false;
+
+        final NotificationInfo notificationInfo=new NotificationInfo();
+        notificationInfo.name = context.getText(R.string.rec_sending).toString();
+
+        isSending=true;
+        sentFileCount=0;
         Single.fromCallable(new Callable<String[]>() {
             @Override
             public String[] call() throws Exception {
@@ -172,7 +177,7 @@ public class RecordSender implements ITask {
       // do nothing because RecordSender stops itself
         notification.hide();
         if(sentFileCount>0)
-           copyObservable.onNext("");
+           onCopyObservable.onNext("");
     }
 
     protected String[] getRecordFileList(String LocalDir)
@@ -197,6 +202,9 @@ public class RecordSender implements ITask {
 
     protected Observable<Integer> createUploadObservable(final String source, String destination)
     {
+        if(!checkSendCondition(destination))
+            return Observable.error(new Exception("No allowed connection to send"));
+
         return
             disks.uploadFile(destination, source)
                     .doOnComplete(new Action() {
@@ -312,13 +320,40 @@ public class RecordSender implements ITask {
 
     };
 
-    Subject<Object> copyObservable= PublishSubject.create();
+    protected boolean checkSendCondition(String dstPath)
+    {
+        NetworkInfo ni;
+        try {
+            if (disks.isLocalStorage(dstPath)) return true;
+            ConnectivityManager cm=  (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            ni=cm.getActiveNetworkInfo();
+        }
+        catch(Exception e)
+        {
+            errorProcessor.onError(e);
+            return false;
+        };
+
+        if(!ni.isConnected()) return false;
+
+        if(ni.getType()==ConnectivityManager.TYPE_MOBILE) {
+            if(!settings.getUsingMobileInternet())
+                return false;
+            if (ni.isRoaming() && !settings.getSendInRoaming())
+                return false;
+        }
+
+        return true;
+
+    }
+
+    Subject<Object> onCopyObservable = PublishSubject.create();
     /**
      * emitts on start and stop recording
      * @return
      */
     public Observable<Object> getOnRecSentObservable()
     {
-        return copyObservable;
+        return onCopyObservable;
     }
 }

@@ -42,6 +42,7 @@ public class AntiTaskKillerNotification {
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
         mBuilder.setSmallIcon(getIconId(param.iconNum));
+        mBuilder.setOngoing(true);
         //mBuilder.setLargeIcon( BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_phonerecorder) );
         //mBuilder.setContentTitle(param.text);
         //mBuilder.setContentText("text");

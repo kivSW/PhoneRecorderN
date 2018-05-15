@@ -19,16 +19,14 @@ import io.reactivex.subjects.Subject;
  */
 
 public class Settings
-implements ISettings
-{
-    private Subject<String> onChangeObservable=null;
+implements ISettings {
+    private Subject<String> onChangeObservable = null;
     private SharedPreferences preferences;
     private Context cnt;
-    private final static String NAME="date";
+    private final static String NAME = "date";
 
     @Inject
-    Settings(Context cnt)
-    {
+    Settings(Context cnt) {
         this.cnt = cnt;
         onChangeObservable = PublishSubject.create();
         preferences = cnt.getSharedPreferences(NAME, Context.MODE_PRIVATE);
@@ -36,17 +34,14 @@ implements ISettings
     }
 
     /**
-     *
      * @return observable that emitts whenever an option was changed
      */
     @Override
-    public Observable<String> getObservable()
-    {
+    public Observable<String> getObservable() {
         return onChangeObservable;
     }
 
-    private void emitOnChange(String id)
-    {
+    private void emitOnChange(String id) {
         onChangeObservable.onNext(id);
     }
 
@@ -55,14 +50,14 @@ implements ISettings
      */
 
     private final static String ENABLE_CALL_RECORDING = "ENABLE_CALL_RECORDING";
+
     @Override
-    public boolean getEnableCallRecording()
-    {
-        return preferences.getBoolean(ENABLE_CALL_RECORDING,false);
+    public boolean getEnableCallRecording() {
+        return preferences.getBoolean(ENABLE_CALL_RECORDING, false);
     }
+
     @Override
-    public void setEnableCallRecording(boolean value)
-    {
+    public void setEnableCallRecording(boolean value) {
         preferences.edit()
                 .putBoolean(ENABLE_CALL_RECORDING, value)
                 .apply();
@@ -70,14 +65,14 @@ implements ISettings
     }
 
     private final static String ENABLE_SMS_RECORDING = "ENABLE_SMS_RECORDING";
+
     @Override
-    public boolean getEnableSmsRecording()
-    {
-        return preferences.getBoolean(ENABLE_SMS_RECORDING,false);
+    public boolean getEnableSmsRecording() {
+        return preferences.getBoolean(ENABLE_SMS_RECORDING, false);
     }
+
     @Override
-    public void setEnableSmsRecording(boolean value)
-    {
+    public void setEnableSmsRecording(boolean value) {
         preferences.edit()
                 .putBoolean(ENABLE_SMS_RECORDING, value)
                 .apply();
@@ -85,14 +80,14 @@ implements ISettings
     }
 
     public final static String HIDDEN_MODE = "HIDDEN_MODE";
+
     @Override
-    public boolean getHiddenMode()
-    {
-        return preferences.getBoolean(HIDDEN_MODE,false);
+    public boolean getHiddenMode() {
+        return preferences.getBoolean(HIDDEN_MODE, false);
     }
+
     @Override
-    public void setHiddenMode(boolean value)
-    {
+    public void setHiddenMode(boolean value) {
         preferences.edit()
                 .putBoolean(HIDDEN_MODE, value)
                 .apply();
@@ -100,16 +95,48 @@ implements ISettings
     }
 
     private final static String USE_FILE_EXTENSION = "USE_FILE_EXTENSION";
-    @Override public boolean getUseFileExtension()
-    {
-        return preferences.getBoolean(USE_FILE_EXTENSION,false);
+
+    @Override
+    public boolean getUseFileExtension() {
+        return preferences.getBoolean(USE_FILE_EXTENSION, false);
     }
-    @Override public void setUseFileExtension(boolean value)
-    {
+
+    @Override
+    public void setUseFileExtension(boolean value) {
         preferences.edit()
                 .putBoolean(USE_FILE_EXTENSION, value)
                 .apply();
         emitOnChange(USE_FILE_EXTENSION);
+    }
+
+    private final static String USE_MOBILE_INTERNET = "USE_MOBILE_INTERNET";
+
+    @Override
+    public boolean getUsingMobileInternet() {
+        return preferences.getBoolean(USE_MOBILE_INTERNET, false);
+    }
+
+    @Override
+    public void setUsingMobileInternet(boolean value) {
+        preferences.edit()
+                .putBoolean(USE_MOBILE_INTERNET, value)
+                .apply();
+        emitOnChange(USE_MOBILE_INTERNET);
+    }
+
+    private final static String SEND_IN_ROAMING = "SEND_IN_ROAMING";
+    @Override
+    public boolean getSendInRoaming() {
+        return preferences.getBoolean(SEND_IN_ROAMING, false);
+    }
+
+    @Override
+    public void setSendInRoaming(boolean value)
+    {
+        preferences.edit()
+                .putBoolean(SEND_IN_ROAMING, value)
+                .apply();
+        emitOnChange(SEND_IN_ROAMING);
     }
 
     private final static String JOURNAL_EXPORTING= "JOURNAL_EXPORTING";
@@ -312,13 +339,13 @@ implements ISettings
         return 10;
     }
 
-    public final static String ANTI_TASK_KILLER_NOTOFICATION = "ANTI_TASK_KILLER_NOTOFICATION";
+    public final static String ANTI_TASKKILLER_NOTOFICATION = "ANTI_TASKKILLER_NOTOFICATION";
                                 //ANTI_TASK_KILLER_NOTOFICATION_TEXT = "ANTI_TASK_KILLER_NOTOFICATION_TEXT",
     private final static String ANTI_TASK_KILLER_NOTOFICATION_ICON = "ANTI_TASK_KILLER_NOTOFICATION_ICON";
     @Override public AntiTaskKillerNotificationParam getAntiTaskKillerNotification()
     {
         return
-                new AntiTaskKillerNotificationParam( preferences.getBoolean(ANTI_TASK_KILLER_NOTOFICATION,false),
+                new AntiTaskKillerNotificationParam( preferences.getBoolean(ANTI_TASKKILLER_NOTOFICATION,false),
                                                 //preferences.getString(ANTI_TASK_KILLER_NOTOFICATION_TEXT, cnt.getText(R.string.app_name).toString()),
                                                 preferences.getInt(ANTI_TASK_KILLER_NOTOFICATION_ICON, 0) );
     }
@@ -327,11 +354,11 @@ implements ISettings
         if(getAntiTaskKillerNotification().equals(param))    return;
 
         preferences.edit()
-                .putBoolean(ANTI_TASK_KILLER_NOTOFICATION, param.visible)
+                .putBoolean(ANTI_TASKKILLER_NOTOFICATION, param.visible)
                 //.putString(ANTI_TASK_KILLER_NOTOFICATION_TEXT, param.text)
                 .putInt(ANTI_TASK_KILLER_NOTOFICATION_ICON, param.iconNum)
                 .apply();
-        emitOnChange(ANTI_TASK_KILLER_NOTOFICATION);
+        emitOnChange(ANTI_TASKKILLER_NOTOFICATION);
     }
 
 

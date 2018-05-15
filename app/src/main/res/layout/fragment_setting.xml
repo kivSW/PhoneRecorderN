@@ -44,6 +44,18 @@
                 android:hint="@string/show_file_extension_hint"
                 android:text="@string/show_file_extension"/>
 
+            <CheckBox
+                android:id="@+id/checkAllowMobileInternet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/allow_mobile_internet"/>
+
+            <CheckBox
+                android:id="@+id/checkAllowRoaming"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/allow_mobile_internet_when_roaming"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">

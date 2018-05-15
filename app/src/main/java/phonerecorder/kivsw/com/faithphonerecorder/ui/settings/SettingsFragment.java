@@ -41,7 +41,9 @@ public class SettingsFragment extends Fragment
     private CheckBox checkBoxCallEnabled,
             checkBoxSmsEnabled,
             checkHiddenMode,
-            checkShowFileExtension;
+            checkShowFileExtension,
+            checkAllowMobileInternet,
+            checkAllowRoaming;
     private TextView textViewPath;
     private ImageView buttonSelDir;
     private Spinner spinnerSoundSource;
@@ -128,6 +130,8 @@ public class SettingsFragment extends Fragment
         checkBoxSmsEnabled = (CheckBox) rootView.findViewById(R.id.checkBoxSmsEnabled);
         checkHiddenMode = (CheckBox) rootView.findViewById(R.id.checkHiddenMode);
         checkShowFileExtension = (CheckBox) rootView.findViewById(R.id.checkShowFileExtension);
+        checkAllowMobileInternet = (CheckBox) rootView.findViewById(R.id.checkAllowMobileInternet);
+        checkAllowRoaming = (CheckBox) rootView.findViewById(R.id.checkAllowRoaming);
         textViewPath = (TextView) rootView.findViewById(R.id.textViewPath);
         buttonSelDir = (ImageView) rootView.findViewById(R.id.buttonSelDir);
         spinnerSoundSource = (Spinner) rootView.findViewById(R.id.spinnerSoundSource);
@@ -179,6 +183,24 @@ public class SettingsFragment extends Fragment
                 if(ignoreChanges) return;
                 if(settings==null) return;
                 settings.setUseFileExtension(checkShowFileExtension.isChecked());
+            }
+        });
+
+        checkAllowMobileInternet .setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(ignoreChanges) return;
+                if(settings==null) return;
+                settings.setUsingMobileInternet(checkAllowMobileInternet.isChecked());
+                checkAllowRoaming.setEnabled(checkAllowMobileInternet.isChecked());
+            }
+        });
+        checkAllowRoaming.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(ignoreChanges) return;
+                if(settings==null) return;
+                settings.setSendInRoaming(checkAllowRoaming.isChecked());
             }
         });
 
@@ -282,18 +304,6 @@ public class SettingsFragment extends Fragment
                 userChangedPermanentNotification();
             }
         });
-        /*editNotificationTitle.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                userChangedPermanentNotification();
-            }
-        });*/
 
         IconSpinnerAdapter iconSpinnerAdapter=IconSpinnerAdapter.create(getContext(), AntiTaskKillerNotification.notificationIcons);
         spinnerNotificationIcon.setAdapter(iconSpinnerAdapter);
@@ -349,10 +359,9 @@ public class SettingsFragment extends Fragment
 
         settings.setAntTaskKillerNotification(new AntiTaskKillerNotificationParam(
                 checkBoxShowNotification.isChecked(),
-                //editNotificationTitle.getText().toString(),
-                spinnerNotificationIcon.getSelectedItemPosition()
-        ));
+                spinnerNotificationIcon.getSelectedItemPosition()  ));
 
+        spinnerNotificationIcon.setEnabled(checkBoxShowNotification.isChecked());
     };
 
 
@@ -375,6 +384,9 @@ public class SettingsFragment extends Fragment
         checkBoxSmsEnabled.setChecked(settings.getEnableSmsRecording());
         checkHiddenMode.setChecked(settings.getHiddenMode());
         checkShowFileExtension.setChecked(settings.getUseFileExtension());
+        checkAllowMobileInternet.setChecked(settings.getUsingMobileInternet());
+        checkAllowRoaming.setChecked(settings.getSendInRoaming());
+        checkAllowRoaming.setEnabled(checkAllowMobileInternet.isChecked());
 
         updateSavePath();
 
