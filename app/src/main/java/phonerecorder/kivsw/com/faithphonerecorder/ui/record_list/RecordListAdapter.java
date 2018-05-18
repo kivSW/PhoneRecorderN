@@ -125,7 +125,10 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.It
 
         holder.nameText.setText(data.callerName);
         holder.phonenumberText.setText(data.recordFileNameData.phoneNumber);
-        holder.durationText.setText(durationToStr(data.recordFileNameData.duration));
+
+        if(data.recordFileNameData.isSMS) holder.durationText.setText("");
+        else holder.durationText.setText(durationToStr(data.recordFileNameData.duration));
+
         holder.dateTimeText.setText(data.recordFileNameData.date+" "+data.recordFileNameData.time);
         holder.commentaryText.setText("");
         holder.checkbox.setChecked(data.selected);

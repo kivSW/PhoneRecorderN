@@ -12,7 +12,7 @@ import io.reactivex.MaybeObserver;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
-import phonerecorder.kivsw.com.faithphonerecorder.model.ErrorProcessor.IErrorProcessor;
+import phonerecorder.kivsw.com.faithphonerecorder.model.error_processor.IErrorProcessor;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.Settings;
 import phonerecorder.kivsw.com.faithphonerecorder.model.task_executor.TaskExecutor;
@@ -139,6 +139,7 @@ public class SettingsPresenter implements SettingsContract.ISettingsPresenter {
                         settings.setSavingUrlPath(s);
                         view.updateSavePath();
                         taskExecutor.startFileSending();
+                        taskExecutor.startSMSreading(); // FIXME
                     }
 
                 });

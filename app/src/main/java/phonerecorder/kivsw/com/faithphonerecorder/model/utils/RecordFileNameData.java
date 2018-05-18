@@ -1,5 +1,7 @@
 package phonerecorder.kivsw.com.faithphonerecorder.model.utils;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -70,7 +72,7 @@ public class RecordFileNameData {
                 else if(info[2].compareToIgnoreCase("income")==0) fd.income=true;
 
                 // phone number
-                fd.phoneNumber = info[3];
+                fd.phoneNumber = decodeStr(info[3]);
 
                 fd.soundSource = info[4];
                 fd.phoneId = info[5];
@@ -84,16 +86,19 @@ public class RecordFileNameData {
 
             };
 
-
             return fd;
         }
 
         public static RecordFileNameData generateNew(String phoneNumber, boolean income, String soundSource, String extension)
         {
+            return generateNew(new Date(), phoneNumber, income, soundSource, extension);
+        }
+        public static RecordFileNameData generateNew(Date date, String phoneNumber, boolean income, String soundSource, String extension)
+        {
 
             SimpleDateFormat sdfD = new SimpleDateFormat("dd.MM.yyyy"),
                     sdfT = new SimpleDateFormat("HH:mm:ss");
-            Date date= new Date();
+
             RecordFileNameData fd= new RecordFileNameData();
 
             fd.date =sdfD.format(date);
@@ -108,6 +113,18 @@ public class RecordFileNameData {
             fd.duration = 0;
 
             return fd;
+        }
+
+        private  String codeStr(String str)
+        {
+           char ch;
+           ch='_';
+           String res=  str.replaceAll("_", String.format("\\\\u%04X", (int)ch));
+           return res;
+        }
+        private static String decodeStr(String str)
+        {
+            return StringEscapeUtils.unescapeJava(str);
         }
 
         public String buildFileName()
@@ -129,7 +146,7 @@ public class RecordFileNameData {
             if(outgoing) sb.append("outgoing_");//2
             else sb.append("income_");
 
-            sb.append(phoneNumber);sb.append("_"); //3
+            sb.append(codeStr(phoneNumber));sb.append("_"); //3
 
             sb.append(soundSource);//4
             sb.append("_");

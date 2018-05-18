@@ -5,13 +5,14 @@ import javax.inject.Singleton;
 import dagger.Component;
 import phonerecorder.kivsw.com.faithphonerecorder.model.CloudCacheModule;
 import phonerecorder.kivsw.com.faithphonerecorder.model.DiskRepresentativeModule;
-import phonerecorder.kivsw.com.faithphonerecorder.model.ErrorProcessor.ErrorProcessorModule;
+import phonerecorder.kivsw.com.faithphonerecorder.model.error_processor.ErrorProcessorModule;
 import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.PersistentDataModule;
 import phonerecorder.kivsw.com.faithphonerecorder.model.player.AndroidPlayerModule;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.SettingsModule;
 import phonerecorder.kivsw.com.faithphonerecorder.model.task_executor.TaskExecutorModule;
 import phonerecorder.kivsw.com.faithphonerecorder.model.tasks.CallRecorder;
 import phonerecorder.kivsw.com.faithphonerecorder.model.tasks.RecordSender;
+import phonerecorder.kivsw.com.faithphonerecorder.model.tasks.SmsReader;
 import phonerecorder.kivsw.com.faithphonerecorder.model.tasks.TaskModule;
 import phonerecorder.kivsw.com.faithphonerecorder.ui.main_activity.MainActivity;
 import phonerecorder.kivsw.com.faithphonerecorder.ui.main_activity.MainActivityModule;
@@ -40,6 +41,7 @@ public interface ApplicationComponent {
 
     CallRecorder getCallRecorder();
     RecordSender getRecordSender();
+    SmsReader getSmsReader();
 
 
 }

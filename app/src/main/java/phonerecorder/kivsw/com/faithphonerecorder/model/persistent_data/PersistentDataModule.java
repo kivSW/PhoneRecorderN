@@ -22,7 +22,7 @@ public class PersistentDataModule {
 
     @Provides
     @Singleton
-    ICallInfoKeeper provideCallInfoKeeper(Context cntx)
+    IPersistentDataKeeper provideCallInfoKeeper(Context cntx)
     {
         return new CallInfoKeeper(cntx);
     }

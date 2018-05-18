@@ -34,7 +34,7 @@ import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 import phonerecorder.kivsw.com.faithphonerecorder.R;
-import phonerecorder.kivsw.com.faithphonerecorder.model.ErrorProcessor.IErrorProcessor;
+import phonerecorder.kivsw.com.faithphonerecorder.model.error_processor.IErrorProcessor;
 import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IJournal;
 import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.Journal;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
@@ -50,7 +50,7 @@ import phonerecorder.kivsw.com.faithphonerecorder.ui.notification.NotificationSh
 public class RecordSender implements ITask {
     private Context context;
     private ISettings settings;
-    private IJournal persistentData;
+    private IJournal journal;
     private IErrorProcessor errorProcessor;
     private DiskContainer disks;
     private TaskExecutor taskExecutor;
@@ -58,10 +58,10 @@ public class RecordSender implements ITask {
 
 
     @Inject
-    public RecordSender(Context context, ISettings settings, IJournal persistentData, DiskContainer disks, TaskExecutor taskExecutor,
+    public RecordSender(Context context, ISettings settings, IJournal journal, DiskContainer disks, TaskExecutor taskExecutor,
                         NotificationShower notification, IErrorProcessor errorProcessor) {
         this.settings = settings;
-        this.persistentData = persistentData;
+        this.journal = journal;
         this.disks = disks;
         this.taskExecutor = taskExecutor;
         this.context = context;
@@ -154,8 +154,7 @@ public class RecordSender implements ITask {
                 isSending=false;
                 errorProcessor.onError(e);
                 taskExecutor.stopFileSending();
-                if(tryToSendAgain)
-                    taskExecutor.startFileSending();
+                checkForStartAgain();
 
             }
 
@@ -163,13 +162,20 @@ public class RecordSender implements ITask {
             public void onComplete() {
                 isSending=false;
                 taskExecutor.stopFileSending();
-                if(tryToSendAgain)
-                    taskExecutor.startFileSending();
+                checkForStartAgain();
+
                 //WatchdogTimer.cancelTimer(context);
             }
         });
 
         return true;
+    }
+
+    private void checkForStartAgain()
+    {
+        if(tryToSendAgain)
+            taskExecutor.startFileSending();
+        tryToSendAgain=false;
     }
 
     @Override

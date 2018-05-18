@@ -14,7 +14,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import phonerecorder.kivsw.com.faithphonerecorder.model.ErrorProcessor.IErrorProcessor;
+import phonerecorder.kivsw.com.faithphonerecorder.model.error_processor.IErrorProcessor;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
 
 /**
@@ -59,7 +59,7 @@ public class Journal implements IJournal {
             removeOldFile();
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            sdf.format(new Date());
+            //sdf.format(new Date());
 
             FileWriter writer = new FileWriter(fileName,true);
             writer.append("\n\n");

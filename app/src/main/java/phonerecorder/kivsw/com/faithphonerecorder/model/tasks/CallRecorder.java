@@ -10,8 +10,8 @@ import java.util.HashMap;
 import javax.inject.Inject;
 
 import phonerecorder.kivsw.com.faithphonerecorder.R;
-import phonerecorder.kivsw.com.faithphonerecorder.model.ErrorProcessor.IErrorProcessor;
-import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.ICallInfoKeeper;
+import phonerecorder.kivsw.com.faithphonerecorder.model.error_processor.IErrorProcessor;
+import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IPersistentDataKeeper;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.SoundSource;
 import phonerecorder.kivsw.com.faithphonerecorder.model.task_executor.TaskExecutor;
@@ -26,7 +26,7 @@ public class CallRecorder implements ITask {
 
     private Context context;
     private ISettings settings;
-    private ICallInfoKeeper callInfoKeeper;
+    private IPersistentDataKeeper callInfoKeeper;
     private IErrorProcessor errorProcessor;
     private TaskExecutor taskExecutor;
     private NotificationShower notification;
@@ -37,7 +37,7 @@ public class CallRecorder implements ITask {
     private RecordFileNameData recordFileNameData;
 
     @Inject
-    public CallRecorder(Context context, ISettings settings, ICallInfoKeeper callInfoKeeper, TaskExecutor taskExecutor, NotificationShower notification, IErrorProcessor errorProcessor) {
+    public CallRecorder(Context context, ISettings settings, IPersistentDataKeeper callInfoKeeper, TaskExecutor taskExecutor, NotificationShower notification, IErrorProcessor errorProcessor) {
         this.context = context;
         this.settings = settings;
         this.callInfoKeeper = callInfoKeeper;
@@ -139,7 +139,7 @@ public class CallRecorder implements ITask {
 
     protected void createRecordFileName()
     {
-        ICallInfoKeeper.CallInfo callInfo=callInfoKeeper.getCallInfo();
+        IPersistentDataKeeper.CallInfo callInfo=callInfoKeeper.getCallInfo();
         recordFileNameData = RecordFileNameData.generateNew(callInfo.number, callInfo.isIncome, soundSourceToStr(), getExtension());
         startTime = SystemClock.elapsedRealtime();
     };

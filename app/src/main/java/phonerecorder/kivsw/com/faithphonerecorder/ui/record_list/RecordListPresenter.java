@@ -43,7 +43,7 @@ import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 import phonerecorder.kivsw.com.faithphonerecorder.R;
-import phonerecorder.kivsw.com.faithphonerecorder.model.ErrorProcessor.IErrorProcessor;
+import phonerecorder.kivsw.com.faithphonerecorder.model.error_processor.IErrorProcessor;
 import phonerecorder.kivsw.com.faithphonerecorder.model.player.IPlayer;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.Settings;
@@ -220,12 +220,14 @@ public class RecordListPresenter
                             if(!m.find()) continue;
                             res.add( getRecordInfo(file.name()) );
                         };
-                        Collections.sort(res, new Comparator<RecordListContract.RecordFileInfo>(){
+
+                        Collections.sort(res, new Comparator<RecordListContract.RecordFileInfo>() {
                             @Override
                             public int compare(RecordListContract.RecordFileInfo o1, RecordListContract.RecordFileInfo o2) {
                                 return o2.recordFileNameData.origFileName.compareTo(o1.recordFileNameData.origFileName);
                             }
                         });
+
                         return res;
                     }
                 })

@@ -3,13 +3,14 @@ package phonerecorder.kivsw.com.faithphonerecorder.os;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.provider.Telephony;
 import android.telephony.PhoneNumberUtils;
 import android.telephony.TelephonyManager;
 
 import javax.inject.Inject;
 
-import phonerecorder.kivsw.com.faithphonerecorder.model.ErrorProcessor.IErrorProcessor;
-import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.ICallInfoKeeper;
+import phonerecorder.kivsw.com.faithphonerecorder.model.error_processor.IErrorProcessor;
+import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IPersistentDataKeeper;
 import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IJournal;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
 import phonerecorder.kivsw.com.faithphonerecorder.model.task_executor.TaskExecutor;
@@ -27,7 +28,8 @@ public class AppReceiver extends android.content.BroadcastReceiver{
 
     @Inject ISettings settings;
     @Inject IJournal journal;
-    @Inject ICallInfoKeeper callInfoKeeper;
+    @Inject
+    IPersistentDataKeeper callInfoKeeper;
     @Inject TaskExecutor taskExecutor;
     @Inject IErrorProcessor errorProcessor;
     @Inject MainActivityPresenter mainActivityPresenter;
@@ -68,6 +70,11 @@ public class AppReceiver extends android.content.BroadcastReceiver{
                 break;
             case AntiTaskKillerNotification.NOTIFICATION_CLICK_ACTION:
                 onNotificationClick();
+                break;
+
+            case Telephony.Sms.Intents.SMS_RECEIVED_ACTION:
+            case Telephony.Sms.Intents.SMS_DELIVER_ACTION:
+                onNewSms();
                 break;
         }
     }
@@ -137,13 +144,13 @@ public class AppReceiver extends android.content.BroadcastReceiver{
 
     protected void startRecording(Context context)
     {
-        ICallInfoKeeper.CallInfo callInfo = callInfoKeeper.getCallInfo();
+        IPersistentDataKeeper.CallInfo callInfo = callInfoKeeper.getCallInfo();
 
         taskExecutor.startCallRecording();
     };
     protected void stopRecording(Context context)
     {
-        ICallInfoKeeper.CallInfo callInfo = callInfoKeeper.getCallInfo();
+        IPersistentDataKeeper.CallInfo callInfo = callInfoKeeper.getCallInfo();
 
         taskExecutor.stopCallRecording();
     };
@@ -151,5 +158,11 @@ public class AppReceiver extends android.content.BroadcastReceiver{
     protected void onNotificationClick()
     {
         mainActivityPresenter.showActivity();
+    };
+    protected void onNewSms()
+    {
+        if(!settings.getEnableSmsRecording())
+            return;
+        taskExecutor.startSMSreading();
     };
 }

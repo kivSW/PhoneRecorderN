@@ -19,11 +19,11 @@ public class TaskExecutor {
     public void startCallRecording()
     {
         AppService.startTask(context, AppService.TASK_CALL_RECORDING);
-    };
+    }
     public void stopCallRecording()
     {
         AppService.stopTask(context, AppService.TASK_CALL_RECORDING);
-    };
+    }
 
     public void startFileSending()
     {
@@ -33,5 +33,14 @@ public class TaskExecutor {
     {
         AppService.stopTask(context, AppService.TASK_SEND_FILES);
     };
+
+    public void startSMSreading()
+    {
+        AppService.startTask(context, AppService.TASK_SMS_READING);
+    }
+    public void stopSMSreading()
+    {
+        AppService.stopTask(context, AppService.TASK_SMS_READING);
+    }
 
 }

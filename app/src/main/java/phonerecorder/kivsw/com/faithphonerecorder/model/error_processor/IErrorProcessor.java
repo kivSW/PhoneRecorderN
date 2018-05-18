@@ -1,4 +1,4 @@
-package phonerecorder.kivsw.com.faithphonerecorder.model.ErrorProcessor;
+package phonerecorder.kivsw.com.faithphonerecorder.model.error_processor;
 
 /**
  * Created by ivan on 5/7/18.

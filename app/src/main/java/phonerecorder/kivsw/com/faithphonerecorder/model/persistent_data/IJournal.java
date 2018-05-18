@@ -2,7 +2,7 @@ package phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data;
 
 import android.content.Intent;
 
-import phonerecorder.kivsw.com.faithphonerecorder.model.ErrorProcessor.IErrorProcessor;
+import phonerecorder.kivsw.com.faithphonerecorder.model.error_processor.IErrorProcessor;
 
 /**
  * Created by ivan on 4/26/18.

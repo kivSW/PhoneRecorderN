@@ -4,7 +4,7 @@ package phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data;
  * Created by ivan on 5/8/18.
  */
 
-public interface ICallInfoKeeper {
+public interface IPersistentDataKeeper {
     class CallInfo
     {
         public String number;
@@ -15,4 +15,9 @@ public interface ICallInfoKeeper {
 
     void setCallInfo(String number, boolean isIncome);
     CallInfo getCallInfo();
+
+    long getLastIncomeSms();
+    void setLastIncomeSms(long v);
+    long getLastOutgoingSms();
+    void setLastOutgoingSms(long v);
 }

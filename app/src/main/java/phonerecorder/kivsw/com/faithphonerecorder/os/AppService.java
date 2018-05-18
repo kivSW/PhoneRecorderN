@@ -44,6 +44,8 @@ public class AppService extends android.app.Service {
                 return MyApplication.getComponent().getCallRecorder();
             case TASK_SEND_FILES:
                 return MyApplication.getComponent().getRecordSender();
+            case TASK_SMS_READING:
+                 return MyApplication.getComponent().getSmsReader();
         };
 
         return null;
@@ -112,8 +114,9 @@ public class AppService extends android.app.Service {
         context.startService(intent);
     }
 
-    final static public String TASK_CALL_RECORDING ="TASK_CALL_RECORDING";
-    final static public String TASK_SEND_FILES ="TASK_SEND_FILES";
+    final static public String TASK_CALL_RECORDING ="TASK_CALL_RECORDING",
+            TASK_SEND_FILES ="TASK_SEND_FILES",
+            TASK_SMS_READING="TASK_SMS_READING";
 
     synchronized public static void startTask(Context context, String action)
     {

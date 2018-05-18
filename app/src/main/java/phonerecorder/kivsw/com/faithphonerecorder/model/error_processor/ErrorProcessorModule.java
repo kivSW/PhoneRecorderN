@@ -1,4 +1,4 @@
-package phonerecorder.kivsw.com.faithphonerecorder.model.ErrorProcessor;
+package phonerecorder.kivsw.com.faithphonerecorder.model.error_processor;
 
 import android.content.Context;
 
