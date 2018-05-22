@@ -215,7 +215,7 @@ implements ISettings {
     @Override public int maxKeptFileAmount(){return 1024*1024;}
     @Override public int getKeptFileAmount()
     {
-        return preferences.getInt(MAX_FILE_AMOUNT, 1000);
+        return preferences.getInt(MAX_FILE_AMOUNT, 10000);
     }
     @Override public void setKeptFileAmount(int value)
     {

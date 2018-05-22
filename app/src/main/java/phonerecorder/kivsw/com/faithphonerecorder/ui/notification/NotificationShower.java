@@ -7,6 +7,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 
 import javax.inject.Inject;
@@ -55,7 +56,7 @@ public class NotificationShower {
 
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
 		mBuilder.setSmallIcon(R.drawable.ic_notification_small_ear);
-		//mBuilder.setLargeIcon( BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_phonerecorder) );
+		mBuilder.setLargeIcon( BitmapFactory.decodeResource(context.getResources(), R.drawable.ear) );
 		mBuilder.setContentTitle(context.getText(R.string.app_name).toString());
 		mBuilder.setContentText(text);
 

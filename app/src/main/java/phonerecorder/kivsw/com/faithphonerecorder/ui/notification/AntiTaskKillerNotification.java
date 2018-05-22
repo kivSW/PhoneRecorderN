@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 
 import javax.inject.Inject;
@@ -41,7 +42,9 @@ public class AntiTaskKillerNotification {
         if(!param.visible) return;
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
-        mBuilder.setSmallIcon(getIconId(param.iconNum));
+        int iconResourceId=getIconId(param.iconNum);
+        mBuilder.setSmallIcon(iconResourceId);
+        mBuilder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(),iconResourceId));
         mBuilder.setOngoing(true);
         //mBuilder.setLargeIcon( BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_phonerecorder) );
         //mBuilder.setContentTitle(param.text);

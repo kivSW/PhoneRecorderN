@@ -36,14 +36,17 @@
 
         <receiver android:name="phonerecorder.kivsw.com.faithphonerecorder.os.AppReceiver"
                   android:enabled="true" >
+            <intent-filter android:priority="2147483647">
+                <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
+                <action android:name="android.provider.Telephony.SMS_DELIVER"/>
+            </intent-filter>
+
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
-                <action android:name="android.provider.Telephony.SMS_DELIVER"/>
 
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>

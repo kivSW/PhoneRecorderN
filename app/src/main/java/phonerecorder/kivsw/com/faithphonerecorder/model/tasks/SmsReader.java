@@ -3,10 +3,12 @@ package phonerecorder.kivsw.com.faithphonerecorder.model.tasks;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -67,6 +69,8 @@ public class SmsReader implements ITask  {
                 List<Sms> out=readSms(false, lastOutgoingSmsId);
 
                 in.addAll(out);
+                Collections.reverse(in);
+                //Collections.sort(in);
                 return in;
             }
         })
@@ -117,13 +121,21 @@ public class SmsReader implements ITask  {
 
     }
 
-    static class Sms
+    static class Sms implements Comparable
     {
         String body,
                address;
         long date;
         int  type;
         boolean isIncome(){return type==1;}
+
+        @Override
+        public int compareTo(@NonNull Object o) {
+            long diff= (date - ((Sms)o).date);
+            if(diff<0) return -1;
+            if(diff>0) return 1;
+            return 0;
+        }
     }
 
     protected List<Sms> readSms(boolean in, long last_id)

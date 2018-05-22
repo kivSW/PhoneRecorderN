@@ -29,17 +29,29 @@ public class ErrorProcessor implements IErrorProcessor {
     @Override
     public void onError(Throwable exception, boolean writeToJournal)
     {
+        StringBuilder message=new StringBuilder();
+
         if(exception instanceof CompositeException)
         {
             List<Throwable> exceptions=((CompositeException)exception).getExceptions();
             for(Throwable t:exceptions)
-                onError(t);
-            return;
+            {
+                message.append(t.getMessage());
+                message.append("\n");
+                if(writeToJournal)
+                    persistentData.journalAdd(t);
+
+            }
+        }
+        else
+        {
+            message.append(exception.getMessage());
+            if(writeToJournal)
+                persistentData.journalAdd(exception);
         }
 
-        if(writeToJournal)
-           persistentData.journalAdd(exception);
 
-        mainActivityPresenter.showErrorMessage(exception.getMessage());
+
+        mainActivityPresenter.showErrorMessage(message.toString());
     };
 }

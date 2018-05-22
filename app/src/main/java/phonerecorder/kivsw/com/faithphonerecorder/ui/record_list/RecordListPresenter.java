@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.SystemClock;
 import android.provider.ContactsContract;
 
 import com.kivsw.cloud.DiskContainer;
@@ -190,10 +191,13 @@ public class RecordListPresenter
             updateDir(false);
     };
 
+    long timeUpdateStart, timeGetFileList, timeFilteredCorrectFiles, timeFilteredList ;
     @Override
     public void updateDir(final boolean scrollToBegin)
     {
         setProgressBarVisible(true);
+
+        timeUpdateStart = SystemClock.elapsedRealtime();
 
         final String dirPath = settings.getCurrentViewUrlPath();
         lastUpdatedDir = dirPath;
@@ -210,6 +214,7 @@ public class RecordListPresenter
 
                     @Override
                     public List<RecordListContract.RecordFileInfo> apply(IDiskIO.ResourceInfo resourceInfo) throws Exception {
+                        timeGetFileList = SystemClock.elapsedRealtime()-timeUpdateStart;
                         List<IDiskIO.ResourceInfo> fileList=resourceInfo.content();
                         List<RecordListContract.RecordFileInfo> res = new ArrayList<>(fileList.size());
                         Pattern p = Pattern.compile(RecordFileNameData.RECORD_PATTERN);//"^[0-9]{8}_[0-9]{6}_"); // this pattern filters the other app's files
@@ -227,6 +232,8 @@ public class RecordListPresenter
                                 return o2.recordFileNameData.origFileName.compareTo(o1.recordFileNameData.origFileName);
                             }
                         });
+
+                        timeFilteredCorrectFiles=SystemClock.elapsedRealtime()-timeUpdateStart;
 
                         return res;
                     }
@@ -291,6 +298,7 @@ public class RecordListPresenter
     protected void setDirContent(List<RecordListContract.RecordFileInfo> recordList, boolean scrollToBegin) {
        this.dirContent=recordList;
        filterContent(scrollToBegin);
+
     }
 
     private String filter;
@@ -566,17 +574,30 @@ public class RecordListPresenter
         })
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Consumer<List<RecordListContract.RecordFileInfo>>() {
+        .subscribe(new SingleObserver<List<RecordListContract.RecordFileInfo>>() {
             @Override
-            public void accept(List<RecordListContract.RecordFileInfo> recordList) throws Exception {
+            public void onSubscribe(Disposable d) { }
+
+            @Override
+            public void onSuccess(List<RecordListContract.RecordFileInfo> recordList) {
                 setVisibleDirContent(recordList,scrollToBegin);
                 setProgressBarVisible(false);
+                timeFilteredList=SystemClock.elapsedRealtime()-timeUpdateStart;
             }
+
+            @Override
+            public void onError(Throwable e) {
+                setProgressBarVisible(false);
+                errorProcessor.onError(e);
+            }
+
        });
     }
 
     protected List<RecordListContract.RecordFileInfo> doFilterContent(List<RecordListContract.RecordFileInfo> dirContent, String filter)
     {
+        if(dirContent==null)
+            return new ArrayList<RecordListContract.RecordFileInfo>();
 
         if(filter==null || filter.length()==0)
             return dirContent;

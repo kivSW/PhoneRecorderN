@@ -25,7 +25,7 @@ public class WatchdogTimer {
 
     static public void setTimer(Context context)
     {
-        int timeout_ms = 60000;
+        int timeout_ms = 60000*60;
         PendingIntent alarmIntent = getAlarmIntent(context);
         AlarmManager am=(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + timeout_ms, alarmIntent);

@@ -3,6 +3,7 @@ package phonerecorder.kivsw.com.faithphonerecorder.model.tasks;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.SystemClock;
 
 import com.kivsw.cloud.DiskContainer;
 import com.kivsw.cloud.disk.IDiskIO;
@@ -70,15 +71,22 @@ public class RecordSender implements ITask {
     }
 
     class NotificationInfo {
-        String name;
-        int totalFileCount=0, currentFileNumber=0;
+        public String name;
+        public int totalFileCount=0, currentFileNumber=0;
+        private long lastUpdateTime=0;
+        final long MIN_UPDATE_INTERVAL=2000;
 
         void updateNotification()
         {
+            long currentTime= SystemClock.elapsedRealtime();
+            if(currentTime-lastUpdateTime < MIN_UPDATE_INTERVAL)
+                return;
+            lastUpdateTime=currentTime;
+
             int percent=-1;
             if(totalFileCount>0)
                 percent = currentFileNumber*100/totalFileCount;
-            String txt=String.format(Locale.US, name, totalFileCount, currentFileNumber);
+            String txt=String.format(Locale.US, name, currentFileNumber, totalFileCount);
             notification.show(txt, percent);
         };
     }
@@ -340,7 +348,7 @@ public class RecordSender implements ITask {
             return false;
         };
 
-        if(!ni.isConnected()) return false;
+        if(ni==null || !ni.isConnected()) return false;
 
         if(ni.getType()==ConnectivityManager.TYPE_MOBILE) {
             if(!settings.getUsingMobileInternet())
