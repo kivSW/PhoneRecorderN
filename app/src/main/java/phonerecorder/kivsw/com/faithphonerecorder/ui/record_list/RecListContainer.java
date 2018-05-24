@@ -6,12 +6,14 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Looper;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
 
 import com.kivsw.cloud.disk.IDiskIO;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -109,7 +111,7 @@ public class RecListContainer {
     {
         checkThread();
         dirContent.clear();
-        visibleDirContent=null;
+        visibleDirContent=Collections.emptyList();
         lastFilteredPosition=0;
         hasData=false;
 
@@ -188,38 +190,63 @@ public class RecListContainer {
          return processingCount>0 || recListFilter.isProcessing();
      }
 
-     final static int PACK_SIZE=1;//20;
+    final static int PACK_SIZE=20;
     protected Observable<List<RecordListContract.RecordFileInfo>> emitFilesAsRecordInfo(final List<IDiskIO.ResourceInfo> fileList)
     {
-        return new Observable<List<RecordListContract.RecordFileInfo>>() {
-            @Override
-            protected void subscribeActual(Observer<? super List<RecordListContract.RecordFileInfo>> observer) {
-
-                Collections.sort(fileList, new Comparator<IDiskIO.ResourceInfo>() {
-                    @Override
-                    public int compare(IDiskIO.ResourceInfo o1, IDiskIO.ResourceInfo o2) {
-                        return o2.name().compareTo(o1.name());
-                    }
-                });
-
-                List<RecordListContract.RecordFileInfo> res = new ArrayList<>(PACK_SIZE);
-                Pattern p = Pattern.compile(RecordFileNameData.RECORD_PATTERN);//"^[0-9]{8}_[0-9]{6}_"); // this pattern filters the other app's files
-                for(IDiskIO.ResourceInfo file:fileList)
+        Iterator<List<RecordListContract.RecordFileInfo>> iterator= new Iterator()
                 {
-                    if(!file.isFile()) continue;
-                    Matcher m = p.matcher(file.name());
-                    if(!m.find()) continue;
-                    res.add( getRecordInfo(file.name()) );
-                    if(res.size()>=PACK_SIZE) {
-                        observer.onNext(res);
-                        res=new ArrayList<>(PACK_SIZE);
+                    private int count=0;
+                    private Pattern p;
+
+                    protected void init()
+                    {
+                        Collections.sort(fileList, new Comparator<IDiskIO.ResourceInfo>() {
+                            @Override
+                            public int compare(IDiskIO.ResourceInfo o1, IDiskIO.ResourceInfo o2) {
+                                return o2.name().compareTo(o1.name());
+                            }
+                        });
+                        p = Pattern.compile(RecordFileNameData.RECORD_PATTERN);//"^[0-9]{8}_[0-9]{6}_"); // this pattern filters the other app's files
                     }
+
+                    @Override
+                    public boolean hasNext() {
+                        return count < fileList.size();
+                    }
+
+                    @Override
+                    public Object next() {
+                        if(count==0)
+                            init();
+
+                        List<RecordListContract.RecordFileInfo> res = new ArrayList<>(PACK_SIZE);
+                        while(count<fileList.size() && res.size()<PACK_SIZE)
+                        {
+                            IDiskIO.ResourceInfo file = fileList.get(count++);
+                            if(!file.isFile()) continue;
+                            Matcher m = p.matcher(file.name());
+                            if(!m.find()) continue;
+                            res.add( getRecordInfo(file.name()) );
+                        }
+                        return res;
+                    }
+
                 };
-                observer.onNext(res);
-                observer.onComplete();
+
+      return Observable.fromIterable(itarableFromIterator(iterator))
+         .subscribeOn(Schedulers.io());
+
+    }
+
+    static<T> Iterable<T> itarableFromIterator(final Iterator<T> i)
+    {
+        return new Iterable<T>() {
+            @NonNull
+            @Override
+            public Iterator<T> iterator() {
+                return i;
             }
-        }
-        .subscribeOn(Schedulers.io());
+        };
     }
     protected RecordListContract.RecordFileInfo getRecordInfo(String fileName)
     {
