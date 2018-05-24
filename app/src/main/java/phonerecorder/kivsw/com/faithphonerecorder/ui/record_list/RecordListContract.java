@@ -1,6 +1,7 @@
 package phonerecorder.kivsw.com.faithphonerecorder.ui.record_list;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 
 import java.util.List;
@@ -13,7 +14,7 @@ import phonerecorder.kivsw.com.faithphonerecorder.model.utils.RecordFileNameData
  */
 
 public class RecordListContract {
-    static class RecordFileInfo // class holds data of a record to be visualized
+    static class RecordFileInfo implements Comparable// class holds data of a record to be visualized
     {
         RecordFileNameData recordFileNameData;
         boolean selected;
@@ -22,6 +23,12 @@ public class RecordListContract {
         boolean isDownloading;
         int percentage;
         int visiblePosition;
+
+        @Override
+        public int compareTo(@NonNull Object o) {
+            RecordFileInfo other=(RecordFileInfo)o;
+            return recordFileNameData.origFileName.compareTo(other.recordFileNameData.origFileName);
+        }
     }
     interface IRecordListPresenter  extends com.kivsw.mvprxdialog.Contract.IPresenter
     {
