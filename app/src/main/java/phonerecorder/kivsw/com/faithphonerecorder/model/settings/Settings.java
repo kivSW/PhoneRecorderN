@@ -142,6 +142,7 @@ implements ISettings {
     private final static String JOURNAL_EXPORTING= "JOURNAL_EXPORTING";
     @Override
     public boolean getJournalExporting() {
+        //return false;
         return preferences.getBoolean(USE_FILE_EXTENSION,true);
     }
 

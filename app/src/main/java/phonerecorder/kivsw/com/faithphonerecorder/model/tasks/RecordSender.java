@@ -28,6 +28,7 @@ import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Function;
@@ -70,11 +71,13 @@ public class RecordSender implements ITask {
         this.errorProcessor = errorProcessor;
     }
 
-    class NotificationInfo {
+    class SendingParam {
         public String name;
         public int totalFileCount=0, currentFileNumber=0;
         private long lastUpdateTime=0;
         final long MIN_UPDATE_INTERVAL=2000;
+
+        public int errorCount=0;
 
         void updateNotification()
         {
@@ -89,12 +92,147 @@ public class RecordSender implements ITask {
             String txt=String.format(Locale.US, name, currentFileNumber, totalFileCount);
             notification.show(txt, percent);
         };
+
+        FileEmitter fileEmmiter;
     }
 
 
+    class FileEmitter implements ObservableSource<String>
+    {
+        private Observer observer=null;
+        private String[] files;
+        private int count;
+
+
+        FileEmitter(@NonNull String[] files) {
+            this.files = files;
+            count=0;
+        }
+
+        public void subscribe(@NonNull Observer observer)
+        {
+            this.observer=observer;
+            emitNext();
+        };
+
+        public void emitNext()
+        {
+            if(count<files.length)
+                observer.onNext(files[count++]);
+            else
+                observer.onComplete();
+        }
+    }
+
     private boolean isSending=false, tryToSendAgain=false;
     private int sentFileCount=0;
-    @Override
+
+    public boolean startTask() {
+
+        if(isSending) {
+            tryToSendAgain=true;
+            return false;
+        }
+
+        WatchdogTimer.setTimer(context);
+
+        final String srcPath=settings.getInternalTempPath();
+        final String dstPath= settings.getSavingUrlPath();
+
+        if(!checkSendCondition(dstPath))
+            return false;
+
+        final SendingParam sendingParam=new SendingParam();
+        sendingParam.name = context.getText(R.string.rec_sending).toString();
+
+        isSending=true;
+        sentFileCount=0;
+
+        Single.fromCallable(new Callable<String[]>() {
+            @Override
+            public String[] call() throws Exception {
+                String[] fileList = getRecordFileList(srcPath);
+                sendingParam.totalFileCount = fileList.length;
+                sendingParam.currentFileNumber=0;
+                sendingParam.updateNotification();
+                return fileList;
+            }
+        })
+        .subscribeOn(Schedulers.io())
+        //.subscribeOn(Schedulers.newThread())
+        .flatMapObservable(new Function<String[], ObservableSource<String> >(){
+            @Override
+            public ObservableSource<String> apply(String[] fileList) throws Exception {
+            sendingParam.fileEmmiter = new FileEmitter(fileList);
+            return sendingParam.fileEmmiter;//Observable.fromArray(fileList);
+            }
+        })
+
+        .flatMap(new Function<String, ObservableSource<Integer>>(){
+            @Override
+            public ObservableSource<Integer> apply(String file) throws Exception {
+                sendingParam.currentFileNumber++;
+                sendingParam.updateNotification();
+
+                final String source =srcPath + file;
+                String destination = dstPath + file;
+                return createUploadObservable(source, destination)
+                        .doOnComplete(new Action() {
+                            @Override
+                            public void run() throws Exception {
+                                sentFileCount++;
+                                sendingParam.fileEmmiter.emitNext();
+                            }
+                        });
+                        /*.onErrorResumeNext(new Function<Throwable, Observable<Integer>>(){
+                            @Override
+                            public Observable apply(Throwable throwable) throws Exception {
+                                errorProcessor.onError(throwable);
+                                sendingParam.fileEmmiter.emitNext();
+                                return Observable.empty();
+                            }
+                        });*/
+            };
+        })
+
+       .concatWith(Observable.just("").flatMap(new Function<Object, ObservableSource<Integer>>() {
+                    @Override
+                    public ObservableSource<Integer> apply(Object v) throws Exception {
+                        return createDeleteOldFilesCompletable(dstPath).toObservable();
+                    }
+                }))
+
+        .subscribeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Observer<Object>() {
+            @Override
+            public void onSubscribe(Disposable d) {}
+
+            @Override
+            public void onNext(Object v) {}
+
+            @Override
+            public void onError(Throwable e) {
+                isSending=false;
+                errorProcessor.onError(e);
+                taskExecutor.stopFileSending();
+                checkForStartAgain();
+
+            }
+
+            @Override
+            public void onComplete() {
+                isSending=false;
+                taskExecutor.stopFileSending();
+                checkForStartAgain();
+
+                //WatchdogTimer.cancelTimer(context);
+            }
+        });
+
+        return true;
+    }
+
+/*    @Override
     public boolean startTask() {
 
         if(isSending) {
@@ -129,6 +267,7 @@ public class RecordSender implements ITask {
         .flatMapObservable(new Function<String[], ObservableSource<String> >(){
             @Override
             public ObservableSource<String> apply(String[] fileList) throws Exception {
+
                 return Observable.fromArray(fileList);
             }
         })
@@ -177,7 +316,7 @@ public class RecordSender implements ITask {
         });
 
         return true;
-    }
+    }*/
 
     private void checkForStartAgain()
     {
@@ -194,9 +333,9 @@ public class RecordSender implements ITask {
            onCopyObservable.onNext("");
     }
 
-    protected String[] getRecordFileList(String LocalDir)
+    protected String[] getRecordFileList(String localDir)
     {
-        File dir=new File(LocalDir);
+        File dir=new File(localDir);
         String pattern;
         if(settings.getJournalExporting()) pattern = "("+RecordFileNameData.RECORD_PATTERN+"|^"+Journal.JOURNAL_FILE_NAME+")";
         else            pattern = RecordFileNameData.RECORD_PATTERN;
@@ -211,8 +350,23 @@ public class RecordSender implements ITask {
         });
         if(fileList==null)
             fileList = new String[0];
-        return fileList;
+
+        return removeEmptyFiles(localDir, fileList);
     }
+
+    protected String[] removeEmptyFiles(String localDir, String[] fileList)
+    {
+        ArrayList<String> res = new ArrayList(fileList.length);
+        for(String fileName:fileList)
+        {
+            File file=new File(localDir, fileName);
+            if(!file.exists() || file.length()<1)
+                file.delete();
+            else
+                res.add(fileName);
+        };
+        return res.toArray(new String[res.size()]);
+    };
 
     protected Observable<Integer> createUploadObservable(final String source, String destination)
     {
@@ -224,26 +378,33 @@ public class RecordSender implements ITask {
                     .doOnComplete(new Action() {
                         @Override
                         public void run() throws Exception {
-                            if(source.indexOf(Journal.JOURNAL_FILE_NAME)>=0) // do not delete journal file
+                            if(source.contains(Journal.JOURNAL_FILE_NAME)) // do not delete journal file
                                 return;
-                            sentFileCount++;
+                           // sentFileCount++;
                             File file = new File(source);
                             file.delete();
                         }
-                    })
-                    .onErrorResumeNext(new Function<Throwable, Observable<Integer>>(){
+                    });
+                    /*.onErrorResumeNext(new Function<Throwable, Observable<Integer>>(){
                         @Override
                         public Observable<Integer> apply(Throwable throwable) throws Exception {
                             errorProcessor.onError(throwable);
                             return Observable.empty();
                         }
-                    });
+                    });*/
     };
 
     protected Completable createDeleteOldFilesCompletable(final String dstPath)
     {
-        final NotificationInfo notificationInfo=new NotificationInfo();
+        boolean hasDataSizeLimit = settings.getDataSizeLimitation();
+        boolean hasFileAmountLimit = settings.getFileAmountLimitation();
+        if(!hasDataSizeLimit && !hasFileAmountLimit)
+            return Completable.complete();
+
+        final SendingParam notificationInfo=new SendingParam();
         notificationInfo.name = context.getText(R.string.rec_deleting).toString();
+
+        notification.show(context.getText(R.string.prepare_rec_deleting).toString());
 
         return
         disks.getResourceInfo(dstPath)

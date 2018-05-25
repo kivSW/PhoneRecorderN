@@ -29,10 +29,10 @@ import phonerecorder.kivsw.com.faithphonerecorder.model.error_processor.IErrorPr
 import phonerecorder.kivsw.com.faithphonerecorder.model.utils.RecordFileNameData;
 
 /**
- * Created by ivan on 5/22/18.
+ * this class holds a dir's content
  */
 
-public class RecListContainer {
+class RecListContainer {
 
     private Context appContext;
     private IErrorProcessor errorProcessor;
@@ -41,9 +41,7 @@ public class RecListContainer {
     private List<RecordListContract.RecordFileInfo> visibleDirContent=null;
     private RecListFilter recListFilter;
     private Disposable filterDisposable;
-    //private String filter;
     private boolean hasData;
-    private int lastFilteredPosition;
 
     private Subject<RecListContainer> contentReadyObservable;
     private int processingCount=0;
@@ -54,8 +52,7 @@ public class RecListContainer {
         this.errorProcessor = errorProcessor;
         dirContent=new ArrayList<>();
         visibleDirContent = Collections.emptyList();
-        lastFilteredPosition=0;
-        //filter="";
+
         hasData = false;
         contentReadyObservable = PublishSubject.create();
 
@@ -112,17 +109,15 @@ public class RecListContainer {
         checkThread();
         dirContent.clear();
         visibleDirContent=Collections.emptyList();
-        lastFilteredPosition=0;
         hasData=false;
 
-    };
+    }
 
     private Disposable recordInfoSubscription=null;
     public void setFileList(List<IDiskIO.ResourceInfo> fileList)
     {
         checkThread();
         hasData = true;
-        lastFilteredPosition=0;
 
         if(recordInfoSubscription!=null && !recordInfoSubscription.isDisposed())
             recordInfoSubscription.dispose();
@@ -168,14 +163,13 @@ public class RecListContainer {
     public void setFilter(String filter)
     {
         checkThread();
-        lastFilteredPosition=0;
         visibleDirContent=new ArrayList<>(dirContent.size());
         if(filter==null) filter="";
 
         recListFilter.clearData();
         recListFilter.setFilter(filter);
         recListFilter.addData(dirContent);
-    };
+    }
 
     public boolean hasData()
     {
@@ -184,7 +178,7 @@ public class RecListContainer {
     public List<RecordListContract.RecordFileInfo> getVisibleDirContent()
     {
         return visibleDirContent;
-    };
+    }
      public boolean isProcessing()
      {
          return processingCount>0 || recListFilter.isProcessing();
@@ -193,7 +187,7 @@ public class RecListContainer {
     final static int PACK_SIZE=20;
     protected Observable<List<RecordListContract.RecordFileInfo>> emitFilesAsRecordInfo(final List<IDiskIO.ResourceInfo> fileList)
     {
-        Iterator<List<RecordListContract.RecordFileInfo>> iterator= new Iterator()
+        Iterator<List<RecordListContract.RecordFileInfo>> iterator= new Iterator<List<RecordListContract.RecordFileInfo>>()
                 {
                     private int count=0;
                     private Pattern p;
@@ -215,7 +209,7 @@ public class RecListContainer {
                     }
 
                     @Override
-                    public Object next() {
+                    public List<RecordListContract.RecordFileInfo> next() {
                         if(count==0)
                             init();
 
@@ -254,7 +248,7 @@ public class RecListContainer {
         item.recordFileNameData = RecordFileNameData.decipherFileName(fileName);
         item. callerName = getNameFromNumber(item.recordFileNameData.phoneNumber);
         return item;
-    };
+    }
 
 
     /** finds and returns name that corresponds phoneNumber
@@ -280,7 +274,7 @@ public class RecListContainer {
         }
         if (res == null) res = "";
         return res;
-    };
+    }
 
 
 }

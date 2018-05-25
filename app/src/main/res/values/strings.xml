@@ -14,6 +14,7 @@
 
     <string name="rec_sending">Sending %d records of %d</string>
     <string name="rec_deleting">Deleting old records:%d of %d </string>
+    <string name="prepare_rec_deleting">Preparing to delete old records</string>
     <string name="recording_call">Recording call</string>
 
 </resources>

@@ -15,7 +15,7 @@ import io.reactivex.subjects.Subject;
 import phonerecorder.kivsw.com.faithphonerecorder.model.error_processor.IErrorProcessor;
 
 /**
- * Created by ivan on 5/22/18.
+ * This class filters record list and emits olny visible items
  */
 
 public class RecListFilter {
@@ -55,12 +55,12 @@ public class RecListFilter {
                 .map(new Function<List<RecordListContract.RecordFileInfo>, List<RecordListContract.RecordFileInfo>>() {
                     @Override
                     public List<RecordListContract.RecordFileInfo> apply(List<RecordListContract.RecordFileInfo> records) throws Exception {
-                        List<RecordListContract.RecordFileInfo> res = new ArrayList(records.size());
+                        List<RecordListContract.RecordFileInfo> res = new ArrayList<RecordListContract.RecordFileInfo>(records.size());
                         for(RecordListContract.RecordFileInfo item:records)
                         {
                             if(checkFilter(item, filter))
                                 res.add(item);
-                        };
+                        }
                         return res;
                     }
                 })
@@ -89,7 +89,7 @@ public class RecListFilter {
                             }
                             records.get(i-1).compareTo(records.get(i));
                             Collections.sort(records, Collections.reverseOrder());
-                        };
+                        }
                         subject.onNext(records);
                         eventCount--;
                     }
@@ -107,8 +107,8 @@ public class RecListFilter {
     }
     protected boolean checkFilter(RecordListContract.RecordFileInfo fileData, String filter)
     {
-        if (fileData.recordFileNameData.phoneNumber.indexOf(filter) >= 0) return true;
-        if (fileData.callerName.toLowerCase().indexOf(filter) >= 0) return true;
+        if (fileData.recordFileNameData.phoneNumber.contains(filter)) return true;
+        if (fileData.callerName.toLowerCase().contains(filter)) return true;
 
         return false;
     }
@@ -122,22 +122,22 @@ public class RecListFilter {
     {
         records.clear();
         createProcessChain();
-    };
+    }
 
     public void addData(List<RecordListContract.RecordFileInfo> newRecords)
     {
         eventCount++;
         processChain.onNext(newRecords);
-    };
+    }
 
     public boolean isProcessing()
     {
         return eventCount>0;
-    };
+    }
 
     public void setFilter(String filter)
     {
         this.filter = filter.toLowerCase();
-    };
+    }
 
 }
