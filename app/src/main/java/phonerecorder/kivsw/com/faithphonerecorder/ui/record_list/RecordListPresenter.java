@@ -462,7 +462,7 @@ public class RecordListPresenter
     protected void notifyRecordChange(RecordListContract.RecordFileInfo recordFileInfo)
     {
         if (view != null)
-                            view.onRecordChanged(recordFileInfo.visiblePosition);
+                     view.onRecordChanged(recordFileInfo.visiblePosition);
     }
 
     private void showSMS(RecordListContract.RecordFileInfo recordFileInfo, String localFileName)
@@ -470,16 +470,44 @@ public class RecordListPresenter
         if(view==null)
             return;
 
-        String title, text;
-        if(recordFileInfo.recordFileNameData.income)
-            title = appContext.getText(R.string.from) + recordFileInfo.recordFileNameData.phoneNumber + " "+recordFileInfo.callerName;
-        else
-            title = appContext.getText(R.string.to) + recordFileInfo.recordFileNameData.phoneNumber + " "+recordFileInfo.callerName;
-        text = SimpleFileReader.readFile(localFileName);
+        String title, lbl;
+        StringBuilder text = new StringBuilder();
 
+        if(recordFileInfo.recordFileNameData.income)
+            lbl = appContext.getText(R.string.from).toString();
+        else
+            lbl = appContext.getText(R.string.to).toString();
+
+        title = "SMS";
+
+        text.append("<b>");    text.append(lbl);    text.append(" ");  text.append("</b>");
+
+        if(recordFileInfo.callerName.isEmpty()) {
+            text.append("<big>");
+            text.append(recordFileInfo.recordFileNameData.phoneNumber);
+            text.append("</big>");
+        }
+        else {
+            text.append("<big>");
+            text.append(recordFileInfo.callerName);
+            text.append("</big><br>");
+
+            text.append("<b>");
+            for (int i=-1;i<lbl.length();i++)
+                text.append("&nbsp");
+            text.append("</b>");
+
+            text.append("<small>");
+            text.append(recordFileInfo.recordFileNameData.phoneNumber);
+            text.append("</small>");
+        }
+
+        text.append("<br><br><i>");
+        text.append( SimpleFileReader.readFile(localFileName) );
+        text.append("</i>");
 
         MvpMessageBoxBuilder.newInstance()
-                .setText(title, text)
+                .setText(title, text.toString())
                 .build(view.getFragmentManager());
 
     }
