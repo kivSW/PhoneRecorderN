@@ -33,6 +33,8 @@
     <string name="show_file_extension_hint">Use natural .3gp file extension</string>
     <string name="allow_mobile_internet">Allow using mobile internet</string>
     <string name="allow_mobile_internet_when_roaming">Allow using mobile internet when roaming</string>
+    <string name="journal_export">Export journal</string>
+    <string name="use_internal_player">Use internal player</string>
 
     <string name="data_file_path">Data path:</string>
     <string name="sound_source">Sound source:</string>

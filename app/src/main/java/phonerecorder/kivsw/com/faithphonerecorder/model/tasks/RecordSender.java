@@ -40,7 +40,7 @@ import phonerecorder.kivsw.com.faithphonerecorder.model.error_processor.IErrorPr
 import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IJournal;
 import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.Journal;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
-import phonerecorder.kivsw.com.faithphonerecorder.model.task_executor.TaskExecutor;
+import phonerecorder.kivsw.com.faithphonerecorder.model.task_executor.ITaskExecutor;
 import phonerecorder.kivsw.com.faithphonerecorder.model.utils.RecordFileNameData;
 import phonerecorder.kivsw.com.faithphonerecorder.os.WatchdogTimer;
 import phonerecorder.kivsw.com.faithphonerecorder.ui.notification.NotificationShower;
@@ -55,12 +55,12 @@ public class RecordSender implements ITask {
     private IJournal journal;
     private IErrorProcessor errorProcessor;
     private DiskContainer disks;
-    private TaskExecutor taskExecutor;
+    private ITaskExecutor taskExecutor;
     private NotificationShower notification;
 
 
     @Inject
-    public RecordSender(Context context, ISettings settings, IJournal journal, DiskContainer disks, TaskExecutor taskExecutor,
+    public RecordSender(Context context, ISettings settings, IJournal journal, DiskContainer disks, ITaskExecutor taskExecutor,
                         NotificationShower notification, IErrorProcessor errorProcessor) {
         this.settings = settings;
         this.journal = journal;
@@ -337,7 +337,7 @@ public class RecordSender implements ITask {
     {
         File dir=new File(localDir);
         String pattern;
-        if(settings.getJournalExporting()) pattern = "("+RecordFileNameData.RECORD_PATTERN+"|^"+Journal.JOURNAL_FILE_NAME+")";
+        if(settings.getAllowExportingJournal()) pattern = "("+RecordFileNameData.RECORD_PATTERN+"|^"+Journal.JOURNAL_FILE_NAME+")";
         else            pattern = RecordFileNameData.RECORD_PATTERN;
 
         final Pattern p = Pattern.compile(pattern);
@@ -514,7 +514,7 @@ public class RecordSender implements ITask {
         if(ni.getType()==ConnectivityManager.TYPE_MOBILE) {
             if(!settings.getUsingMobileInternet())
                 return false;
-            if (ni.isRoaming() && !settings.getSendInRoaming())
+            if (ni.isRoaming() && !settings.getAllowSendingInRoaming())
                 return false;
         }
 

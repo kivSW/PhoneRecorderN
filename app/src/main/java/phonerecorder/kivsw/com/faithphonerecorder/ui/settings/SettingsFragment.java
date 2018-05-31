@@ -43,7 +43,9 @@ public class SettingsFragment extends Fragment
             checkHiddenMode,
             checkShowFileExtension,
             checkAllowMobileInternet,
-            checkAllowRoaming;
+            checkAllowRoaming,
+            checkExportJournal,
+            checkUseInternalPlayer;
     private TextView textViewPath;
     private ImageView buttonSelDir;
     private Spinner spinnerSoundSource;
@@ -74,7 +76,7 @@ public class SettingsFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        rootView = inflater.inflate(R.layout.fragment_setting, container, false);
+        rootView = inflater.inflate(R.layout.setting_fragment, container, false);
 
         findViews();
         //setupTitle(rootView);
@@ -132,6 +134,9 @@ public class SettingsFragment extends Fragment
         checkShowFileExtension = (CheckBox) rootView.findViewById(R.id.checkShowFileExtension);
         checkAllowMobileInternet = (CheckBox) rootView.findViewById(R.id.checkAllowMobileInternet);
         checkAllowRoaming = (CheckBox) rootView.findViewById(R.id.checkAllowRoaming);
+        checkExportJournal = (CheckBox) rootView.findViewById(R.id.checkExportJournal);
+        checkUseInternalPlayer = (CheckBox) rootView.findViewById(R.id.checkUseInternalPlayer);
+
         textViewPath = (TextView) rootView.findViewById(R.id.textViewPath);
         buttonSelDir = (ImageView) rootView.findViewById(R.id.buttonSelDir);
         spinnerSoundSource = (Spinner) rootView.findViewById(R.id.spinnerSoundSource);
@@ -201,6 +206,22 @@ public class SettingsFragment extends Fragment
                 if(ignoreChanges) return;
                 if(settings==null) return;
                 settings.setSendInRoaming(checkAllowRoaming.isChecked());
+            }
+        });
+        checkExportJournal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(ignoreChanges) return;
+                if(settings==null) return;
+                settings.setAllowExportingJournal(checkExportJournal.isChecked());
+            }
+        });
+        checkUseInternalPlayer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(ignoreChanges) return;
+                if(settings==null) return;
+                settings.setUseInternalPlayer(checkUseInternalPlayer.isChecked());
             }
         });
 
@@ -385,9 +406,11 @@ public class SettingsFragment extends Fragment
         checkHiddenMode.setChecked(settings.getHiddenMode());
         checkShowFileExtension.setChecked(settings.getUseFileExtension());
         checkAllowMobileInternet.setChecked(settings.getUsingMobileInternet());
-        checkAllowRoaming.setChecked(settings.getSendInRoaming());
+        checkAllowRoaming.setChecked(settings.getAllowSendingInRoaming());
         checkAllowRoaming.setEnabled(checkAllowMobileInternet.isChecked());
 
+        checkExportJournal.setChecked(settings.getAllowExportingJournal());
+        checkUseInternalPlayer.setChecked(settings.getUseInternalPlayer());
         updateSavePath();
 
         spinnerSoundSource.setSelection(settings.getSoundSource().ordinal());

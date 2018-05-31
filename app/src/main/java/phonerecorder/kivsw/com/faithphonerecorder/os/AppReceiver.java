@@ -13,7 +13,7 @@ import phonerecorder.kivsw.com.faithphonerecorder.model.error_processor.IErrorPr
 import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IPersistentDataKeeper;
 import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IJournal;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
-import phonerecorder.kivsw.com.faithphonerecorder.model.task_executor.TaskExecutor;
+import phonerecorder.kivsw.com.faithphonerecorder.model.task_executor.ITaskExecutor;
 import phonerecorder.kivsw.com.faithphonerecorder.model.utils.MyConfiguration;
 import phonerecorder.kivsw.com.faithphonerecorder.ui.main_activity.MainActivity;
 import phonerecorder.kivsw.com.faithphonerecorder.ui.main_activity.MainActivityPresenter;
@@ -30,7 +30,7 @@ public class AppReceiver extends android.content.BroadcastReceiver{
     @Inject IJournal journal;
     @Inject
     IPersistentDataKeeper callInfoKeeper;
-    @Inject TaskExecutor taskExecutor;
+    @Inject ITaskExecutor taskExecutor;
     @Inject IErrorProcessor errorProcessor;
     @Inject MainActivityPresenter mainActivityPresenter;
 

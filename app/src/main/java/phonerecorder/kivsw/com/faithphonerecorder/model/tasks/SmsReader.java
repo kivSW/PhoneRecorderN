@@ -25,7 +25,7 @@ import phonerecorder.kivsw.com.faithphonerecorder.model.error_processor.IErrorPr
 import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IJournal;
 import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IPersistentDataKeeper;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
-import phonerecorder.kivsw.com.faithphonerecorder.model.task_executor.TaskExecutor;
+import phonerecorder.kivsw.com.faithphonerecorder.model.task_executor.ITaskExecutor;
 import phonerecorder.kivsw.com.faithphonerecorder.model.utils.RecordFileNameData;
 import phonerecorder.kivsw.com.faithphonerecorder.ui.notification.NotificationShower;
 
@@ -38,12 +38,12 @@ public class SmsReader implements ITask  {
     private Context context;
     private ISettings settings;
     private IJournal journal;
-    private TaskExecutor taskExecutor;
+    private ITaskExecutor taskExecutor;
     private NotificationShower notification;
     private IErrorProcessor errorProcessor;
     private IPersistentDataKeeper persistentDataKeeper;
 
-    public SmsReader(Context context, ISettings settings, IJournal journal, IPersistentDataKeeper persistentDataKeeper, TaskExecutor taskExecutor, NotificationShower notification, IErrorProcessor errorProcessor)
+    public SmsReader(Context context, ISettings settings, IJournal journal, IPersistentDataKeeper persistentDataKeeper, ITaskExecutor taskExecutor, NotificationShower notification, IErrorProcessor errorProcessor)
     {
         this.context=context;
         this.settings=settings;

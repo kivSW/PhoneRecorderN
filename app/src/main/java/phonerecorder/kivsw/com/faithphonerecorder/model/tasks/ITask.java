@@ -7,5 +7,5 @@ package phonerecorder.kivsw.com.faithphonerecorder.model.tasks;
 
 public interface ITask {
     boolean startTask(); // return true if a new task has been started
-    void stopTask();
+    void stopTask();     // notify the task it must be stopped
 }

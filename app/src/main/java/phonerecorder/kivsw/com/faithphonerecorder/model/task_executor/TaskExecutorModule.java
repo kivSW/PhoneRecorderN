@@ -14,8 +14,8 @@ import dagger.Provides;
 public class TaskExecutorModule {
     @Singleton
     @Provides
-    TaskExecutor provideTaskExecutor(Context context)
+    ITaskExecutor provideTaskExecutor(Context context)
     {
-        return new TaskExecutor(context);
+            return new TaskExecutor(context);
     };
 }

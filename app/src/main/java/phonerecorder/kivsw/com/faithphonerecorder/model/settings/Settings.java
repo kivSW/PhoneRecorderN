@@ -126,7 +126,7 @@ implements ISettings {
 
     private final static String SEND_IN_ROAMING = "SEND_IN_ROAMING";
     @Override
-    public boolean getSendInRoaming() {
+    public boolean getAllowSendingInRoaming() {
         return preferences.getBoolean(SEND_IN_ROAMING, false);
     }
 
@@ -141,18 +141,34 @@ implements ISettings {
 
     private final static String JOURNAL_EXPORTING= "JOURNAL_EXPORTING";
     @Override
-    public boolean getJournalExporting() {
+    public boolean getAllowExportingJournal() {
         //return false;
-        return preferences.getBoolean(USE_FILE_EXTENSION,true);
+        return preferences.getBoolean(JOURNAL_EXPORTING,true);
     }
 
     @Override
-    public void setJournalExporting(boolean value) {
+    public void setAllowExportingJournal(boolean value) {
         preferences.edit()
                 .putBoolean(JOURNAL_EXPORTING, value)
                 .apply();
         emitOnChange(JOURNAL_EXPORTING);
     }
+
+    private final static String USE_INTERNAL_PLAYER= "USE_INTERNAL_PLAYER";
+    @Override
+    public boolean getUseInternalPlayer()
+    {
+         return preferences.getBoolean(USE_INTERNAL_PLAYER,true);
+    };
+
+    @Override
+    public void setUseInternalPlayer(boolean value)
+    {
+        preferences.edit()
+                .putBoolean(USE_INTERNAL_PLAYER, value)
+                .apply();
+        emitOnChange(USE_INTERNAL_PLAYER);
+    };
 
     private final static String SAVING_PATH = "SAVING_PATH";
     @Override public String getSavingUrlPath()

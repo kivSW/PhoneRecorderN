@@ -27,11 +27,14 @@ public interface ISettings {
 
     boolean getUsingMobileInternet();
     void setUsingMobileInternet(boolean value);
-    boolean getSendInRoaming();
+    boolean getAllowSendingInRoaming();
     void setSendInRoaming(boolean value);
 
-    boolean getJournalExporting();
-    void setJournalExporting(boolean value);
+    boolean getAllowExportingJournal();
+    void setAllowExportingJournal(boolean value);
+
+    boolean getUseInternalPlayer();
+    void setUseInternalPlayer(boolean value);
 
     String getSavingUrlPath();
     void setSavingUrlPath(String value);

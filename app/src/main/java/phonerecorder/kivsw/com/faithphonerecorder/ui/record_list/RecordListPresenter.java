@@ -43,6 +43,7 @@ import phonerecorder.kivsw.com.faithphonerecorder.model.settings.Settings;
 import phonerecorder.kivsw.com.faithphonerecorder.model.tasks.RecordSender;
 import phonerecorder.kivsw.com.faithphonerecorder.model.utils.RecordFileNameData;
 import phonerecorder.kivsw.com.faithphonerecorder.model.utils.SimpleFileReader;
+import phonerecorder.kivsw.com.faithphonerecorder.os.MyApplication;
 
 /**
  * Created by ivan on 3/27/18.
@@ -52,12 +53,11 @@ public class RecordListPresenter
         implements RecordListContract.IRecordListPresenter
 {
     private ISettings settings;
-    private IPlayer player;
     private DiskContainer disks;
     private RecordListContract.IRecordListView view;
     private CloudCache cloudCache;
     private IErrorProcessor errorProcessor;
-    private RecordSender recordSender;
+
     private Context appContext;
     private RecListContainer recListContainer;
     //private List<RecordListContract.RecordFileInfo> visibleDirContent;
@@ -66,15 +66,13 @@ public class RecordListPresenter
     private Disposable settingsDisposable;
 
     @Inject
-    public RecordListPresenter(Context appContext, ISettings settings, IPlayer player, DiskContainer disks, CloudCache cloudCache, IErrorProcessor errorProcessor, RecordSender recordSender)
+    public RecordListPresenter(Context appContext, ISettings settings, DiskContainer disks, CloudCache cloudCache, IErrorProcessor errorProcessor, RecordSender recordSender)
     {
         this.settings = settings;
-        this.player = player;
         this.disks = disks;
         this.appContext = appContext;
         this.cloudCache = cloudCache;
         this.errorProcessor = errorProcessor;
-        this.recordSender = recordSender;
 
         settingsDisposable=null;
         lastUpdatedDir = "";
@@ -115,6 +113,14 @@ public class RecordListPresenter
                 @Override public void onComplete() {}
             });
     };
+
+    protected IPlayer providePlayerInstance()
+    {
+        if(settings.getUseInternalPlayer())
+            return MyApplication.getComponent().getInnerPlayer();
+        else
+            return MyApplication.getComponent().getAndroidPlayer();
+    }
 
 
     @Override
@@ -357,6 +363,7 @@ public class RecordListPresenter
     @Override
     public void playItem(int pos) {
         try{
+
             final RecordListContract.RecordFileInfo recordFileInfo = recListContainer.getVisibleDirContent().get(pos);//visibleDirContent.get(pos);
 
             getCachedFile(recordFileInfo)
@@ -368,8 +375,11 @@ public class RecordListPresenter
                                 if(recordFileInfo.recordFileNameData.isSMS)
                                     showSMS(recordFileInfo, cacheFileInfo.localName);
                                 else
-                                    if(view!=null)
-                                       player.play(view.getContext(), cacheFileInfo.localName);
+                                    if(view!=null) {
+                                        IPlayer player = providePlayerInstance();
+                                        player.setUiParam(recordFileInfo.callerName, recordFileInfo.recordFileNameData);
+                                        player.play(view.getContext(), cacheFileInfo.localName);
+                                    }
                         }
 
                         @Override
@@ -385,6 +395,7 @@ public class RecordListPresenter
     @Override
     public void playItemWithPlayerChoosing(int pos) {
         try{
+
             final RecordListContract.RecordFileInfo recordFileInfo = recListContainer.getVisibleDirContent().get(pos);//visibleDirContent.get(pos);
 
             getCachedFile(recordFileInfo)
@@ -396,8 +407,10 @@ public class RecordListPresenter
                             if(recordFileInfo.recordFileNameData.isSMS)
                                 showSMS(recordFileInfo, cacheFileInfo.localName);
                             else
-                                if(view!=null)
-                                    player.playItemWithChooser(view.getContext(),cacheFileInfo.localName);
+                                if(view!=null) {
+                                    IPlayer player = providePlayerInstance();
+                                    player.playItemWithChooser(view.getContext(), cacheFileInfo.localName);
+                                }
                         }
 
                         @Override

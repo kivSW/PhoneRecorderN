@@ -11,7 +11,6 @@ import dagger.Module;
 import dagger.Provides;
 import io.reactivex.annotations.NonNull;
 import phonerecorder.kivsw.com.faithphonerecorder.model.error_processor.IErrorProcessor;
-import phonerecorder.kivsw.com.faithphonerecorder.model.player.IPlayer;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
 import phonerecorder.kivsw.com.faithphonerecorder.model.tasks.RecordSender;
 
@@ -23,8 +22,8 @@ public class RecordListPresenterModule {
     @Provides
     @NonNull
     @Singleton
-    public RecordListContract.IRecordListPresenter providePresenter(Context appContext, ISettings settings, IPlayer player, DiskContainer disks, CloudCache cloudCache, IErrorProcessor errorProcessor, RecordSender recordSender)
+    public RecordListContract.IRecordListPresenter providePresenter(Context appContext, ISettings settings, DiskContainer disks, CloudCache cloudCache, IErrorProcessor errorProcessor, RecordSender recordSender)
     {
-        return new RecordListPresenter(appContext, settings, player,  disks, cloudCache,  errorProcessor, recordSender);
+        return new RecordListPresenter(appContext, settings, disks, cloudCache,  errorProcessor, recordSender);
     }
 }

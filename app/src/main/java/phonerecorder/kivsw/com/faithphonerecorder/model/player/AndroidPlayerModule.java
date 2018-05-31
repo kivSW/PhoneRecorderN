@@ -10,10 +10,12 @@ import dagger.Provides;
  */
 @Module
 public class AndroidPlayerModule {
+
     @Singleton
     @Provides
-    IPlayer providePlayer()
+    AndroidPlayer  provideAndroidPlayer()
     {
         return new AndroidPlayer();
     }
+
 }

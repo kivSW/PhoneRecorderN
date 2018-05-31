@@ -14,7 +14,7 @@ import phonerecorder.kivsw.com.faithphonerecorder.model.error_processor.IErrorPr
 import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IPersistentDataKeeper;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.SoundSource;
-import phonerecorder.kivsw.com.faithphonerecorder.model.task_executor.TaskExecutor;
+import phonerecorder.kivsw.com.faithphonerecorder.model.task_executor.ITaskExecutor;
 import phonerecorder.kivsw.com.faithphonerecorder.model.utils.RecordFileNameData;
 import phonerecorder.kivsw.com.faithphonerecorder.ui.notification.NotificationShower;
 
@@ -28,7 +28,7 @@ public class CallRecorder implements ITask {
     private ISettings settings;
     private IPersistentDataKeeper callInfoKeeper;
     private IErrorProcessor errorProcessor;
-    private TaskExecutor taskExecutor;
+    private ITaskExecutor taskExecutor;
     private NotificationShower notification;
     private MediaRecorder recorder = null;
     private String tempFileName;
@@ -37,7 +37,7 @@ public class CallRecorder implements ITask {
     private RecordFileNameData recordFileNameData;
 
     @Inject
-    public CallRecorder(Context context, ISettings settings, IPersistentDataKeeper callInfoKeeper, TaskExecutor taskExecutor, NotificationShower notification, IErrorProcessor errorProcessor) {
+    public CallRecorder(Context context, ISettings settings, IPersistentDataKeeper callInfoKeeper, ITaskExecutor taskExecutor, NotificationShower notification, IErrorProcessor errorProcessor) {
         this.context = context;
         this.settings = settings;
         this.callInfoKeeper = callInfoKeeper;

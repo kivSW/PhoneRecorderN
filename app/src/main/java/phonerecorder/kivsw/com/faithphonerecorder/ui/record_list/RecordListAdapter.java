@@ -13,6 +13,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import phonerecorder.kivsw.com.faithphonerecorder.R;
+import phonerecorder.kivsw.com.faithphonerecorder.model.utils.Utils;
 
 /**
  * Created by ivan on 4/3/18.
@@ -127,7 +128,7 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.It
         holder.phonenumberText.setText(data.recordFileNameData.phoneNumber);
 
         if(data.recordFileNameData.isSMS) holder.durationText.setText("");
-        else holder.durationText.setText(durationToStr(data.recordFileNameData.duration));
+        else holder.durationText.setText(Utils.durationToStr(data.recordFileNameData.duration));
 
         holder.dateTimeText.setText(data.recordFileNameData.date+" "+data.recordFileNameData.time);
         holder.commentaryText.setText("");
@@ -161,7 +162,8 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.It
         if(data.isDownloading)
         {
             holder.downloadPercentageText.setVisibility(View.VISIBLE);
-            holder.downloadProgress.setVisibility(View.VISIBLE);
+            if(holder.downloadProgress.getVisibility()!=View.VISIBLE)
+                holder.downloadProgress.setVisibility(View.VISIBLE);
             holder.downloadPercentageText.setText(String.valueOf(data.percentage)+"%");
             holder.playButton.setVisibility(View.GONE);
         }
@@ -176,19 +178,6 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.It
                 holder.playButton.setImageResource(R.drawable.ic_play_arrow_black_48dp);
         }
 
-    }
-
-    protected String durationToStr(int d)
-    {
-        if(d<=0)
-            return "--:--";
-        int m,s;
-        s=d%60;
-        d=d/60;
-
-        m=d;
-
-        return String.format("%02d:%02d", m,s);
     }
 
     // Return the size of your dataset (invoked by the layout manager)

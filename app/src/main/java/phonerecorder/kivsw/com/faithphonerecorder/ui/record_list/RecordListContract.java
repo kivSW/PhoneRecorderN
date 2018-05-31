@@ -14,11 +14,11 @@ import phonerecorder.kivsw.com.faithphonerecorder.model.utils.RecordFileNameData
  */
 
 public class RecordListContract {
-    static class RecordFileInfo implements Comparable// class holds data of a record to be visualized
+    static public class RecordFileInfo implements Comparable// class holds data of a record to be visualized
     {
-        RecordFileNameData recordFileNameData;
+        public RecordFileNameData recordFileNameData;
         boolean selected;
-        String callerName;
+        public String callerName;
         //int duration;
         boolean isDownloading;
         int percentage;

@@ -9,6 +9,7 @@ import android.support.v4.content.FileProvider;
 import java.io.File;
 
 import phonerecorder.kivsw.com.faithphonerecorder.R;
+import phonerecorder.kivsw.com.faithphonerecorder.model.utils.RecordFileNameData;
 
 /**
  * play a record with another app
@@ -55,4 +56,9 @@ public class AndroidPlayer implements IPlayer{
             activity.startActivity(chooser);
 
     }
+    @Override
+    public void setUiParam(String callerName, RecordFileNameData recordFileNameData)
+    {
+
+    };
 }

@@ -12,7 +12,7 @@ import phonerecorder.kivsw.com.faithphonerecorder.model.error_processor.IErrorPr
 import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IPersistentDataKeeper;
 import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IJournal;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
-import phonerecorder.kivsw.com.faithphonerecorder.model.task_executor.TaskExecutor;
+import phonerecorder.kivsw.com.faithphonerecorder.model.task_executor.ITaskExecutor;
 import phonerecorder.kivsw.com.faithphonerecorder.ui.notification.NotificationShower;
 
 /**
@@ -22,7 +22,7 @@ import phonerecorder.kivsw.com.faithphonerecorder.ui.notification.NotificationSh
 public class TaskModule {
     @Provides
     @Singleton
-    CallRecorder provideCallRecorder(Context context, ISettings settings, IPersistentDataKeeper callInfoKeeper, TaskExecutor taskExecutor, NotificationShower notification, IErrorProcessor errorProcessor)
+    CallRecorder provideCallRecorder(Context context, ISettings settings, IPersistentDataKeeper callInfoKeeper, ITaskExecutor taskExecutor, NotificationShower notification, IErrorProcessor errorProcessor)
     {
         return new CallRecorder(context,settings, callInfoKeeper, taskExecutor, notification, errorProcessor);
     };
@@ -30,14 +30,14 @@ public class TaskModule {
 
     @Provides
     @Singleton
-    RecordSender provideRecordSender(Context context, ISettings settings, IJournal persistentData, DiskContainer disks, TaskExecutor taskExecutor, NotificationShower notification, IErrorProcessor errorProcessor)
+    RecordSender provideRecordSender(Context context, ISettings settings, IJournal persistentData, DiskContainer disks, ITaskExecutor taskExecutor, NotificationShower notification, IErrorProcessor errorProcessor)
     {
         return new RecordSender(context,settings,persistentData,disks, taskExecutor, notification, errorProcessor);
     };
 
     @Provides
     @Singleton
-    SmsReader provideSmsReader(Context context, ISettings settings, IJournal journal, IPersistentDataKeeper persistentData, TaskExecutor taskExecutor, NotificationShower notification, IErrorProcessor errorProcessor)
+    SmsReader provideSmsReader(Context context, ISettings settings, IJournal journal, IPersistentDataKeeper persistentData, ITaskExecutor taskExecutor, NotificationShower notification, IErrorProcessor errorProcessor)
     {
         return new SmsReader(context,settings,journal, persistentData, taskExecutor, notification, errorProcessor);
     };

@@ -15,7 +15,7 @@ import io.reactivex.functions.Consumer;
 import phonerecorder.kivsw.com.faithphonerecorder.model.error_processor.IErrorProcessor;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
 import phonerecorder.kivsw.com.faithphonerecorder.model.settings.Settings;
-import phonerecorder.kivsw.com.faithphonerecorder.model.task_executor.TaskExecutor;
+import phonerecorder.kivsw.com.faithphonerecorder.model.task_executor.ITaskExecutor;
 import phonerecorder.kivsw.com.faithphonerecorder.os.LauncherIcon;
 import phonerecorder.kivsw.com.faithphonerecorder.ui.notification.AntiTaskKillerNotification;
 
@@ -30,7 +30,7 @@ public class SettingsPresenter implements SettingsContract.ISettingsPresenter {
     protected ISettings settings;
     private Disposable settingsDisposable;
     protected DiskContainer disks;
-    protected TaskExecutor taskExecutor;
+    protected ITaskExecutor taskExecutor;
     protected IErrorProcessor errorProcessor;
     protected AntiTaskKillerNotification antiTaskKillerNotification;
 
@@ -49,7 +49,7 @@ public class SettingsPresenter implements SettingsContract.ISettingsPresenter {
     }*/
 
     @Inject
-    public SettingsPresenter(Context  context, ISettings settings, DiskContainer disks, TaskExecutor taskExecutor, IErrorProcessor errorProcessor, AntiTaskKillerNotification antiTaskKillerNotification)
+    public SettingsPresenter(Context  context, ISettings settings, DiskContainer disks, ITaskExecutor taskExecutor, IErrorProcessor errorProcessor, AntiTaskKillerNotification antiTaskKillerNotification)
     {
         super();
         this.context = context;
