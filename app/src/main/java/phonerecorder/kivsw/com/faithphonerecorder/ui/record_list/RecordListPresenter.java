@@ -480,6 +480,7 @@ public class RecordListPresenter
 
         title = "SMS";
 
+        text.append("<font face=\"monospace\" >");
         text.append("<b>");    text.append(lbl);    text.append(" ");  text.append("</b>");
 
         if(recordFileInfo.callerName.isEmpty()) {
@@ -501,6 +502,7 @@ public class RecordListPresenter
             text.append(recordFileInfo.recordFileNameData.phoneNumber);
             text.append("</small>");
         }
+        text.append("</font>");
 
         text.append("<br><br><i>");
         text.append( SimpleFileReader.readFile(localFileName) );
