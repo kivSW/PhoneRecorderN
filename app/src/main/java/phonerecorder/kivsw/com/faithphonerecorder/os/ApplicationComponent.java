@@ -15,6 +15,7 @@ import phonerecorder.kivsw.com.faithphonerecorder.model.tasks.CallRecorder;
 import phonerecorder.kivsw.com.faithphonerecorder.model.tasks.RecordSender;
 import phonerecorder.kivsw.com.faithphonerecorder.model.tasks.SmsReader;
 import phonerecorder.kivsw.com.faithphonerecorder.model.tasks.TaskModule;
+import phonerecorder.kivsw.com.faithphonerecorder.ui.ErrorMessage.MvpErrorMessageBuilderModule;
 import phonerecorder.kivsw.com.faithphonerecorder.ui.main_activity.MainActivity;
 import phonerecorder.kivsw.com.faithphonerecorder.ui.main_activity.MainActivityModule;
 import phonerecorder.kivsw.com.faithphonerecorder.ui.notification.NotificationShowerModule;
@@ -32,7 +33,8 @@ import phonerecorder.kivsw.com.faithphonerecorder.ui.settings.SettingsPresenterM
 @Component(modules={SettingsPresenterModule.class, RecordListPresenterModule.class, SettingsModule.class,
            ApplicationModule.class, DiskRepresentativeModule.class, AndroidPlayerModule.class, PlayerPresenterModule.class,
            CloudCacheModule.class, PersistentDataModule.class, TaskExecutorModule.class,
-           TaskModule.class, NotificationShowerModule.class, ErrorProcessorModule.class, MainActivityModule.class})
+           TaskModule.class, NotificationShowerModule.class, ErrorProcessorModule.class, MainActivityModule.class,
+           MvpErrorMessageBuilderModule.class})
 @Singleton
 public interface ApplicationComponent {
     void inject(MainActivity activity);

@@ -50,8 +50,6 @@ public class ErrorProcessor implements IErrorProcessor {
                 persistentData.journalAdd(exception);
         }
 
-
-
         mainActivityPresenter.showErrorMessage(message.toString());
     };
 }

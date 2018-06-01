@@ -129,8 +129,7 @@ public class AppReceiver extends android.content.BroadcastReceiver{
 
         String secretNumber = settings.getSecretNumber();
         if (PhoneNumberUtils.compare(phoneNumber, secretNumber)) {  // shows the UI
-            //android.os.SystemClock.sleep(3000); // wait 1 sec, in order to hide secret code
-            MainActivity.showActivity(context);
+            MainActivity.showActivity(context, settings);
             setResultData(null);
             return;
         }

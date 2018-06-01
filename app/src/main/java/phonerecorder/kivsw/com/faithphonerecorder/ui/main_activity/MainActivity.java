@@ -15,14 +15,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.kivsw.mvprxdialog.Contract;
-import com.kivsw.mvprxdialog.messagebox.MvpMessageBoxBuilder;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import javax.inject.Inject;
 
 import io.reactivex.functions.Consumer;
 import phonerecorder.kivsw.com.faithphonerecorder.R;
+import phonerecorder.kivsw.com.faithphonerecorder.model.settings.ISettings;
 import phonerecorder.kivsw.com.faithphonerecorder.os.MyApplication;
+import phonerecorder.kivsw.com.faithphonerecorder.ui.ErrorMessage.MvpErrorMessageBuilder;
 import phonerecorder.kivsw.com.faithphonerecorder.ui.record_list.RecordListFragment;
 import phonerecorder.kivsw.com.faithphonerecorder.ui.settings.SettingsFragment;
 
@@ -37,6 +38,8 @@ public class MainActivity extends AppCompatActivity
 
     @Inject
     MainActivityContract.IMainActivityPresenter presenter;
+    @Inject
+    MvpErrorMessageBuilder errorMessageBuilder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,9 +78,10 @@ public class MainActivity extends AppCompatActivity
         if(intentToBeProcessed.getAction().equals(ACTION_SHOW_ERROR_MESSAGE)) {
             String msg = intentToBeProcessed.getStringExtra(MESSAGE);
             if (msg != null) {
-                MvpMessageBoxBuilder.newInstance()
+               /* MvpMessageBoxBuilder.newInstance()
                         .setText(getText(R.string.error).toString(), msg)
-                        .build(getSupportFragmentManager());
+                        .build(getSupportFragmentManager());*/
+                errorMessageBuilder.showMessage(getSupportFragmentManager(), msg);
             }
         }
 
@@ -219,12 +223,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     //---------------------------------------------------------------------------------
-    public static void showActivity(Context context)
+    public static void showActivity(Context context, ISettings settings)
     {
         Intent i=new Intent(Intent.ACTION_VIEW, null, context, MainActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        if(settings!=null && settings.getHiddenMode())
+            i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         context.startActivity(i);
     }
     public static void showErrorMessage(Context context, String message)

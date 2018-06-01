@@ -84,12 +84,27 @@ implements PlayerContract.IPlayerView {
                 getPresenter().pause();
             }
         });
-        /*imageViewStop.setOnClickListener(new View.OnClickListener() {
+
+        View.OnTouchListener btnListener=new View.OnTouchListener(){
             @Override
-            public void onClick(View v) {
-                getPresenter().stop();
+            public boolean onTouch(View v, MotionEvent event) {
+                int action=event.getAction();
+                switch(action) {
+                    case MotionEvent.ACTION_DOWN:
+                        v.setBackgroundResource(R.drawable.rectagle);
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        v.setBackgroundDrawable(null);
+                        break;
+
+                }
+                return true;
             }
-        });*/
+        };
+        imageViewPlay.setOnTouchListener(btnListener);
+        imageViewPause.setOnTouchListener(btnListener);
 
         progressBar.setOnTouchListener(new View.OnTouchListener() {
             @Override

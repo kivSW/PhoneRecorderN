@@ -44,7 +44,7 @@ public class MainActivityPresenter implements MainActivityContract.IMainActivity
 
     @Override
     public void showErrorMessage(String msg) {
-           if(settings.getHiddenMode() && view==null)
+           if(settings.getHiddenMode())
                return;
            MainActivity.showErrorMessage(context, msg);
     }
@@ -52,8 +52,8 @@ public class MainActivityPresenter implements MainActivityContract.IMainActivity
     @Override
     public void showActivity()
     {
-        if(settings.getHiddenMode() && view==null)
+        if(settings.getHiddenMode())
             return;
-        MainActivity.showActivity(context);
+        MainActivity.showActivity(context, settings);
     };
 }

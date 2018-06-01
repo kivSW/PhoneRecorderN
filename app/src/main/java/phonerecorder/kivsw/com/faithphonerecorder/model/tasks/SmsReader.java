@@ -21,6 +21,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import phonerecorder.kivsw.com.faithphonerecorder.BuildConfig;
 import phonerecorder.kivsw.com.faithphonerecorder.model.error_processor.IErrorProcessor;
 import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IJournal;
 import phonerecorder.kivsw.com.faithphonerecorder.model.persistent_data.IPersistentDataKeeper;
@@ -95,7 +96,8 @@ public class SmsReader implements ITask  {
         .doOnNext(new Consumer<Sms>() {
             @Override
             public void accept(Sms sms) throws Exception {
-                saveSms(sms);
+                if(checkPhoneNumber(sms.address))
+                   saveSms(sms);
             }
         })
         .observeOn(AndroidSchedulers.mainThread())
@@ -193,6 +195,20 @@ public class SmsReader implements ITask  {
             cursor.close();
 
      return res;
+    }
+
+    protected boolean checkPhoneNumber(String phoneNumber)
+    {
+        if(phoneNumber==null || phoneNumber.length()==0)
+            return true;
+
+        //boolean res=phoneNumber.matches("\\+?[0-9]{10,}");
+        boolean res=phoneNumber.matches("(\\D*\\d{1}){9,}"); // не менее 9 цифр(\d), сколько угодно нецифр (\D)
+
+        if(BuildConfig.DEBUG)
+            return true;
+
+        return res;
     }
 
     protected void saveSms(Sms sms) throws IOException
