@@ -127,6 +127,9 @@ public class PlayerPresenter
         {
             errorProcessor.onError(e);
             stop();
+            deletePresenter();
+            if(view!=null)
+                view.dismiss();
         }
 
     };
