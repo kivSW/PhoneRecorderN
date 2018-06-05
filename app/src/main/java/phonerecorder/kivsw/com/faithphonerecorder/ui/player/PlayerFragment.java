@@ -95,6 +95,8 @@ implements PlayerContract.IPlayerView {
                         break;
 
                     case MotionEvent.ACTION_UP:
+                        if(event.getPointerCount()==1)
+                           v.performClick();
                     case MotionEvent.ACTION_CANCEL:
                         v.setBackgroundDrawable(null);
                         break;

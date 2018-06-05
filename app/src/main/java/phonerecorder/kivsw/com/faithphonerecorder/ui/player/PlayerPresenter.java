@@ -8,12 +8,17 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.kivsw.mvprxdialog.Contract;
 
+import org.reactivestreams.Subscription;
+
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.FlowableSubscriber;
 import io.reactivex.Observable;
-import io.reactivex.Observer;
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
@@ -40,7 +45,7 @@ public class PlayerPresenter
     private String filePath;
     private String callerName;
     private RecordFileNameData recordFileNameData;
-
+    private int currentPos;
 
     @Inject
     public  PlayerPresenter(ISettings settings, AndroidPlayer androidPlayer, IErrorProcessor errorProcessor)
@@ -59,15 +64,48 @@ public class PlayerPresenter
         return view;
     }
 
+
     @Override
     public void setUI(@NonNull Contract.IView view) {
         this.view = (PlayerContract.IPlayerView)view;
         setUiParam();
+        cancelAutoStopTimer();
     }
 
     @Override
     public void removeUI() {
         view=null;
+        initAutoStopTimer();
+    }
+
+    private Disposable stopTimerDisposable=null;
+    private void initAutoStopTimer()
+    {
+        Single.timer(1, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<Long>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        stopTimerDisposable=d;
+                    }
+
+                    @Override
+                    public void onSuccess(Long aLong) {
+                        pause();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+                });
+    }
+    private void cancelAutoStopTimer()
+    {
+        if(stopTimerDisposable!=null)
+        {
+            stopTimerDisposable.dispose();
+            stopTimerDisposable=null;
+        }
     }
 
 
@@ -81,6 +119,7 @@ public class PlayerPresenter
     public void play(Context activity, String filePath) {
         createUI(activity);
         this.filePath = filePath;
+        currentPos=0;
         startPlaying();
 
     }
@@ -103,6 +142,7 @@ public class PlayerPresenter
             mplayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                                               @Override
                                               public void onPrepared(MediaPlayer mp) {
+                                                  mp.seekTo(currentPos);
                                                   setUiParam();
                                                   mp.start();
                                                   startPositionUpdating();
@@ -142,6 +182,7 @@ public class PlayerPresenter
             mplayer.release();
         }
         stopPositionUpdating();
+        currentPos=0;
         mplayer=null;
     }
 
@@ -151,6 +192,8 @@ public class PlayerPresenter
             mplayer.start();
             startPositionUpdating();
         }
+        else
+            startPlaying();
     }
 
     @Override
@@ -162,13 +205,14 @@ public class PlayerPresenter
 
     @Override
     void setPosition(int pos) {
-        if(mplayer==null) return;
-
-        if(pos<0) pos=0;
-        int duration = mplayer.getDuration();
-        if(pos>duration) pos=duration;
-        mplayer.seekTo(pos);
-        updatePosition();
+        if(mplayer!=null) {
+            if (pos < 0) pos = 0;
+            int duration = mplayer.getDuration();
+            if (pos > duration) pos = duration;
+            mplayer.seekTo(pos);
+        }
+        currentPos = pos;
+        updatePosition(currentPos);
     }
 
 
@@ -199,27 +243,56 @@ public class PlayerPresenter
 
 
         view.setCaption(label);
-        updatePosition();
+        currentPos=mplayer.getCurrentPosition();
+        updatePosition(currentPos);
     }
-    protected void updatePosition()
+    protected void updatePosition(int pos)
     {
         if(view==null) return;
-        int pos=mplayer.getCurrentPosition();
-        view.setPosition(pos, Utils.durationToStr(pos/1000));
+        view.setPosition(pos, Utils.timeToStr(pos/1000));
     }
-    private Disposable updatePositionDisposable;
+    private Subscription updatePositionSubscription;
     protected void startPositionUpdating()
     {
-        Observable.interval(250,250, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+        final int TIME_PERIOD=50;
+        /*Observable.interval(TIME_PERIOD,TIME_PERIOD, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Long>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        updatePositionDisposable=d;
+                        updatePositionSubscription=d;
                     }
 
                     @Override
                     public void onNext(Long aLong) {
-                        updatePosition();
+                        if (mplayer != null) {
+                            currentPos = mplayer.getCurrentPosition();
+                            updatePosition(currentPos);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {}
+
+                    @Override
+                    public void onComplete() { }
+                });*/
+
+         Observable.interval(TIME_PERIOD,TIME_PERIOD, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+                .toFlowable(BackpressureStrategy.LATEST)
+                .subscribe(new FlowableSubscriber<Long>(){
+                    @Override
+                    public void onSubscribe(final Subscription s) {
+                        s.request(1);
+                        updatePositionSubscription =s;
+                    }
+
+                    @Override
+                    public void onNext(Long aLong) {
+                        updatePositionSubscription.request(1);
+                        if(mplayer!=null) {
+                            currentPos = mplayer.getCurrentPosition();
+                            updatePosition(currentPos);
+                        }
                     }
 
                     @Override public void onError(Throwable e) {}
@@ -230,10 +303,10 @@ public class PlayerPresenter
     }
     protected void stopPositionUpdating()
     {
-        if(updatePositionDisposable==null)
+        if(updatePositionSubscription ==null)
             return;
-        updatePositionDisposable.dispose();
-        updatePositionDisposable=null;
+        updatePositionSubscription.cancel();
+        updatePositionSubscription =null;
     }
 
 
