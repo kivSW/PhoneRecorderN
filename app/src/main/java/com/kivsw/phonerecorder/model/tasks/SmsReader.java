@@ -216,11 +216,11 @@ public class SmsReader implements ITask  {
     {
         String fileName = createFileName(sms);
 
-        FileWriter writer = new FileWriter(fileName,true);
+        FileWriter writer = new FileWriter(fileName,false);
         writer.append(sms.body);
         writer.close();
 
-    };
+    }
     protected String createFileName(Sms sms)
     {
         Date date= new Date(sms.date);

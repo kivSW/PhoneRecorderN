@@ -115,12 +115,13 @@ public class RecordFileNameData {
             return fd;
         }
 
-        private  String codeStr(String str)
+        private  String correctStr(String str)
         {
            char ch;
            ch='_';
-           String res=  str.replaceAll("_", String.format("\\\\u%04X", (int)ch));
-           res = res.replaceAll("[\\x00-\\x1F]", "");
+           String res= str;
+           //res = res.replaceAll("_", String.format("\\\\u%04X", (int)ch));
+           res = res.replaceAll("[\\x00-\\x1F_\\:\\/\\\\]", "");
            return res;
         }
         private static String decodeStr(String str)
@@ -147,7 +148,7 @@ public class RecordFileNameData {
             if(outgoing) sb.append("outgoing_");//2
             else sb.append("income_");
 
-            sb.append(codeStr(phoneNumber));sb.append("_"); //3
+            sb.append(correctStr(phoneNumber));sb.append("_"); //3
 
             sb.append(soundSource);//4
             sb.append("_");
