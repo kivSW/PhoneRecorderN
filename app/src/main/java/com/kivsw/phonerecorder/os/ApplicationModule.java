@@ -1,5 +1,6 @@
 package com.kivsw.phonerecorder.os;
 
+import android.app.Application;
 import android.content.Context;
 
 import javax.inject.Singleton;
@@ -14,15 +15,24 @@ import io.reactivex.annotations.NonNull;
 @Module
 public class ApplicationModule {
     private Context context;
-    public ApplicationModule(@NonNull Context context)
+    private Application application;
+    public ApplicationModule(@NonNull Application application)
     {
         this.context = context;
+        this.application = application;
     };
 
     @Provides
     @Singleton
     Context provideContext()
     {
-        return context;
+        return application.getApplicationContext();
+    }
+
+    @Provides
+    @Singleton
+    Application provideApplication()
+    {
+        return application;
     }
 }

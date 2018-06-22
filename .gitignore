@@ -7,3 +7,4 @@
 /build
 /captures
 .externalNativeBuild
+./app/src/release/java/com/kivsw/phonerecorder/model/keys/keys.java

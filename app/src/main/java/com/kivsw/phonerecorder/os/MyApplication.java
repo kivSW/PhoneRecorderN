@@ -1,6 +1,7 @@
 package com.kivsw.phonerecorder.os;
 
 
+import com.kivsw.phonerecorder.model.metrica.IMetrica;
 import com.kivsw.phonerecorder.model.settings.ISettings;
 import com.kivsw.phonerecorder.ui.notification.AntiTaskKillerNotification;
 
@@ -21,6 +22,8 @@ public class MyApplication extends android.app.Application {
     ISettings settings;
     @Inject
     AntiTaskKillerNotification antiTaskKillerNotification;
+    @Inject
+    IMetrica metrica;
 
     public MyApplication()
     {

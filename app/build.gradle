@@ -42,4 +42,10 @@ dependencies {
     compile 'com.google.dagger:dagger:2.11'
     compile 'commons-lang:commons-lang:2.6'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.11'
+
+
+    // AppMetrica from maven central.
+    implementation 'com.yandex.android:mobmetricalib:3.1.0'
+    // Optional. Play Install Referrer library for better attribution.
+    //implementation 'com.android.installreferrer:installreferrer:1.0'
 }
