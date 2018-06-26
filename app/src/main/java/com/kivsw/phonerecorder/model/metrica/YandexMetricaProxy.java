@@ -3,9 +3,19 @@ package com.kivsw.phonerecorder.model.metrica;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 
+import com.kivsw.phonerecorder.model.settings.ISettings;
+import com.kivsw.phonerecorder.model.settings.Settings;
 import com.yandex.metrica.YandexMetrica;
 import com.yandex.metrica.YandexMetricaConfig;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 
 /**
  *
@@ -15,6 +25,7 @@ import com.yandex.metrica.YandexMetricaConfig;
 public class YandexMetricaProxy implements IMetrica {
 
     SharedPreferences sharedPreferences;
+    ISettings settings;
 
     YandexMetricaProxy(Application app, String API_key)
     {
@@ -43,4 +54,46 @@ public class YandexMetricaProxy implements IMetrica {
 
         return  res;
     }
+
+    public void onSettingsCreate(ISettings settings)
+    {
+        this.settings = settings;
+        settings.getObservable()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+                        switch(s) {
+                            case Settings.HIDDEN_MODE:
+                                        sendSettings();
+                                        break;
+                        }
+                    };
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    };
+
+    private void sendSettings()
+    {
+        Map<String, Object> map=new HashMap<>();
+        map.put("HiddenMode", String.valueOf(settings.getHiddenMode()));
+        Uri uri= Uri.parse(settings.getSavingUrlPath());
+        map.put("SavingUrlPath", uri.getScheme());
+        YandexMetrica.reportEvent("settings",map);
+    }
+
 }

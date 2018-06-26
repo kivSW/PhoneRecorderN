@@ -2,6 +2,8 @@ package com.kivsw.phonerecorder.model.settings;
 
 import android.content.Context;
 
+import com.kivsw.phonerecorder.model.metrica.IMetrica;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -14,8 +16,10 @@ import dagger.Provides;
 public class SettingsModule {
     @Provides
     @Singleton
-    ISettings provideSettings(Context cntx)
+    ISettings provideSettings(Context cntx, IMetrica metrica)
     {
-        return new Settings(cntx);
+        ISettings settings= new Settings(cntx);
+        metrica.onSettingsCreate(settings);
+        return settings;
     }
 }
