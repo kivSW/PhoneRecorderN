@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="error">Ошибка</string>
+    <string name="confirmation">Подтверждение</string>
+    <string name="yes">да</string>
+    <string name="no">нет</string>
+
+    <string name="action_settings">Настройки</string>
+    <string name="action_record_list">Записи</string>
+    <string name="from">от:</string>
+    <string name="to">кому:</string>
+
+    <string name="rec_sending">Отправлено %d записей из %d</string>
+    <string name="rec_deleting">Удаление старых записей: %d из %d </string>
+    <string name="prepare_rec_deleting">Подготовка удаления старых записей</string>
+    <string name="recording_call">Звонок записывается</string>
+</resources>

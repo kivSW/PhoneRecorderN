@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="search">Search</string>
-    <string name="selectAll">select all</string>
-    <string name="unselectAll">unselect all</string>
-    <string name="refresh">refresh</string>
+    <string name="selectAll">Select all</string>
+    <string name="unselectAll">Unselect all</string>
+    <string name="refresh">Refresh</string>
 
     <string name="deleteConfirmation">Do you want to delete %d records?</string>
     <string name="chooser_title">Choose an application</string>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="settings">Settings</string>
+
     <!-- sound sources names and codes -->
     <string-array name="sound_source_array" translatable="false">
         <item>MIC</item>
@@ -25,10 +25,11 @@
         <item>TB</item>
     </string-array>
 
+    <string name="settings">Settings</string>
+
     <string name="enable_call_recording">Enable call recording</string>
     <string name="enable_sms_recording">Enable SMS recording</string>
     <string name="hidden_mode">Hidden mode</string>
-    <string name="show_in_launcher">Show in launcher</string>
     <string name="show_file_extension">Use file extension</string>
     <string name="show_file_extension_hint">Use natural .3gp file extension</string>
     <string name="allow_mobile_internet">Allow using mobile internet</string>
@@ -42,12 +43,9 @@
     <string name="max_file_amount">Max file amount:</string>
     <string name="limit_data_size">Limiting data size</string>
     <string name="max_data_size">Max data size:</string>
-    <string name="phoneId">Phone ID:</string>
     <string name="phoneSecretNumber">Phone secret number:</string>
-    <string name="show_journal">Show journal</string>
     <string name="journal">Journal</string>
     <string name="incorrect_value">Incorrect value</string>
-    <string name="setup">Setup</string>
 
     <string name="showNotification">Permanent notification</string>
 
