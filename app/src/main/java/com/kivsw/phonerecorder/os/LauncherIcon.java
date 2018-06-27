@@ -9,7 +9,7 @@ import android.content.pm.PackageManager;
  */
 
 public class LauncherIcon {
-    private final static String ALIASE_NAME="phonerecorder.kivsw.com.faithphonerecorder.MainActivityAlias";
+    private final static String ALIASE_NAME="com.kivSW.phonerecorder.MainActivity";//"phonerecorder.kivsw.com.faithphonerecorder.MainActivityAlias";
     static public void setVisibility(Context context, boolean isVisible)
     {
         PackageManager p = context.getPackageManager();
