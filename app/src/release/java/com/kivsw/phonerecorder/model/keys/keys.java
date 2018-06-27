@@ -10,10 +10,10 @@ public static class keys {
     }
 
     static public String getYandexMetricKey() {
-        return "";
+        return ";
     }
 
-    static public String getYPCloudKey()
+    static public String getPCloud_clientId()
     {
         return "";
     }

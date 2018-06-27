@@ -33,7 +33,7 @@ public class DiskRepresentativeModule {
         disks.addAll(StorageUtils.getSD_list(context));
         disks.add(LocalDiskRepresenter.createPrivateStorageFS(context));
 
-        disks.add(new PcloudRepresenter(context, keys.getYPCloudKey()));
+        disks.add(new PcloudRepresenter(context, keys.getPCloud_clientId()));
         disks.add(new YandexRepresenter(context, keys.getYandexDiskKey(), null, null));
 
         return new DiskContainer(disks);
