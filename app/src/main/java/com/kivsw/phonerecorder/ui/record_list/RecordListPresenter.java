@@ -12,9 +12,12 @@ import com.kivsw.mvprxdialog.messagebox.MvpMessageBoxPresenter;
 import com.kivsw.mvprxfiledialog.MvpRxSelectDirDialogPresenter;
 import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor;
 import com.kivsw.phonerecorder.model.player.IPlayer;
+import com.kivsw.phonerecorder.model.settings.ISettings;
 import com.kivsw.phonerecorder.model.settings.Settings;
 import com.kivsw.phonerecorder.model.tasks.RecordSender;
+import com.kivsw.phonerecorder.model.utils.RecordFileNameData;
 import com.kivsw.phonerecorder.model.utils.SimpleFileIO;
+import com.kivsw.phonerecorder.os.MyApplication;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,10 +44,6 @@ import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 import phonerecorder.kivsw.com.phonerecorder.R;
-
-import com.kivsw.phonerecorder.model.settings.ISettings;
-import com.kivsw.phonerecorder.model.utils.RecordFileNameData;
-import com.kivsw.phonerecorder.os.MyApplication;
 
 /**
  * Created by ivan on 3/27/18.
@@ -260,6 +259,10 @@ public class RecordListPresenter
               });
     };
 
+    /*Observable<IDiskIO.ResourceInfo> getFileList()
+    {
+
+    }*/
 
     private boolean progressBarVisible=false;
     protected void setProgressBarVisible(boolean visible)

@@ -1,7 +1,5 @@
 package com.kivsw.phonerecorder.model.internal_filelist;
 
-import android.content.Context;
-
 import com.google.gson.Gson;
 import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor;
 import com.kivsw.phonerecorder.model.persistent_data.Journal;
@@ -26,7 +24,7 @@ import java.util.regex.Pattern;
  */
 
 public class InternalFiles implements IInternalFiles {
-    private Context context;
+
     private ISettings settings;
     private IErrorProcessor errorProcessor;
     private Map<String, Object> sentFiles;
@@ -34,7 +32,7 @@ public class InternalFiles implements IInternalFiles {
 
     private static final int MAX_FILES_NUM = 20;
     
-    InternalFiles(Context context, ISettings settings, IErrorProcessor errorProcessor)
+    InternalFiles( ISettings settings, IErrorProcessor errorProcessor)
     {
         this.settings = settings;
         this.errorProcessor = errorProcessor;
