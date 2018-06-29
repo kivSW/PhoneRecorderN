@@ -14,7 +14,7 @@ import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor;
 import com.kivsw.phonerecorder.model.player.IPlayer;
 import com.kivsw.phonerecorder.model.settings.Settings;
 import com.kivsw.phonerecorder.model.tasks.RecordSender;
-import com.kivsw.phonerecorder.model.utils.SimpleFileReader;
+import com.kivsw.phonerecorder.model.utils.SimpleFileIO;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -506,7 +506,7 @@ public class RecordListPresenter
         text.append("</font>");
 
         text.append("<br><br><i>");
-        text.append( SimpleFileReader.readFile(localFileName) );
+        text.append( SimpleFileIO.readFile(localFileName) );
         text.append("</i>");
 
         MvpMessageBoxBuilder.newInstance()

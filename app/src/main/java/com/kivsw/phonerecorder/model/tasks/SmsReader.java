@@ -11,9 +11,9 @@ import com.kivsw.phonerecorder.model.persistent_data.IPersistentDataKeeper;
 import com.kivsw.phonerecorder.model.settings.ISettings;
 import com.kivsw.phonerecorder.model.task_executor.ITaskExecutor;
 import com.kivsw.phonerecorder.model.utils.RecordFileNameData;
+import com.kivsw.phonerecorder.model.utils.SimpleFileIO;
 import com.kivsw.phonerecorder.ui.notification.NotificationShower;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -215,10 +215,11 @@ public class SmsReader implements ITask  {
     protected void saveSms(Sms sms) throws IOException
     {
         String fileName = createFileName(sms);
+        SimpleFileIO.writeFile(fileName, sms.body);
 
-        FileWriter writer = new FileWriter(fileName,false);
+        /*FileWriter writer = new FileWriter(fileName,false);
         writer.append(sms.body);
-        writer.close();
+        writer.close();*/
 
     }
     protected String createFileName(Sms sms)

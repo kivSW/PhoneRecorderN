@@ -8,16 +8,14 @@ import android.os.SystemClock;
 import com.kivsw.cloud.DiskContainer;
 import com.kivsw.cloud.disk.IDiskIO;
 import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor;
+import com.kivsw.phonerecorder.model.internal_filelist.IInternalFiles;
 import com.kivsw.phonerecorder.model.persistent_data.IJournal;
-import com.kivsw.phonerecorder.model.persistent_data.Journal;
 import com.kivsw.phonerecorder.model.settings.ISettings;
 import com.kivsw.phonerecorder.model.task_executor.ITaskExecutor;
 import com.kivsw.phonerecorder.model.utils.RecordFileNameData;
 import com.kivsw.phonerecorder.os.WatchdogTimer;
 import com.kivsw.phonerecorder.ui.notification.NotificationShower;
 
-import java.io.File;
-import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -57,11 +55,12 @@ public class RecordSender implements ITask {
     private DiskContainer disks;
     private ITaskExecutor taskExecutor;
     private NotificationShower notification;
+    private IInternalFiles internalFiles;
 
 
     @Inject
     public RecordSender(Context context, ISettings settings, IJournal journal, DiskContainer disks, ITaskExecutor taskExecutor,
-                        NotificationShower notification, IErrorProcessor errorProcessor) {
+                        NotificationShower notification, IInternalFiles internalFiles, IErrorProcessor errorProcessor) {
         this.settings = settings;
         this.journal = journal;
         this.disks = disks;
@@ -69,6 +68,7 @@ public class RecordSender implements ITask {
         this.context = context;
         this.notification = notification;
         this.errorProcessor = errorProcessor;
+        this.internalFiles = internalFiles;
     }
 
     class SendingParam {
@@ -151,7 +151,8 @@ public class RecordSender implements ITask {
         Single.fromCallable(new Callable<String[]>() {
             @Override
             public String[] call() throws Exception {
-                String[] fileList = getRecordFileList(srcPath);
+                internalFiles.deleteOldFiles();
+                String[] fileList = internalFiles.getFileListToSend();//getRecordFileList(srcPath);
                 sendingParam.totalFileCount = fileList.length;
                 sendingParam.currentFileNumber=0;
                 sendingParam.updateNotification();
@@ -184,14 +185,6 @@ public class RecordSender implements ITask {
                                 sendingParam.fileEmmiter.emitNext();
                             }
                         });
-                        /*.onErrorResumeNext(new Function<Throwable, Observable<Integer>>(){
-                            @Override
-                            public Observable apply(Throwable throwable) throws Exception {
-                                errorProcessor.onError(throwable);
-                                sendingParam.fileEmmiter.emitNext();
-                                return Observable.empty();
-                            }
-                        });*/
             };
         })
 
@@ -248,7 +241,7 @@ public class RecordSender implements ITask {
            onCopyObservable.onNext("");
     }
 
-    protected String[] getRecordFileList(String localDir)
+/*    protected String[] getRecordFileList(String localDir)
     {
         File dir=new File(localDir);
         String pattern;
@@ -281,7 +274,7 @@ public class RecordSender implements ITask {
                 res.add(fileName);
         };
         return res.toArray(new String[res.size()]);
-    };
+    };*/
 
     protected Observable<Integer> createUploadObservable(final String source, String destination)
     {
@@ -293,11 +286,11 @@ public class RecordSender implements ITask {
                     .doOnComplete(new Action() {
                         @Override
                         public void run() throws Exception {
-                            if(source.contains(Journal.JOURNAL_FILE_NAME)) // do not delete journal file
+                            internalFiles.markFileAsSent(source);
+/*                            if(source.contains(Journal.JOURNAL_FILE_NAME)) // do not delete journal file
                                 return;
-                           // sentFileCount++;
                             File file = new File(source);
-                            file.delete();
+                            file.delete();*/
                         }
                     });
                     /*.onErrorResumeNext(new Function<Throwable, Observable<Integer>>(){
