@@ -99,9 +99,12 @@ public class RecordListPresenter
                             @Override
                             public void onError(Throwable e) {
                                 RecordListPresenter.this.errorProcessor.onError(e);
+                                updateViewProgressBarVisible();
                             }
 
-                            @Override public void onComplete() {}
+                            @Override public void onComplete() {
+                                updateViewProgressBarVisible();
+                            }
                         });
 
         if(recordSender!=null)
@@ -250,7 +253,7 @@ public class RecordListPresenter
 
                         @Override
                         public void onError(Throwable e) {
-                            errorProcessor.onError(e);
+                            errorProcessor.onSmallError(e);
                             setProgressBarVisible(false);
                         }
 

@@ -20,6 +20,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.kivsw.phonerecorder.model.settings.ISettings;
+import com.kivsw.phonerecorder.os.MyApplication;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +28,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import phonerecorder.kivsw.com.phonerecorder.R;
-
-import com.kivsw.phonerecorder.os.MyApplication;
 
 //import android.widget.Toolbar;
 
@@ -203,6 +202,9 @@ public class RecordListFragment extends Fragment
     @Override
     public void setRecListProgressBarVisible(boolean show) {
         int visibility;
+        /*Log.v("DBG", "progressBar.visibility="+show);
+        Thread.dumpStack();*/
+
         if(show)  visibility=(View.VISIBLE);
         else      visibility=(View.GONE);
         progressBar.setVisibility(visibility);

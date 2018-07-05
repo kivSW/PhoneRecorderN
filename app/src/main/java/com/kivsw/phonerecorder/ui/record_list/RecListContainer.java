@@ -188,25 +188,22 @@ class RecListContainer {
     protected void doAddFileList(List<RecordListContract.RecordFileInfo> recordFileInfo)
     {
         checkThread();
-        if(recordFileInfo.size()==0) return;
+        if(recordFileInfo.size()>0) {
+            if (recordFileInfo.get(0).fromInternalDir) {
+                cacheDirContent.addAll(recordFileInfo);
+                for (RecordListContract.RecordFileInfo item : recordFileInfo)
+                    cacheDirContentMap.put(item.recordFileNameData.origFileName, item);
+            } else {
+                List<RecordListContract.RecordFileInfo> newRecordFileInfo = new ArrayList<>(recordFileInfo.size());
+                for (RecordListContract.RecordFileInfo item : recordFileInfo)
+                    if (!bindWithCache(item))
+                        newRecordFileInfo.add(item);
+                recordFileInfo = newRecordFileInfo;
+            }
 
-        if(recordFileInfo.get(0).fromInternalDir) {
-            cacheDirContent.addAll(recordFileInfo);
-            for (RecordListContract.RecordFileInfo item : recordFileInfo)
-               cacheDirContentMap.put(item.recordFileNameData.origFileName, item);
+            dirContent.addAll(recordFileInfo);
+            recListFilter.addData(recordFileInfo);
         }
-        else
-        {
-            List<RecordListContract.RecordFileInfo> newRecordFileInfo=new ArrayList<>(recordFileInfo.size());
-            for (RecordListContract.RecordFileInfo item : recordFileInfo)
-                if (!bindWithCache(item))
-                    newRecordFileInfo.add(item);
-            recordFileInfo = newRecordFileInfo;
-        };
-
-        dirContent.addAll(recordFileInfo);
-        recListFilter.addData(recordFileInfo);
-
 
         onChange();
     };

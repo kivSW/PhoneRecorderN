@@ -7,4 +7,6 @@
 
     <string name="deleteConfirmation">Хотите удалить %d записей?</string>
     <string name="chooser_title">Выберете приложение</string>
+
+    <string name="retry_later">Повторите операцию позже. Данные еще не загружены.</string>
 </resources>

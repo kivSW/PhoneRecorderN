@@ -1,5 +1,8 @@
 package com.kivsw.phonerecorder.model.error_processor;
 
+import android.content.Context;
+import android.widget.Toast;
+
 import com.kivsw.phonerecorder.model.persistent_data.IJournal;
 import com.kivsw.phonerecorder.ui.main_activity.MainActivityContract;
 
@@ -13,21 +16,38 @@ import io.reactivex.exceptions.CompositeException;
 
 public class ErrorProcessor implements IErrorProcessor {
 
-    private IJournal persistentData;
+    private IJournal journal;
     private MainActivityContract.IMainActivityPresenter mainActivityPresenter;
+    private Context appContext;
 
-    ErrorProcessor(IJournal persistentData, MainActivityContract.IMainActivityPresenter mainActivityPresenter)
+    ErrorProcessor(Context appContext, IJournal journal, MainActivityContract.IMainActivityPresenter mainActivityPresenter)
     {
-        this.persistentData = persistentData;
+        this.journal = journal;
         this.mainActivityPresenter = mainActivityPresenter;
+        this.appContext = appContext;
     }
 
+    protected void doShowMessage(String message)
+    {
+        mainActivityPresenter.showErrorMessage(message);
+    }
+    protected void doShowToast(String message)
+    {
+        Toast.makeText(appContext, message, Toast.LENGTH_LONG)
+                .show();
+    }
     @Override
     public void onError(Throwable exception)
     {
         onError(exception, true);
     };
     @Override
+    public void onSmallError(Throwable exception)
+    {
+        onError(exception, false);
+    };
+
+
     public void onError(Throwable exception, boolean writeToJournal)
     {
         StringBuilder message=new StringBuilder();
@@ -40,17 +60,19 @@ public class ErrorProcessor implements IErrorProcessor {
                 message.append(t.getMessage());
                 message.append("\n");
                 if(writeToJournal)
-                    persistentData.journalAdd(t);
-
+                    journal.journalAdd(t);
             }
         }
         else
         {
             message.append(exception.getMessage());
             if(writeToJournal)
-                persistentData.journalAdd(exception);
+                journal.journalAdd(exception);
         }
+        if(writeToJournal)
+            doShowMessage(message.toString());
+        else
+            doShowToast(message.toString());
 
-        mainActivityPresenter.showErrorMessage(message.toString());
     };
 }

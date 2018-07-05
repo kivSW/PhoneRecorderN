@@ -31,7 +31,8 @@ public class InternalFiles implements IInternalFiles {
     private String filePath;
 
     private static final int MAX_FILES_NUM = 20;
-    
+
+
     InternalFiles( ISettings settings, IErrorProcessor errorProcessor)
     {
         this.settings = settings;

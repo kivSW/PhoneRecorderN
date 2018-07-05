@@ -7,4 +7,6 @@
 
     <string name="deleteConfirmation">Do you want to delete %d records?</string>
     <string name="chooser_title">Choose an application</string>
+
+    <string name="retry_later">Retry this operation later. Data has not been loaded yet.</string>
 </resources>

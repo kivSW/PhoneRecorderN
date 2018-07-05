@@ -38,8 +38,9 @@ import dagger.Component;
 @Component(modules={SettingsPresenterModule.class, RecordListPresenterModule.class, SettingsModule.class,
            ApplicationModule.class, DiskRepresentativeModule.class, AndroidPlayerModule.class, PlayerPresenterModule.class,
            CloudCacheModule.class, PersistentDataModule.class, TaskExecutorModule.class, InternalFilesModule.class,
+           MvpErrorMessageBuilderModule.class, MetricaModule.class, OperationsModule.class,
            TaskModule.class, NotificationShowerModule.class, ErrorProcessorModule.class, MainActivityModule.class,
-           MvpErrorMessageBuilderModule.class, MetricaModule.class, OperationsModule.class})
+           })
 @Singleton
 public interface ApplicationComponent {
     void inject(MainActivity activity);

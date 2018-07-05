@@ -1,6 +1,9 @@
 package com.kivsw.phonerecorder.ui.record_list.operations;
 
+import android.content.Context;
+
 import com.kivsw.cloud.DiskContainer;
+import com.kivsw.phonerecorder.model.internal_filelist.IInternalFiles;
 import com.kivsw.phonerecorder.model.settings.ISettings;
 import com.kivsw.phonerecorder.ui.record_list.RecordListContract;
 
@@ -9,6 +12,7 @@ import io.reactivex.CompletableSource;
 import io.reactivex.Single;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Function;
+import phonerecorder.kivsw.com.phonerecorder.R;
 
 /**
  * Created by ivan on 7/4/18.
@@ -17,17 +21,24 @@ import io.reactivex.functions.Function;
 public class SetUndeletableFlagOperator {
     private ISettings settings;
     private DiskContainer disks;
+    private IInternalFiles internalFiles;
+    private Context appContext;
 
-    SetUndeletableFlagOperator(ISettings settings, DiskContainer disks)
+    SetUndeletableFlagOperator(Context context, ISettings settings, IInternalFiles internalFiles, DiskContainer disks)
     {
         this.settings = settings;
         this.disks = disks;
+        this.internalFiles = internalFiles;
+        this.appContext = context;
     }
 
     public Completable setUndeletableFlag(final RecordListContract.RecordFileInfo fileInfo, final boolean isProtected)
     {
-        if(fileInfo.fromInternalDir && fileInfo.cachedRecordFileInfo!=null)
+        if(fileInfo.fromInternalDir && internalFiles.isSent(fileInfo.recordFileNameData.origFileName))
         {
+            if(fileInfo.cachedRecordFileInfo!=null)
+                return Completable.error(new Exception(appContext.getText(R.string.retry_later).toString()));
+
             return
                 doSetUndeletableFlag(fileInfo.cachedRecordFileInfo, isProtected)
                 .andThen(Single.just("") )

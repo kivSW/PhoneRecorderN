@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor;
+import com.kivsw.phonerecorder.model.settings.ISettings;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -15,8 +16,6 @@ import java.util.Date;
 import java.util.Set;
 
 import javax.inject.Inject;
-
-import com.kivsw.phonerecorder.model.settings.ISettings;
 
 /**
  * Created by ivan on 4/26/18.
@@ -71,7 +70,7 @@ public class Journal implements IJournal {
         }catch(Exception e)
         {
            if(errorProcessor!=null)
-               errorProcessor.onError(e, false);
+               errorProcessor.onSmallError(e);
         }
     };
 

@@ -19,8 +19,9 @@ public class ErrorProcessorModule {
     @Singleton
     IErrorProcessor provideErrorProcessor(Context context, IJournal data, MainActivityContract.IMainActivityPresenter mainActivityPresenter)
     {
-        IErrorProcessor res= new ErrorProcessor( data, mainActivityPresenter);
+        IErrorProcessor res= new ErrorProcessor(context, data, mainActivityPresenter);
         data.setErrorProcessor(res);
         return res;
     }
+
 }

@@ -16,6 +16,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import phonerecorder.kivsw.com.phonerecorder.BuildConfig;
 
 /**
  * this DI module provides the list of available disks
@@ -31,7 +32,8 @@ public class DiskRepresentativeModule {
 
         disks = new ArrayList();
         disks.addAll(StorageUtils.getSD_list(context));
-        disks.add(LocalDiskRepresenter.createPrivateStorageFS(context));
+        if(BuildConfig.DEBUG)
+            disks.add(LocalDiskRepresenter.createPrivateStorageFS(context));
 
         disks.add(new PcloudRepresenter(context, keys.getPCloud_clientId()));
         disks.add(new YandexRepresenter(context, keys.getYandexDiskKey(), null, null));
