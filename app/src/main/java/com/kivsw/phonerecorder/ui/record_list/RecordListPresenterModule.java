@@ -5,15 +5,17 @@ import android.content.Context;
 import com.kivsw.cloud.DiskContainer;
 import com.kivsw.cloudcache.CloudCache;
 import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor;
+import com.kivsw.phonerecorder.model.settings.ISettings;
 import com.kivsw.phonerecorder.model.tasks.RecordSender;
+import com.kivsw.phonerecorder.ui.record_list.operations.DeleteRecordsOperation;
+import com.kivsw.phonerecorder.ui.record_list.operations.ReadRecordListOperation;
+import com.kivsw.phonerecorder.ui.record_list.operations.SetUndeletableFlagOperator;
 
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
 import io.reactivex.annotations.NonNull;
-
-import com.kivsw.phonerecorder.model.settings.ISettings;
 
 /**
  * Created by ivan on 3/27/18.
@@ -23,8 +25,12 @@ public class RecordListPresenterModule {
     @Provides
     @NonNull
     @Singleton
-    public RecordListContract.IRecordListPresenter providePresenter(Context appContext, ISettings settings, DiskContainer disks, CloudCache cloudCache, IErrorProcessor errorProcessor, RecordSender recordSender)
+    public RecordListContract.IRecordListPresenter providePresenter(Context appContext, ISettings settings, DiskContainer disks, CloudCache cloudCache,
+                                                                    ReadRecordListOperation readRecordListOperation, DeleteRecordsOperation deleteRecordsOperation, SetUndeletableFlagOperator setUndeletableFlagOperator,
+                                                                    IErrorProcessor errorProcessor, RecordSender recordSender)
     {
-        return new RecordListPresenter(appContext, settings, disks, cloudCache,  errorProcessor, recordSender);
+        return new RecordListPresenter(appContext, settings, disks, cloudCache,
+                readRecordListOperation, deleteRecordsOperation, setUndeletableFlagOperator,
+                errorProcessor, recordSender);
     }
 }

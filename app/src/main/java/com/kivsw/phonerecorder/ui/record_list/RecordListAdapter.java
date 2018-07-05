@@ -10,10 +10,11 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.kivsw.phonerecorder.model.utils.Utils;
+
 import java.util.List;
 
 import phonerecorder.kivsw.com.phonerecorder.R;
-import com.kivsw.phonerecorder.model.utils.Utils;
 
 /**
  * Created by ivan on 4/3/18.
@@ -32,6 +33,7 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.It
     public class ItemViewHolder extends RecyclerView.ViewHolder
     {
         TextView nameText, phonenumberText, durationText, dateTimeText, commentaryText, downloadPercentageText;
+        View fromInternalDirTextView;
         ImageButton playButton;
         CheckBox checkbox;
         ImageView imageViewCallDirection, imageViewProtected;
@@ -50,6 +52,7 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.It
             commentaryText= (TextView)view.findViewById(R.id.commentaryText);
             downloadProgress = (ProgressBar)view.findViewById(R.id.downloadProgress);
             downloadPercentageText = (TextView)view.findViewById(R.id.downloadPercentageText);
+            fromInternalDirTextView = view.findViewById(R.id.fromInternalDirTextView);
 
             checkbox=(CheckBox)view.findViewById(R.id.checkbox);
             checkbox.setOnClickListener(new View.OnClickListener() {
@@ -126,6 +129,10 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.It
 
         holder.nameText.setText(data.callerName);
         holder.phonenumberText.setText(data.recordFileNameData.phoneNumber);
+        if(data.fromInternalDir)
+            holder.fromInternalDirTextView.setVisibility(View.VISIBLE);
+        else
+            holder.fromInternalDirTextView.setVisibility(View.GONE);
 
         if(data.recordFileNameData.isSMS) holder.durationText.setText("");
         else holder.durationText.setText(Utils.durationToStr(data.recordFileNameData.duration));
@@ -147,16 +154,14 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.It
         //holder.imageViewProtected.setImageResource( data.recordFileNameData.isProtected? R.drawable.icon_lock : R.drawable.icon_unlock);
 
         // chooses background  colour
-        if((position&1)==0)
+        int color=0;
+        if((position&1)!=0)
         {
-            holder.itemView.setBackgroundColor(0);
+            color=holder.nameText.getCurrentTextColor();
+            color = (color & 0x00FFFFFF) | 0x22000000;
         }
-        else
-        {
-            int color=holder.nameText.getCurrentTextColor();
-            color = (color & 0x00FFFFFF) | 0x11000000;
-            holder.itemView.setBackgroundColor(color);
-        }
+
+        holder.itemView.setBackgroundColor(color);
 
 
         if(data.isDownloading)

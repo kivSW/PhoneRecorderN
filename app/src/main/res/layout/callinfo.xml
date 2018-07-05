@@ -103,7 +103,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="duration"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
+                    android:textAppearance="?android:attr/textAppearanceSmall"/>
             </LinearLayout>
 
             <LinearLayout
@@ -130,6 +130,14 @@
                     android:visibility="gone" />
 
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/fromInternalDirTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="."
+                android:textAppearance="?android:attr/textAppearanceSmall"/>
 
         </LinearLayout>
     </LinearLayout>

@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         /*ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        toolbar.setLogo(R.drawable.ear);
+        toolbar.setLogo(R.drawable.horns);
         toolbar.setLogoDescription(R.string.app_name);
         actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);*/

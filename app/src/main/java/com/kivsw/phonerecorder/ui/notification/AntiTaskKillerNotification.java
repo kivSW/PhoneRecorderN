@@ -8,13 +8,12 @@ import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 
 import com.kivsw.phonerecorder.model.settings.AntiTaskKillerNotificationParam;
+import com.kivsw.phonerecorder.model.settings.ISettings;
+import com.kivsw.phonerecorder.os.AppReceiver;
 
 import javax.inject.Inject;
 
 import phonerecorder.kivsw.com.phonerecorder.R;
-
-import com.kivsw.phonerecorder.model.settings.ISettings;
-import com.kivsw.phonerecorder.os.AppReceiver;
 
 /**
  * Notification is used only to avoid killing application
@@ -44,9 +43,9 @@ public class AntiTaskKillerNotification {
         if(!param.visible) return;
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
-        int iconResourceId=getIconId(param.iconNum);
-        mBuilder.setSmallIcon(iconResourceId);
-        mBuilder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(),iconResourceId));
+        int smallIconResourceId=getSmallIconId(param.iconNum);
+        mBuilder.setSmallIcon(smallIconResourceId);
+        mBuilder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(),smallIconResourceId));
         mBuilder.setOngoing(true);
         //mBuilder.setLargeIcon( BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_phonerecorder) );
         //mBuilder.setContentTitle(param.text);
@@ -78,19 +77,26 @@ public class AntiTaskKillerNotification {
     }
 
 
-    static public final int notificationIcons[];
+    static public final int notificationSmallIcons[],
+                  notificationIcons[];
     static{
+        notificationSmallIcons = new int[3];
+        notificationSmallIcons[0]=R.drawable.ic_notification_small_horns;
+        notificationSmallIcons[1]=R.drawable.ic_notification_small_android;
+        notificationSmallIcons[2]=R.drawable.ic_notification_small_empty;
+
         notificationIcons = new int[3];
-        notificationIcons[0]=R.drawable.ic_notification_small_ear;
-        notificationIcons[1]=R.drawable.ic_notification_small1;
-        notificationIcons[2]=R.drawable.ic_notification_small_empty;
+        notificationIcons[0]=R.drawable.ic_notification_horns;
+        notificationIcons[1]=R.drawable.ic_notification_android;
+        notificationIcons[2]=R.drawable.ic_notification_empty;
     }
-    private int getIconId(int iconIndex)
+
+    private int getSmallIconId(int iconIndex)
     {
         if(iconIndex<0)iconIndex=0;
-        if(iconIndex>=notificationIcons.length) iconIndex=notificationIcons.length-1;
+        if(iconIndex>=notificationSmallIcons.length) iconIndex=notificationSmallIcons.length-1;
 
-        return notificationIcons[iconIndex];
+        return notificationSmallIcons[iconIndex];
     }
 
 }

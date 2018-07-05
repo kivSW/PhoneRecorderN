@@ -52,7 +52,6 @@ public class RecListFilter {
         processChain=PublishSubject.create();
         processChain
                 .observeOn(Schedulers.io())
-                //.observeOn(Schedulers.newThread())
                 .map(new Function<List<RecordListContract.RecordFileInfo>, List<RecordListContract.RecordFileInfo>>() {
                     @Override
                     public List<RecordListContract.RecordFileInfo> apply(List<RecordListContract.RecordFileInfo> records) throws Exception {

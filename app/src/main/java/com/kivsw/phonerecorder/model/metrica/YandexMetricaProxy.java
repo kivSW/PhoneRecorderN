@@ -20,6 +20,7 @@ import io.reactivex.disposables.Disposable;
 /**
  *
  * https://tech.yandex.ru/appmetrica/doc/mobile-sdk-dg/concepts/android-initialize-docpage/
+ * https://appmetrica.yandex.com
  */
 
 public class YandexMetricaProxy implements IMetrica {

@@ -3,7 +3,6 @@ package com.kivsw.phonerecorder.ui.record_list;
 import android.content.Context;
 
 import com.kivsw.cloud.DiskContainer;
-import com.kivsw.cloud.disk.IDiskIO;
 import com.kivsw.cloudcache.CloudCache;
 import com.kivsw.cloudcache.data.CacheFileInfo;
 import com.kivsw.mvprxdialog.Contract;
@@ -18,6 +17,9 @@ import com.kivsw.phonerecorder.model.tasks.RecordSender;
 import com.kivsw.phonerecorder.model.utils.RecordFileNameData;
 import com.kivsw.phonerecorder.model.utils.SimpleFileIO;
 import com.kivsw.phonerecorder.os.MyApplication;
+import com.kivsw.phonerecorder.ui.record_list.operations.DeleteRecordsOperation;
+import com.kivsw.phonerecorder.ui.record_list.operations.ReadRecordListOperation;
+import com.kivsw.phonerecorder.ui.record_list.operations.SetUndeletableFlagOperator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,25 +30,21 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import io.reactivex.CompletableObserver;
-import io.reactivex.CompletableSource;
 import io.reactivex.MaybeObserver;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
-import io.reactivex.SingleSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
-import io.reactivex.schedulers.Schedulers;
 import phonerecorder.kivsw.com.phonerecorder.R;
 
 /**
- * Created by ivan on 3/27/18.
+ *
  */
 
 public class RecordListPresenter
@@ -54,6 +52,9 @@ public class RecordListPresenter
 {
     private ISettings settings;
     private DiskContainer disks;
+    private ReadRecordListOperation readRecordListOperation;
+    private DeleteRecordsOperation deleteRecordsOperation;
+    private SetUndeletableFlagOperator setUndeletableFlagOperator;
     private RecordListContract.IRecordListView view;
     private CloudCache cloudCache;
     private IErrorProcessor errorProcessor;
@@ -66,12 +67,17 @@ public class RecordListPresenter
     private Disposable settingsDisposable;
 
     @Inject
-    public RecordListPresenter(Context appContext, ISettings settings, DiskContainer disks, CloudCache cloudCache, IErrorProcessor errorProcessor, RecordSender recordSender)
+    RecordListPresenter(Context appContext, ISettings settings, DiskContainer disks, CloudCache cloudCache,
+                        ReadRecordListOperation readRecordListOperation, DeleteRecordsOperation deleteRecordsOperation, SetUndeletableFlagOperator setUndeletableFlagOperator,
+                        IErrorProcessor errorProcessor, RecordSender recordSender)
     {
         this.settings = settings;
         this.disks = disks;
         this.appContext = appContext;
         this.cloudCache = cloudCache;
+        this.readRecordListOperation = readRecordListOperation;
+        this.deleteRecordsOperation = deleteRecordsOperation;
+        this.setUndeletableFlagOperator = setUndeletableFlagOperator;
         this.errorProcessor = errorProcessor;
 
         settingsDisposable=null;
@@ -112,7 +118,7 @@ public class RecordListPresenter
 
                 @Override public void onComplete() {}
             });
-    };
+    }
 
     protected IPlayer providePlayerInstance()
     {
@@ -182,15 +188,15 @@ public class RecordListPresenter
             @Override
             public void onSuccess(String filePath) {
                 setCurrentDir(filePath);
-            };
+            }
 
             @Override
             public void onError(Throwable e) {
                 errorProcessor.onError(e);
-            };
+            }
 
             @Override
-            public void onComplete() {};
+            public void onComplete() {}
         });
 
     }
@@ -201,15 +207,15 @@ public class RecordListPresenter
             return;
          settings.addToViewUrlPathHistory(filePath);
          //updateDir(true); WE don't need updateDir due to subscribeSettings()
-    };
+    }
 
     protected void lazyUpdateDir()
     {
         if(view==null)
-            recListContainer.clean();
+            recListContainer.clear();
         else
             updateDir(false);
-    };
+    }
 
 
     private Disposable updateDirDisposable=null;
@@ -218,8 +224,7 @@ public class RecordListPresenter
     {
         setProgressBarVisible(true);
 
-        final String dirPath = settings.getCurrentViewUrlPath();
-        lastUpdatedDir = dirPath;
+        lastUpdatedDir = settings.getCurrentViewUrlPath();
 
         if(clearCurrentData)
            setVisibleDirContent(Collections.<RecordListContract.RecordFileInfo>emptyList(), true);
@@ -228,25 +233,19 @@ public class RecordListPresenter
         {
             updateDirDisposable.dispose();
             updateDirDisposable=null;
-        };
-        disks.authorizeIfNecessary(dirPath)
-             .andThen(Single.just("") )
-             .flatMap(new Function<String, SingleSource<IDiskIO.ResourceInfo>>() {
-                @Override
-                public SingleSource<IDiskIO.ResourceInfo> apply(@NonNull String s) throws Exception {
-                    return disks.getResourceInfo(dirPath);
-                }
-             })
+        }
+
+        recListContainer.clear();
+        readRecordListOperation.getCallRecordList(lastUpdatedDir)
               .observeOn(AndroidSchedulers.mainThread())
-              .subscribe(new SingleObserver<IDiskIO.ResourceInfo>(){
+              .subscribe(new Observer<BunchOfFiles>(){
                         @Override public void onSubscribe(Disposable d) {
                             updateDirDisposable = d;
                         }
 
                         @Override
-                        public void onSuccess(IDiskIO.ResourceInfo dir) {
-                           recListContainer.setFileList(dir.content());
-                           setProgressBarVisible(false);
+                        public void onNext(BunchOfFiles bunchOfFiles) {
+                           recListContainer.addFileList(bunchOfFiles);
                         }
 
                         @Override
@@ -255,14 +254,17 @@ public class RecordListPresenter
                             setProgressBarVisible(false);
                         }
 
+                        @Override
+                        public void onComplete() {
+                            setProgressBarVisible(false);
+                        }
+
 
               });
-    };
+    }
 
-    /*Observable<IDiskIO.ResourceInfo> getFileList()
-    {
 
-    }*/
+
 
     private boolean progressBarVisible=false;
     protected void setProgressBarVisible(boolean visible)
@@ -270,7 +272,7 @@ public class RecordListPresenter
         progressBarVisible = visible;
 
         updateViewProgressBarVisible();
-    };
+    }
     protected void updateViewProgressBarVisible()
     {
         if(view!=null) {
@@ -290,23 +292,8 @@ public class RecordListPresenter
         if(view!=null)
         {
             view.setRecordList(aFilteredDirContent, scrollToBegin);
-        };
+        }
     }
-
-
-  /*  protected void addDirContent(List<RecordListContract.RecordFileInfo> recordList, boolean scrollToBegin) {
-
-        if(needToClearDirContent) {
-            this.dirContent = recordList;
-            filterContent(scrollToBegin);
-        }
-        else {
-            this.dirContent.addAll(recordList);
-            addFilterContent(scrollToBegin);
-        }
-
-
-    }*/
 
     //private String filter;
     @Override
@@ -322,30 +309,20 @@ public class RecordListPresenter
         try {
             final RecordListContract.RecordFileInfo recordFileInfo = recListContainer.getVisibleDirContent().get(pos);//visibleDirContent.get(pos);
 
-            final String dirPath = settings.getCurrentViewUrlPath();
-            String oldPath = dirPath + recordFileInfo.recordFileNameData.origFileName;
-            recordFileInfo.recordFileNameData.isProtected = isProtected;
-            final String newFileName = recordFileInfo.recordFileNameData.buildFileName();
-            String newPath = dirPath + newFileName;
+            recordFileInfo.recordFileNameData.isProtected = isProtected; // updates UI state
             notifyRecordChange(recordFileInfo);
 
-            disks
-                    .renameFile(oldPath, newPath)
+            setUndeletableFlagOperator.setUndeletableFlag(recordFileInfo, isProtected)
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new CompletableObserver() {
                         @Override
                         public void onSubscribe(Disposable d) {
-
                         }
-
-                        ;
 
                         @Override
                         public void onComplete() {
                             notifyRecordChange(recordFileInfo);
-                            recordFileInfo.recordFileNameData.origFileName = newFileName;
                         }
-
-                        ;
 
                         @Override
                         public void onError(Throwable e) {
@@ -354,13 +331,11 @@ public class RecordListPresenter
                             notifyRecordChange(recordFileInfo);
                         }
 
-                        ;
                     });
         }catch(Exception e)
         {
             errorProcessor.onError(e);
         }
-
 
     }
 
@@ -428,7 +403,7 @@ public class RecordListPresenter
 
     protected Single<CacheFileInfo> getCachedFile(final RecordListContract.RecordFileInfo recordFileInfo)
     {
-        String filePath = settings.getCurrentViewUrlPath() + recordFileInfo.recordFileNameData.origFileName;
+        String filePath = recordFileInfo.getFileFullPath();//settings.getCurrentViewUrlPath() + recordFileInfo.recordFileNameData.origFileName;
         recordFileInfo.percentage=0;
         recordFileInfo.isDownloading=true;
         notifyRecordChange(recordFileInfo);
@@ -563,7 +538,7 @@ public class RecordListPresenter
                 return true;
         };
         return false;
-    };
+    }
 
     List<RecordListContract.RecordFileInfo> getSelectedItems(boolean excludeProtected)
     {
@@ -602,26 +577,13 @@ public class RecordListPresenter
                             doDelete(selectedFiles);
                     }
                 });
-    };
+    }
 
     protected void  doDelete(List<RecordListContract.RecordFileInfo> selectedFiles)
     {
-        /*StorageUtils.CloudFile cloudFile = getCloudFile();
-        final String path=cloudFile.getPath();
-        final IDiskIO diskIo=cloudFile.diskRepresenter.getDiskIo();*/
-
-        final String dirPath = settings.getCurrentViewUrlPath();
-
         setProgressBarVisible(true);
 
-        Observable.fromIterable(selectedFiles)
-            .observeOn(Schedulers.io())
-            .flatMapCompletable(new Function<RecordListContract.RecordFileInfo, CompletableSource>() {
-                @Override
-                public CompletableSource apply(RecordListContract.RecordFileInfo recordFileInfo) throws Exception {
-                    return disks.deleteFile(dirPath+recordFileInfo.recordFileNameData.origFileName);
-                }
-            })
+        deleteRecordsOperation.deleteRecords(selectedFiles)
             .subscribeOn(AndroidSchedulers.mainThread())
             .subscribe(new CompletableObserver() {
                 @Override
@@ -639,7 +601,6 @@ public class RecordListPresenter
                     errorProcessor.onError(e);
                 }
             });
-
 
     }
 

@@ -23,6 +23,7 @@ import com.kivsw.phonerecorder.ui.player.PlayerPresenter;
 import com.kivsw.phonerecorder.ui.player.PlayerPresenterModule;
 import com.kivsw.phonerecorder.ui.record_list.RecordListFragment;
 import com.kivsw.phonerecorder.ui.record_list.RecordListPresenterModule;
+import com.kivsw.phonerecorder.ui.record_list.operations.OperationsModule;
 import com.kivsw.phonerecorder.ui.settings.SettingsFragment;
 import com.kivsw.phonerecorder.ui.settings.SettingsPresenterModule;
 
@@ -38,7 +39,7 @@ import dagger.Component;
            ApplicationModule.class, DiskRepresentativeModule.class, AndroidPlayerModule.class, PlayerPresenterModule.class,
            CloudCacheModule.class, PersistentDataModule.class, TaskExecutorModule.class, InternalFilesModule.class,
            TaskModule.class, NotificationShowerModule.class, ErrorProcessorModule.class, MainActivityModule.class,
-           MvpErrorMessageBuilderModule.class, MetricaModule.class,})
+           MvpErrorMessageBuilderModule.class, MetricaModule.class, OperationsModule.class})
 @Singleton
 public interface ApplicationComponent {
     void inject(MainActivity activity);

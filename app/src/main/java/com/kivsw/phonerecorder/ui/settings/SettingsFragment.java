@@ -19,15 +19,14 @@ import android.widget.TextView;
 
 import com.kivsw.phonerecorder.model.settings.AntiTaskKillerNotificationParam;
 import com.kivsw.phonerecorder.model.settings.DataSize;
+import com.kivsw.phonerecorder.model.settings.ISettings;
 import com.kivsw.phonerecorder.model.settings.SoundSource;
+import com.kivsw.phonerecorder.os.MyApplication;
+import com.kivsw.phonerecorder.ui.notification.AntiTaskKillerNotification;
 
 import javax.inject.Inject;
 
 import phonerecorder.kivsw.com.phonerecorder.R;
-
-import com.kivsw.phonerecorder.model.settings.ISettings;
-import com.kivsw.phonerecorder.os.MyApplication;
-import com.kivsw.phonerecorder.ui.notification.AntiTaskKillerNotification;
 
 /**
 
@@ -41,13 +40,13 @@ public class SettingsFragment extends Fragment
 
     private View rootView;
     private CheckBox checkBoxCallEnabled,
-            checkBoxSmsEnabled,
-            checkHiddenMode,
-            checkShowFileExtension,
-            checkAllowMobileInternet,
-            checkAllowRoaming,
-            checkExportJournal,
-            checkUseInternalPlayer;
+                    checkBoxSmsEnabled,
+                    checkHiddenMode,
+                    checkShowFileExtension,
+                    checkAllowMobileInternet,
+                    checkAllowRoaming,
+                    checkExportJournal,
+                    checkUseInternalPlayer;
     private TextView textViewPath;
     private ImageView buttonSelDir;
     private Spinner spinnerSoundSource;

@@ -10,12 +10,12 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 
+import com.kivsw.phonerecorder.model.settings.ISettings;
 import com.kivsw.phonerecorder.ui.main_activity.MainActivity;
 
 import javax.inject.Inject;
 
 import phonerecorder.kivsw.com.phonerecorder.R;
-import com.kivsw.phonerecorder.model.settings.ISettings;
 
 public class NotificationShower {
 
@@ -56,8 +56,8 @@ public class NotificationShower {
 		if(settings.getHiddenMode()) return;
 
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
-		mBuilder.setSmallIcon(R.drawable.ic_notification_small_ear);
-		mBuilder.setLargeIcon( BitmapFactory.decodeResource(context.getResources(), R.drawable.ear) );
+		mBuilder.setSmallIcon(R.drawable.ic_notification_small_horns);
+		mBuilder.setLargeIcon( BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_phonerecorder) );
 		mBuilder.setContentTitle(context.getText(R.string.app_name).toString());
 		mBuilder.setContentText(text);
 
