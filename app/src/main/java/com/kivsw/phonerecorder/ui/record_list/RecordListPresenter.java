@@ -66,6 +66,7 @@ public class RecordListPresenter
     private String lastUpdatedDir;
     private Disposable settingsDisposable;
 
+
     @Inject
     RecordListPresenter(Context appContext, ISettings settings, DiskContainer disks, CloudCache cloudCache,
                         ReadRecordListOperation readRecordListOperation, DeleteRecordsOperation deleteRecordsOperation, SetUndeletableFlagOperator setUndeletableFlagOperator,
@@ -226,6 +227,7 @@ public class RecordListPresenter
     public void updateDir(final boolean clearCurrentData)
     {
         setProgressBarVisible(true);
+        isFileListLoading=true;
 
         lastUpdatedDir = settings.getCurrentViewUrlPath();
 
@@ -255,11 +257,13 @@ public class RecordListPresenter
                         public void onError(Throwable e) {
                             errorProcessor.onSmallError(e);
                             setProgressBarVisible(false);
+                            isFileListLoading=false;
                         }
 
                         @Override
                         public void onComplete() {
                             setProgressBarVisible(false);
+                            isFileListLoading=false;
                         }
 
 
@@ -267,19 +271,23 @@ public class RecordListPresenter
     }
 
 
-
+    private boolean isFileListLoading=false;
+    protected boolean isFileListLoading()
+    {
+        return isFileListLoading || recListContainer.isProcessing();
+    }
 
     private boolean progressBarVisible=false;
     protected void setProgressBarVisible(boolean visible)
     {
         progressBarVisible = visible;
-
         updateViewProgressBarVisible();
     }
+
     protected void updateViewProgressBarVisible()
     {
         if(view!=null) {
-            boolean v= (progressBarVisible) || (recListContainer.isProcessing());
+            boolean v= (progressBarVisible) || isFileListLoading();
             view.setRecListProgressBarVisible(v);
         }
     }
@@ -315,7 +323,7 @@ public class RecordListPresenter
             recordFileInfo.recordFileNameData.isProtected = isProtected; // updates UI state
             notifyRecordChange(recordFileInfo);
 
-            setUndeletableFlagOperator.setUndeletableFlag(recordFileInfo, isProtected)
+            setUndeletableFlagOperator.setUndeletableFlag(recordFileInfo, isProtected, !isFileListLoading())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new CompletableObserver() {
                         @Override
@@ -586,7 +594,7 @@ public class RecordListPresenter
     {
         setProgressBarVisible(true);
 
-        deleteRecordsOperation.deleteRecords(selectedFiles)
+        deleteRecordsOperation.deleteRecords(selectedFiles, !isFileListLoading())
             .subscribeOn(AndroidSchedulers.mainThread())
             .subscribe(new CompletableObserver() {
                 @Override

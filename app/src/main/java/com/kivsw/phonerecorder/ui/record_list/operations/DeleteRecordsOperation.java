@@ -16,27 +16,20 @@ import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
-import phonerecorder.kivsw.com.phonerecorder.R;
 
 /**
  * Created by ivan on 7/4/18.
  */
 
-public class DeleteRecordsOperation {
-    private ISettings settings;
-    private DiskContainer disks;
-    private IInternalFiles internalFiles;
-    private Context appContext;
+public class DeleteRecordsOperation extends AbstractOperation{
+
 
     DeleteRecordsOperation(Context context, ISettings settings, IInternalFiles internalFiles, DiskContainer disks)
     {
-        this.settings = settings;
-        this.disks = disks;
-        this.internalFiles = internalFiles;
-        this.appContext = context;
+        super(context,settings,internalFiles,disks);
     };
 
-    public Completable deleteRecords(List<RecordListContract.RecordFileInfo> files)
+    public Completable deleteRecords(List<RecordListContract.RecordFileInfo> files, final boolean allDataLoaded)
     {
         return
             Observable.fromIterable(files)
@@ -45,33 +38,36 @@ public class DeleteRecordsOperation {
                 .flatMapCompletable(new Function<RecordListContract.RecordFileInfo, CompletableSource>() {
                     @Override
                     public CompletableSource apply(RecordListContract.RecordFileInfo recordFileInfo) throws Exception {
-                        return doDelete(recordFileInfo);
+                        return doDeleteRecord(recordFileInfo, allDataLoaded);
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    protected Completable doDelete(final RecordListContract.RecordFileInfo fileInfo)
+    protected Completable doDeleteRecord(final RecordListContract.RecordFileInfo fileInfo, boolean allDataLoaded)
     {
+        if(!isConsistent(fileInfo, allDataLoaded))
+            return getRetryLaterError();
 
-        if(fileInfo.fromInternalDir && internalFiles.isSent(fileInfo.recordFileNameData.origFileName))
-        {
-            if(fileInfo.cachedRecordFileInfo!=null)
-                return Completable.error(new Exception(appContext.getText(R.string.retry_later).toString()));
-
+            if(fileInfo.cachedRecordFileInfo==null)
+                return doDeleteFile(fileInfo);
+            else
             return
-                doDelete(fileInfo.cachedRecordFileInfo)
+                    doDeleteFile(fileInfo.cachedRecordFileInfo)
                     .andThen(Single.just("") )
                     .flatMapCompletable(new Function<String, CompletableSource>() {
                         @Override
                         public CompletableSource apply(String s) throws Exception {
                             fileInfo.cachedRecordFileInfo=null;
-                            return doDelete(fileInfo);
+                            return doDeleteFile(fileInfo);
                         }
                     });
-        }
-
-        return disks.deleteFile(fileInfo.getFileFullPath());
-
     }
+
+    protected Completable doDeleteFile(final RecordListContract.RecordFileInfo fileInfo)
+    {
+        return disks.deleteFile(fileInfo.getFileFullPath());
+    }
+
+
 }

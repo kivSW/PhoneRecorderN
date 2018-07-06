@@ -107,7 +107,7 @@ public class RecListFilter {
     }
     protected boolean checkFilter(RecordListContract.RecordFileInfo fileData, String filter)
     {
-        if (fileData.recordFileNameData.phoneNumber.contains(filter)) return true;
+        if (fileData.recordFileNameData.phoneNumber.toLowerCase().contains(filter)) return true;
         if (fileData.callerName.toLowerCase().contains(filter)) return true;
 
         return false;

@@ -269,7 +269,7 @@ public class RecordSender implements ITask {
         {
             File file=new File(localDir, fileName);
             if(!file.exists() || file.length()<1)
-                file.doDelete();
+                file.deleteRecord();
             else
                 res.add(fileName);
         };
@@ -287,10 +287,10 @@ public class RecordSender implements ITask {
                         @Override
                         public void run() throws Exception {
                             internalFiles.markFileAsSent(source);
-/*                            if(source.contains(Journal.JOURNAL_FILE_NAME)) // do not doDelete journal file
+/*                            if(source.contains(Journal.JOURNAL_FILE_NAME)) // do not deleteRecord journal file
                                 return;
                             File file = new File(source);
-                            file.doDelete();*/
+                            file.deleteRecord();*/
                         }
                     });
                     /*.onErrorResumeNext(new Function<Throwable, Observable<Integer>>(){

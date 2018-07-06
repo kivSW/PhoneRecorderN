@@ -210,7 +210,6 @@ class RecListContainer {
 
     protected boolean bindWithCache(RecordListContract.RecordFileInfo item)
     {
-
         RecordListContract.RecordFileInfo cacheItem=cacheDirContentMap.get(item.recordFileNameData.origFileName);
         if(cacheItem==null)
             return false;
@@ -232,7 +231,9 @@ class RecListContainer {
 
         recListFilter.clearData();
         recListFilter.setFilter(filter);
-        recListFilter.addData(dirContent);
+
+        List<RecordListContract.RecordFileInfo> tmpDirContent=new ArrayList(dirContent);
+        recListFilter.addData(tmpDirContent);
     }
 
     public boolean hasData()

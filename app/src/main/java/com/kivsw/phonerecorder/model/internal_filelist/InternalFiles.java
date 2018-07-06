@@ -51,7 +51,12 @@ public class InternalFiles implements IInternalFiles {
     @Override
     public String[] getFileListToSend()
     {
-        String pattern = "("+ RecordFileNameData.RECORD_PATTERN+"|^"+ Journal.JOURNAL_FILE_NAME+")";
+        String pattern;
+        if(settings.getAllowExportingJournal())
+            pattern = "("+ RecordFileNameData.RECORD_PATTERN+"|^"+ Journal.JOURNAL_FILE_NAME+")";
+        else
+            pattern = RecordFileNameData.RECORD_PATTERN;
+
         String fileList[] = getFileList(settings.getInternalTempPath(), pattern);
         String res[] = removeSentFiles(fileList);
         return res;
@@ -145,9 +150,6 @@ public class InternalFiles implements IInternalFiles {
     protected String[] getFileList(String localDir, String regExp)
     {
         File dir=new File(localDir);
-        /*String pattern;
-        if(settings.getAllowExportingJournal()) pattern = "("+ RecordFileNameData.RECORD_PATTERN+"|^"+ Journal.JOURNAL_FILE_NAME+")";
-        else            pattern = RecordFileNameData.RECORD_PATTERN;*/
 
         final Pattern p = Pattern.compile(regExp);
         String[] fileList = dir.list(new FilenameFilter(){

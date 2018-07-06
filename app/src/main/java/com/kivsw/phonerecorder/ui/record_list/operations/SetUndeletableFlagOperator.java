@@ -12,33 +12,27 @@ import io.reactivex.CompletableSource;
 import io.reactivex.Single;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Function;
-import phonerecorder.kivsw.com.phonerecorder.R;
 
 /**
  * Created by ivan on 7/4/18.
  */
 
-public class SetUndeletableFlagOperator {
-    private ISettings settings;
-    private DiskContainer disks;
-    private IInternalFiles internalFiles;
-    private Context appContext;
+public class SetUndeletableFlagOperator  extends AbstractOperation {
 
     SetUndeletableFlagOperator(Context context, ISettings settings, IInternalFiles internalFiles, DiskContainer disks)
     {
-        this.settings = settings;
-        this.disks = disks;
-        this.internalFiles = internalFiles;
-        this.appContext = context;
+        super(context,settings,internalFiles,disks);
     }
 
-    public Completable setUndeletableFlag(final RecordListContract.RecordFileInfo fileInfo, final boolean isProtected)
+    public Completable setUndeletableFlag(final RecordListContract.RecordFileInfo fileInfo, final boolean isProtected, boolean allDataLoaded)
     {
-        if(fileInfo.fromInternalDir && internalFiles.isSent(fileInfo.recordFileNameData.origFileName))
-        {
-            if(fileInfo.cachedRecordFileInfo!=null)
-                return Completable.error(new Exception(appContext.getText(R.string.retry_later).toString()));
+        if(!isConsistent(fileInfo, allDataLoaded))
+            return getRetryLaterError();
 
+        if(fileInfo.cachedRecordFileInfo==null)
+            return doSetUndeletableFlag(fileInfo, isProtected);
+        else
+        {
             return
                 doSetUndeletableFlag(fileInfo.cachedRecordFileInfo, isProtected)
                 .andThen(Single.just("") )
@@ -49,8 +43,8 @@ public class SetUndeletableFlagOperator {
                             }
                         });
         }
-        else
-            return doSetUndeletableFlag(fileInfo, isProtected);
+
+
     }
 
     protected Completable doSetUndeletableFlag(final RecordListContract.RecordFileInfo recordFileInfo, boolean isProtected)

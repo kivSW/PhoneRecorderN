@@ -35,7 +35,7 @@ public class RecordFileNameData {
             if(i>=0)     aFileName = aFileName.substring(i+1);
 
             try{
-                // doDelete a file extension and "_s" flag
+                // deleteRecord a file extension and "_s" flag
                 i=aFileName.lastIndexOf("_s.");
 
                 if(i==-1)
