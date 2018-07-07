@@ -7,6 +7,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 
 import com.kivsw.mvprxdialog.Contract;
+import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor;
+import com.kivsw.phonerecorder.model.player.AndroidPlayer;
+import com.kivsw.phonerecorder.model.settings.ISettings;
+import com.kivsw.phonerecorder.model.utils.RecordFileNameData;
+import com.kivsw.phonerecorder.model.utils.Utils;
 
 import org.reactivestreams.Subscription;
 
@@ -22,11 +27,6 @@ import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
-import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor;
-import com.kivsw.phonerecorder.model.player.AndroidPlayer;
-import com.kivsw.phonerecorder.model.settings.ISettings;
-import com.kivsw.phonerecorder.model.utils.RecordFileNameData;
-import com.kivsw.phonerecorder.model.utils.Utils;
 
 /**
  * Created by ivan on 5/29/18.
@@ -46,6 +46,7 @@ public class PlayerPresenter
     private String callerName;
     private RecordFileNameData recordFileNameData;
     private int currentPos;
+    private int trackDuration=0;
 
     @Inject
     public  PlayerPresenter(ISettings settings, AndroidPlayer androidPlayer, IErrorProcessor errorProcessor)
@@ -55,6 +56,7 @@ public class PlayerPresenter
         this.settings = settings;
         this.androidPlayer = androidPlayer;
         this.errorProcessor = errorProcessor;
+        trackDuration=0;
 
         registerDialogPresenter();
     }
@@ -129,9 +131,12 @@ public class PlayerPresenter
         androidPlayer.playItemWithChooser(activity, filePath);
     }
 
-    MediaPlayer mplayer;
+    private MediaPlayer mplayer;
+
+
     protected void startPlaying()
     {
+        trackDuration=0;
         if(mplayer!=null)
             stop();
 
@@ -142,6 +147,7 @@ public class PlayerPresenter
             mplayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                                               @Override
                                               public void onPrepared(MediaPlayer mp) {
+                                                  trackDuration=mp.getDuration();
                                                   mp.seekTo(currentPos);
                                                   setUiParam();
                                                   mp.start();
@@ -231,19 +237,18 @@ public class PlayerPresenter
     }
     protected void setUiParam()
     {
-        if(mplayer==null) return;
         if(view==null) return;
-
-        int duration=mplayer.getDuration();
-        if(duration>=0) view.setMaxPosition(duration);
 
         String label = "<small> "+recordFileNameData.date+" "+recordFileNameData.time+"</small><br>" +
                        "<big><b>"+callerName+"</b></big><br>" +
                       "<small> "+recordFileNameData.phoneNumber+"</small>";
-
-
         view.setCaption(label);
-        currentPos=mplayer.getCurrentPosition();
+
+        if (trackDuration >= 0)
+            view.setMaxPosition(trackDuration);
+
+        if(mplayer!=null)
+            currentPos = mplayer.getCurrentPosition();
         updatePosition(currentPos);
     }
     protected void updatePosition(int pos)
@@ -255,27 +260,6 @@ public class PlayerPresenter
     protected void startPositionUpdating()
     {
         final int TIME_PERIOD=50;
-        /*Observable.interval(TIME_PERIOD,TIME_PERIOD, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Long>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        updatePositionSubscription=d;
-                    }
-
-                    @Override
-                    public void onNext(Long aLong) {
-                        if (mplayer != null) {
-                            currentPos = mplayer.getCurrentPosition();
-                            updatePosition(currentPos);
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {}
-
-                    @Override
-                    public void onComplete() { }
-                });*/
 
          Observable.interval(TIME_PERIOD,TIME_PERIOD, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
                 .toFlowable(BackpressureStrategy.LATEST)
