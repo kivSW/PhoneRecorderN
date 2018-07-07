@@ -32,7 +32,8 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.It
 
     public class ItemViewHolder extends RecyclerView.ViewHolder
     {
-        TextView nameText, phonenumberText, durationText, dateTimeText, commentaryText, downloadPercentageText;
+        TextView nameText, phonenumberText, durationText, dateTimeText,
+                commentaryText;
         View fromInternalDirTextView;
         ImageButton playButton;
         CheckBox checkbox;
@@ -51,7 +52,6 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.It
             dateTimeText= (TextView)view.findViewById(R.id.dateTimeText);
             commentaryText= (TextView)view.findViewById(R.id.commentaryText);
             downloadProgress = (ProgressBar)view.findViewById(R.id.downloadProgress);
-            downloadPercentageText = (TextView)view.findViewById(R.id.downloadPercentageText);
             fromInternalDirTextView = view.findViewById(R.id.fromInternalDirTextView);
 
             checkbox=(CheckBox)view.findViewById(R.id.checkbox);
@@ -166,15 +166,12 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.It
 
         if(data.isDownloading)
         {
-            holder.downloadPercentageText.setVisibility(View.VISIBLE);
             if(holder.downloadProgress.getVisibility()!=View.VISIBLE)
                 holder.downloadProgress.setVisibility(View.VISIBLE);
-            holder.downloadPercentageText.setText(String.valueOf(data.percentage)+"%");
             holder.playButton.setVisibility(View.GONE);
         }
         else
         {
-            holder.downloadPercentageText.setVisibility(View.GONE);
             holder.downloadProgress.setVisibility(View.GONE);
             holder.playButton.setVisibility(View.VISIBLE);
             if(data.recordFileNameData.isSMS)

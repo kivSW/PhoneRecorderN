@@ -432,7 +432,7 @@ public class RecordListPresenter
                     public boolean test(Object event) throws Exception {
                         if(event instanceof Integer) {
                             recordFileInfo.percentage=(((Integer) event).intValue());
-                            notifyRecordChange(recordFileInfo);
+                            //notifyRecordChange(recordFileInfo);
                         }
                         return event instanceof CacheFileInfo;
                     }
