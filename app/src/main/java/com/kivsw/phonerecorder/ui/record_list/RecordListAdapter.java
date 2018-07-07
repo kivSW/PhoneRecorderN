@@ -130,9 +130,9 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.It
         holder.nameText.setText(data.callerName);
         holder.phonenumberText.setText(data.recordFileNameData.phoneNumber);
         if(data.fromInternalDir)
-            holder.fromInternalDirTextView.setVisibility(View.VISIBLE);
+            holder.fromInternalDirTextView.setBackgroundResource(R.drawable.shape_blue_rectangle);//setVisibility(View.VISIBLE);
         else
-            holder.fromInternalDirTextView.setVisibility(View.GONE);
+            holder.fromInternalDirTextView.setBackgroundResource(0);//setVisibility(View.GONE);
 
         if(data.recordFileNameData.isSMS) holder.durationText.setText("");
         else holder.durationText.setText(Utils.durationToStr(data.recordFileNameData.duration));
@@ -158,7 +158,7 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.It
         if((position&1)!=0)
         {
             color=holder.nameText.getCurrentTextColor();
-            color = (color & 0x00FFFFFF) | 0x22000000;
+            color = (color & 0x00FFFFFF) | 0x11000000;
         }
 
         holder.itemView.setBackgroundColor(color);

@@ -2,11 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/FaithPhoneRecorder.iml" filepath="$PROJECT_DIR$/FaithPhoneRecorder.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PhoneRecorderN.iml" filepath="$PROJECT_DIR$/PhoneRecorderN.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../android/MvpRxDialogSample/cloud_disk/cloud_disk.iml" filepath="$PROJECT_DIR$/../../android/MvpRxDialogSample/cloud_disk/cloud_disk.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../android/MvpRxDialogSample/mvprxdialog/mvprxdialog.iml" filepath="$PROJECT_DIR$/../../android/MvpRxDialogSample/mvprxdialog/mvprxdialog.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../android/MvpRxDialogSample/mvprxfiledialog/mvprxfiledialog.iml" filepath="$PROJECT_DIR$/../../android/MvpRxDialogSample/mvprxfiledialog/mvprxfiledialog.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../MvpRxDialogSample/cloud_disk/cloud_disk.iml" filepath="$PROJECT_DIR$/../MvpRxDialogSample/cloud_disk/cloud_disk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../MvpRxDialogSample/mvprxdialog/mvprxdialog.iml" filepath="$PROJECT_DIR$/../MvpRxDialogSample/mvprxdialog/mvprxdialog.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../MvpRxDialogSample/mvprxfiledialog/mvprxfiledialog.iml" filepath="$PROJECT_DIR$/../MvpRxDialogSample/mvprxfiledialog/mvprxfiledialog.iml" />
     </modules>
   </component>
 </project>

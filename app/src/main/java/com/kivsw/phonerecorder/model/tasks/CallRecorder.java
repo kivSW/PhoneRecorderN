@@ -17,6 +17,9 @@ import java.util.HashMap;
 
 import javax.inject.Inject;
 
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 import phonerecorder.kivsw.com.phonerecorder.R;
 
 /**
@@ -131,6 +134,8 @@ public class CallRecorder implements ITask {
         recorder.release();
         recorder=null;
         recordFileNameData=null;
+
+        onRecordObservable.onNext("");
     }
 
     protected boolean isRecording()
@@ -173,6 +178,16 @@ public class CallRecorder implements ITask {
         if(settings.getUseFileExtension())
             return ".3gp";
         return ".dat";
+    }
+
+    Subject<Object> onRecordObservable = PublishSubject.create();
+    /**
+     * emitts on start and stop recording
+     * @return
+     */
+    public Observable<Object> getOnRecordObservable()
+    {
+        return onRecordObservable;
     }
 
 

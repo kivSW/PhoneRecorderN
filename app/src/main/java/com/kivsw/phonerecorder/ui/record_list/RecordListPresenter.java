@@ -13,6 +13,7 @@ import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor;
 import com.kivsw.phonerecorder.model.player.IPlayer;
 import com.kivsw.phonerecorder.model.settings.ISettings;
 import com.kivsw.phonerecorder.model.settings.Settings;
+import com.kivsw.phonerecorder.model.tasks.CallRecorder;
 import com.kivsw.phonerecorder.model.tasks.RecordSender;
 import com.kivsw.phonerecorder.model.utils.RecordFileNameData;
 import com.kivsw.phonerecorder.model.utils.SimpleFileIO;
@@ -70,7 +71,7 @@ public class RecordListPresenter
     @Inject
     RecordListPresenter(Context appContext, ISettings settings, DiskContainer disks, CloudCache cloudCache,
                         ReadRecordListOperation readRecordListOperation, DeleteRecordsOperation deleteRecordsOperation, SetUndeletableFlagOperator setUndeletableFlagOperator,
-                        IErrorProcessor errorProcessor, RecordSender recordSender)
+                        IErrorProcessor errorProcessor, RecordSender recordSender, CallRecorder callRecorder)
     {
         this.settings = settings;
         this.disks = disks;
@@ -108,20 +109,26 @@ public class RecordListPresenter
                             }
                         });
 
+        Observer updateObserver=new Observer<Object>() {
+            @Override  public void onSubscribe(Disposable d) { }
+
+            @Override  public void onNext(Object aBoolean) {
+                lazyUpdateDir();
+            }
+
+            @Override  public void onError(Throwable e) { }
+
+            @Override public void onComplete() {}
+        };
+
         if(recordSender!=null)
             recordSender.getOnRecSentObservable()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Observer<Object>() {
-                @Override  public void onSubscribe(Disposable d) { }
-
-                @Override  public void onNext(Object aBoolean) {
-                    lazyUpdateDir();
-                }
-
-                @Override  public void onError(Throwable e) { }
-
-                @Override public void onComplete() {}
-            });
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(updateObserver);
+        if(callRecorder!=null)
+            callRecorder.getOnRecordObservable()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(updateObserver);
     }
 
     protected IPlayer providePlayerInstance()

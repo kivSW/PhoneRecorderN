@@ -432,7 +432,7 @@ public class RecordSender implements ITask {
 
     Subject<Object> onCopyObservable = PublishSubject.create();
     /**
-     * emitts on start and stop recording
+     * emitts rocords were copied from the internal storage
      * @return
      */
     public Observable<Object> getOnRecSentObservable()

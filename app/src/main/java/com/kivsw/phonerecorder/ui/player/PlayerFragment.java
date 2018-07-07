@@ -91,7 +91,7 @@ implements PlayerContract.IPlayerView {
                 int action=event.getAction();
                 switch(action) {
                     case MotionEvent.ACTION_DOWN:
-                        v.setBackgroundResource(R.drawable.rectagle);
+                        v.setBackgroundResource(R.drawable.shape_gray_rectangle);
                         break;
 
                     case MotionEvent.ACTION_UP:

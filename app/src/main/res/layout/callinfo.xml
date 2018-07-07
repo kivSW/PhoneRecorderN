@@ -13,7 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="fitXY"
-            android:src="@drawable/ic_play_arrow_black_48dp" />
+            android:src="@drawable/ic_play_arrow_black_48dp"/>
         <ProgressBar
             android:id="@+id/downloadProgress"
             android:layout_width="match_parent"
@@ -42,7 +42,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:alpha="0.5"
-            android:background="@drawable/round"
+            android:background="@drawable/shape_gray_round"
             android:padding="10dp"
             android:scaleType="fitXY"
             android:src="@drawable/icon_lock"/>
@@ -131,14 +131,12 @@
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/fromInternalDirTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="."
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
-
         </LinearLayout>
+    <TextView
+        android:id="@+id/fromInternalDirTextView"
+        android:layout_width="5dp"
+        android:layout_height="match_parent"
+
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
     </LinearLayout>
 
