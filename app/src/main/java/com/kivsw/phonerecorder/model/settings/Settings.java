@@ -173,11 +173,14 @@ implements ISettings {
     private final static String SAVING_PATH = "SAVING_PATH";
     @Override public String getSavingUrlPath()
     {
+        String res=preferences.getString(SAVING_PATH, null);
+        if(res!=null)
+            return res;
+
         //File file=cnt.getFilesDir();//
         File file= cnt.getExternalFilesDir(null);
-
         String defPath = "file://"+addLastSeparator(file.getAbsolutePath());
-
+        setSavingUrlPath(defPath);
         return preferences.getString(SAVING_PATH, defPath);
     }
     @Override public void setSavingUrlPath(String value)
