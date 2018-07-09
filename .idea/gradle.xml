@@ -7,11 +7,11 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/../MvpRxDialogSample/cloud_disk" />
-            <option value="$PROJECT_DIR$/../MvpRxDialogSample/mvprxdialog" />
-            <option value="$PROJECT_DIR$/../MvpRxDialogSample/mvprxfiledialog" />
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/../../android/MvpRxDialogSample/cloud_disk" />
+            <option value="$PROJECT_DIR$/../../android/MvpRxDialogSample/mvprxdialog" />
+            <option value="$PROJECT_DIR$/../../android/MvpRxDialogSample/mvprxfiledialog" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

@@ -64,7 +64,7 @@ implements ISettings {
         emitOnChange(ENABLE_CALL_RECORDING);
     }
 
-    private final static String ENABLE_SMS_RECORDING = "ENABLE_SMS_RECORDING";
+    public final static String ENABLE_SMS_RECORDING = "ENABLE_SMS_RECORDING";
 
     @Override
     public boolean getEnableSmsRecording() {
@@ -98,7 +98,7 @@ implements ISettings {
 
     @Override
     public boolean getUseFileExtension() {
-        return preferences.getBoolean(USE_FILE_EXTENSION, false);
+        return preferences.getBoolean(USE_FILE_EXTENSION, true);
     }
 
     @Override

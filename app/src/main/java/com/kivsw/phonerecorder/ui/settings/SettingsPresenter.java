@@ -6,7 +6,9 @@ import com.kivsw.cloud.DiskContainer;
 import com.kivsw.mvprxdialog.Contract;
 import com.kivsw.mvprxfiledialog.MvpRxSelectDirDialogPresenter;
 import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor;
+import com.kivsw.phonerecorder.model.settings.ISettings;
 import com.kivsw.phonerecorder.model.settings.Settings;
+import com.kivsw.phonerecorder.model.task_executor.ITaskExecutor;
 import com.kivsw.phonerecorder.os.LauncherIcon;
 import com.kivsw.phonerecorder.ui.notification.AntiTaskKillerNotification;
 
@@ -16,9 +18,6 @@ import io.reactivex.MaybeObserver;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
-
-import com.kivsw.phonerecorder.model.settings.ISettings;
-import com.kivsw.phonerecorder.model.task_executor.ITaskExecutor;
 
 /**
  * Created by ivan on 3/1/18.
@@ -111,12 +110,16 @@ public class SettingsPresenter implements SettingsContract.ISettingsPresenter {
                 LauncherIcon.setVisibility(context, visible);
                 break;
 
-
             case Settings.ANTI_TASKKILLER_NOTOFICATION:
                     if (settings.getAntiTaskKillerNotification().visible)
                         antiTaskKillerNotification.show();
                     else
                         antiTaskKillerNotification.hide();
+                    break;
+
+            case Settings.ENABLE_SMS_RECORDING:
+                    if(settings.getEnableSmsRecording())
+                        taskExecutor.startSMSreading();
                     break;
         }
     }

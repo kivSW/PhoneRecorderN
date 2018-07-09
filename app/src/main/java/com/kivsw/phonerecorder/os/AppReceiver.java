@@ -9,16 +9,15 @@ import android.telephony.TelephonyManager;
 
 import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor;
 import com.kivsw.phonerecorder.model.persistent_data.IJournal;
+import com.kivsw.phonerecorder.model.persistent_data.IPersistentDataKeeper;
+import com.kivsw.phonerecorder.model.settings.ISettings;
+import com.kivsw.phonerecorder.model.task_executor.ITaskExecutor;
 import com.kivsw.phonerecorder.model.utils.MyConfiguration;
 import com.kivsw.phonerecorder.ui.main_activity.MainActivity;
 import com.kivsw.phonerecorder.ui.main_activity.MainActivityPresenter;
 import com.kivsw.phonerecorder.ui.notification.AntiTaskKillerNotification;
 
 import javax.inject.Inject;
-
-import com.kivsw.phonerecorder.model.persistent_data.IPersistentDataKeeper;
-import com.kivsw.phonerecorder.model.settings.ISettings;
-import com.kivsw.phonerecorder.model.task_executor.ITaskExecutor;
 
 /**
  * Receives intents
@@ -86,7 +85,10 @@ public class AppReceiver extends android.content.BroadcastReceiver{
 
     protected void doDataSave(Context context, Intent intent)
     {
-        taskExecutor.startFileSending();
+        if(settings.getEnableSmsRecording())
+            onNewSms();
+        else
+            taskExecutor.startFileSending();
         setWatchdogTimer(context);
     }
     protected void setLauncherIcon(Context context, Intent intent)
