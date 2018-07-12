@@ -46,22 +46,22 @@ public class DeleteRecordsOperation extends AbstractOperation{
 
     protected Completable doDeleteRecord(final RecordListContract.RecordFileInfo fileInfo, boolean allDataLoaded)
     {
-        if(!isConsistent(fileInfo, allDataLoaded))
+        if(allDataLoaded==false && isConsistent(fileInfo)==false)
             return getRetryLaterError();
 
-            if(fileInfo.cachedRecordFileInfo==null)
-                return doDeleteFile(fileInfo);
-            else
-            return
-                    doDeleteFile(fileInfo.cachedRecordFileInfo)
-                    .andThen(Single.just("") )
-                    .flatMapCompletable(new Function<String, CompletableSource>() {
-                        @Override
-                        public CompletableSource apply(String s) throws Exception {
-                            fileInfo.cachedRecordFileInfo=null;
-                            return doDeleteFile(fileInfo);
-                        }
-                    });
+        if(fileInfo.cachedRecordFileInfo==null)
+            return doDeleteFile(fileInfo);
+        else
+        return
+                doDeleteFile(fileInfo.cachedRecordFileInfo)
+                .andThen(Single.just("") )
+                .flatMapCompletable(new Function<String, CompletableSource>() {
+                    @Override
+                    public CompletableSource apply(String s) throws Exception {
+                        fileInfo.cachedRecordFileInfo=null;
+                        return doDeleteFile(fileInfo);
+                    }
+                });
     }
 
     protected Completable doDeleteFile(final RecordListContract.RecordFileInfo fileInfo)

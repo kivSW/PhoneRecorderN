@@ -45,12 +45,19 @@ public class CallInfoKeeper implements IPersistentDataKeeper {
         return callInfo;
     }
 
+    private long getDefaultTime()
+    {
+        /*if(BuildConfig.DEBUG)
+            return 0;;*/
+        final long _24HOURS=24*60*60000;
+        return System.currentTimeMillis() - _24HOURS*1;
+    };
 
     private final static String LAST_INCOME_SMS="LAST_INCOME_SMS";
     @Override
     public long getLastIncomeSms()
     {
-        return preferences.getLong(LAST_INCOME_SMS, -1);
+        return preferences.getLong(LAST_INCOME_SMS, getDefaultTime());
     };
     @Override
     public void setLastIncomeSms(long v)
@@ -64,7 +71,7 @@ public class CallInfoKeeper implements IPersistentDataKeeper {
     @Override
     public long getLastOutgoingSms()
     {
-        return preferences.getLong(LAST_OUTGOING_SMS, -1);
+        return preferences.getLong(LAST_OUTGOING_SMS, getDefaultTime());
     }
     @Override
     public void setLastOutgoingSms(long v)

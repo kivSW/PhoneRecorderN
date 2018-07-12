@@ -12,6 +12,7 @@ import io.reactivex.CompletableSource;
 import io.reactivex.Single;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Function;
+import phonerecorder.kivsw.com.phonerecorder.R;
 
 /**
  * Created by ivan on 7/4/18.
@@ -26,8 +27,10 @@ public class SetUndeletableFlagOperator  extends AbstractOperation {
 
     public Completable setUndeletableFlag(final RecordListContract.RecordFileInfo fileInfo, final boolean isProtected, boolean allDataLoaded)
     {
-        if(!isConsistent(fileInfo, allDataLoaded))
-            return getRetryLaterError();
+        if(!isConsistent(fileInfo)) {
+            if(allDataLoaded)  return getInconsistentError();
+            else               return getRetryLaterError();
+        }
 
         if(fileInfo.cachedRecordFileInfo==null)
             return doSetUndeletableFlag(fileInfo, isProtected);
@@ -63,5 +66,10 @@ public class SetUndeletableFlagOperator  extends AbstractOperation {
                         recordFileInfo.recordFileNameData.origFileName = newFileName;
                     }
                 });
+    }
+
+    protected Completable getInconsistentError()
+    {
+        return Completable.error(new Exception(appContext.getText(R.string.inconsistent_record).toString()));
     }
 }

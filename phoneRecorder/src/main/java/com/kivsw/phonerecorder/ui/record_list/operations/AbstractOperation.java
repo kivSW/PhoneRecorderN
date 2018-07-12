@@ -32,10 +32,8 @@ public abstract class AbstractOperation {
     * return true if fileInfo is consistent.
     * Check that this fileInfo has a reference to its main RecordFileInfo, in case fileInfo should has the reference
     * */
-    protected boolean isConsistent(RecordListContract.RecordFileInfo fileInfo, boolean allDataLoaded)
+    protected boolean isConsistent(RecordListContract.RecordFileInfo fileInfo)
     {
-        if(allDataLoaded)
-            return true;
 
         if(fileInfo.fromInternalDir && internalFiles.isSent(fileInfo.recordFileNameData.origFileName))
         {

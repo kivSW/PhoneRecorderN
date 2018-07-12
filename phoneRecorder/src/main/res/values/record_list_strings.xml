@@ -9,4 +9,5 @@
     <string name="chooser_title">Choose an application</string>
 
     <string name="retry_later">Retry this operation later. Data has not been loaded yet.</string>
+    <string name="inconsistent_record">This record is only accessible in the local cache.</string>
 </resources>

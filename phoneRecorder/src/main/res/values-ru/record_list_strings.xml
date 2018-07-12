@@ -9,4 +9,5 @@
     <string name="chooser_title">Выберете приложение</string>
 
     <string name="retry_later">Повторите операцию позже. Данные еще не загружены.</string>
+    <string name="inconsistent_record">Запись доступна только в КЭШ.</string>
 </resources>

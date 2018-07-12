@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout android:id="@+id/setupscreenfragment"
+              xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical"
-              android:id="@+id/setupscreenfragment"
-    >
+              android:paddingTop="3dp">
 
 
     <ScrollView
@@ -27,9 +27,8 @@
                 <TextView
                     android:id="@+id/dlInputValTextView"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="10dp"
-                    android:gravity="center_vertical"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:text="@string/data_file_path"/>
 
                 <TextView
@@ -38,7 +37,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical|center_horizontal"
                     android:layout_weight="1"
-                    android:gravity="center_vertical|center_horizontal"
+                    android:gravity="center_horizontal"
                     android:text=""/>
 
                 <ImageView
@@ -94,6 +93,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/journal_export"/>
+
             <CheckBox
                 android:id="@+id/checkUseInternalPlayer"
                 android:layout_width="wrap_content"
@@ -103,7 +103,8 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp">
 
                 <TextView
                     android:id="@+id/SoundSourcetext"
@@ -126,7 +127,9 @@
                 android:id="@+id/checkFileNumberLimitation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:text="@string/limit_file_amount"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -154,7 +157,9 @@
                 android:id="@+id/checkDataSizeLimitation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:text="@string/limit_data_size"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -244,12 +249,10 @@
                     />
 
 
-
             </LinearLayout>
 
 
         </LinearLayout>
-
 
 
     </ScrollView>

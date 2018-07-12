@@ -1,5 +1,7 @@
 package com.kivsw.phonerecorder.model.utils;
 
+import android.support.annotation.NonNull;
+
 import org.apache.commons.lang.StringEscapeUtils;
 
 import java.text.SimpleDateFormat;
@@ -9,7 +11,7 @@ import java.util.Date;
  * this class holds data from a call file name.
  */
 
-public class RecordFileNameData {
+public class RecordFileNameData implements Comparable{
 
         public final static String RECORD_PATTERN ="^[0-9]{8}_[0-9]{6}_";
 
@@ -179,5 +181,47 @@ public class RecordFileNameData {
         }
 
 
+    @Override
+    public int compareTo(@NonNull Object o) {
+        if(!(o instanceof RecordFileNameData))
+                return Integer.MIN_VALUE;
 
+        RecordFileNameData other=(RecordFileNameData)o;
+
+        int r=0;
+        r=date.compareTo(other.date);
+        if(r!=0) return r;
+
+        r=time.compareTo(other.time);
+        if(r!=0) return r;
+
+        r=phoneNumber.compareTo(other.phoneNumber);
+        if(r!=0) return r;
+
+        r=Boolean.valueOf(isSMS).compareTo(other.isSMS);
+        if(r!=0) return r;
+
+        return r;
+    }
+    @Override
+    public boolean equals(@NonNull Object o)
+    {
+        return 0==compareTo(o);
+    }
+    @Override
+    public int 	hashCode()
+    {
+        int hash=0, m=29;
+        if(date!=null)
+            hash=hash*m+date.hashCode();
+        if(time!=null)
+            hash=hash*m+time.hashCode();
+        if(phoneNumber!=null)
+            hash=hash*m+phoneNumber.hashCode();
+
+        hash*=m;
+        if(isSMS) hash++;
+
+        return hash;
+    }
 }

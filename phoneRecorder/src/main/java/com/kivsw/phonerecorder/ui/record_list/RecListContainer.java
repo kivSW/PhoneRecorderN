@@ -43,8 +43,9 @@ class RecListContainer {
     private Context appContext;
     private IErrorProcessor errorProcessor;
 
-    private List<RecordListContract.RecordFileInfo> dirContent, cacheDirContent;
-    private Map<String, RecordListContract.RecordFileInfo> cacheDirContentMap;
+    private List<RecordListContract.RecordFileInfo> dirContent,
+                                                    cacheDirContent;
+    private Map<RecordFileNameData, RecordListContract.RecordFileInfo> cacheDirContentMap;
     private List<RecordListContract.RecordFileInfo> visibleDirContent=null;
     private RecListFilter recListFilter;
     private Disposable filterDisposable;
@@ -192,7 +193,7 @@ class RecListContainer {
             if (recordFileInfo.get(0).fromInternalDir) {
                 cacheDirContent.addAll(recordFileInfo);
                 for (RecordListContract.RecordFileInfo item : recordFileInfo)
-                    cacheDirContentMap.put(item.recordFileNameData.origFileName, item);
+                    cacheDirContentMap.put(item.recordFileNameData, item);
             } else {
                 List<RecordListContract.RecordFileInfo> newRecordFileInfo = new ArrayList<>(recordFileInfo.size());
                 for (RecordListContract.RecordFileInfo item : recordFileInfo)
@@ -210,7 +211,7 @@ class RecListContainer {
 
     protected boolean bindWithCache(RecordListContract.RecordFileInfo item)
     {
-        RecordListContract.RecordFileInfo cacheItem=cacheDirContentMap.get(item.recordFileNameData.origFileName);
+        RecordListContract.RecordFileInfo cacheItem=cacheDirContentMap.get(item.recordFileNameData);
         if(cacheItem==null)
             return false;
 
@@ -250,13 +251,16 @@ class RecListContainer {
      }
 
     final static int BUNCH_SIZE =20;
+
     protected Observable<List<RecordListContract.RecordFileInfo>> emitFilesAsRecordInfo(final BunchOfFiles bunchOfFiles)
     {
+
         final List<IDiskIO.ResourceInfo> fileList = bunchOfFiles.content;
         Iterator<List<RecordListContract.RecordFileInfo>> iterator= new Iterator<List<RecordListContract.RecordFileInfo>>()
                 {
                     private int count=0;
                     private Pattern p;
+                    private boolean finished=false;
 
                     protected void init()
                     {
@@ -271,7 +275,7 @@ class RecListContainer {
 
                     @Override
                     public boolean hasNext() {
-                        return count < fileList.size();
+                        return !finished;
                     }
 
                     @Override
@@ -289,6 +293,7 @@ class RecListContainer {
                             RecordListContract.RecordFileInfo recInfo=getRecordInfo(file.name(),bunchOfFiles.path,bunchOfFiles.cache);
                             res.add(recInfo);
                         }
+                        finished = (count >= fileList.size());
                         return res;
                     }
 

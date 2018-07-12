@@ -327,7 +327,7 @@ public class SettingsFragment extends Fragment
             }
         });
 
-        IconSpinnerAdapter iconSpinnerAdapter=IconSpinnerAdapter.create(getContext(), AntiTaskKillerNotification.notificationIcons);
+        IconNotificationSpinnerAdapter iconSpinnerAdapter= IconNotificationSpinnerAdapter.create(getContext(), AntiTaskKillerNotification.notificationIcons);
         spinnerNotificationIcon.setAdapter(iconSpinnerAdapter);
         spinnerNotificationIcon.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override

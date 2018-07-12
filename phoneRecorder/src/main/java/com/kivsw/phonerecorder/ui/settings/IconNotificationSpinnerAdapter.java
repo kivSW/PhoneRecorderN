@@ -15,11 +15,11 @@ import phonerecorder.kivsw.com.phonerecorder.R;
 /**
  * Created by ivan on 5/11/16.
  */
-public class IconSpinnerAdapter extends ArrayAdapter<String> {
+public class IconNotificationSpinnerAdapter extends ArrayAdapter<String> {
 
     Drawable[] icons=null;
 
-    static public IconSpinnerAdapter create(Context context, /*int textViewResourceId,*/
+    static public IconNotificationSpinnerAdapter create(Context context, /*int textViewResourceId,*/
                               String[] objects, int[] icons_res)
     {
 
@@ -27,10 +27,10 @@ public class IconSpinnerAdapter extends ArrayAdapter<String> {
         for(int i=0;i<icons_res.length;i++)
            icons[i]=context.getResources().getDrawable(icons_res[i]);
 
-        return new IconSpinnerAdapter(context, objects, icons);
+        return new IconNotificationSpinnerAdapter(context, objects, icons);
     }
 
-    static public IconSpinnerAdapter create(Context context, int[] icons_res)
+    static public IconNotificationSpinnerAdapter create(Context context, int[] icons_res)
     {
 
         String labels[]=new String[icons_res.length];
@@ -40,7 +40,7 @@ public class IconSpinnerAdapter extends ArrayAdapter<String> {
         return create(context, labels, icons_res);
     }
 
-    public IconSpinnerAdapter(Context context, /*int textViewResourceId,*/
+    public IconNotificationSpinnerAdapter(Context context, /*int textViewResourceId,*/
                               String[] objects, Drawable[] icons) {
         super(context, R.layout.icon_spinner_adapter_item, objects);
         this.icons = icons;
@@ -71,6 +71,8 @@ public class IconSpinnerAdapter extends ArrayAdapter<String> {
         label.setText(getItem(position));
 
         ImageView icon=(ImageView)row.findViewById(R.id.imageView);
+
+        row.setBackgroundColor(0x80888888);
 
         if (icons!=null && icons.length>position){
             icon.setImageDrawable(icons[position]);
