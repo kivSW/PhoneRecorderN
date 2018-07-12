@@ -3,10 +3,9 @@ package com.kivsw.phonerecorder.ui.main_activity;
 import android.content.Context;
 
 import com.kivsw.mvprxdialog.Contract;
+import com.kivsw.phonerecorder.model.settings.ISettings;
 
 import javax.inject.Inject;
-
-import com.kivsw.phonerecorder.model.settings.ISettings;
 
 /**
  * Created by ivan on 5/10/18.
@@ -44,7 +43,7 @@ public class MainActivityPresenter implements MainActivityContract.IMainActivity
 
     @Override
     public void showErrorMessage(String msg) {
-           if(settings.getHiddenMode())
+           if(settings.getHiddenMode() && view==null)
                return;
            MainActivity.showErrorMessage(context, msg);
     }
