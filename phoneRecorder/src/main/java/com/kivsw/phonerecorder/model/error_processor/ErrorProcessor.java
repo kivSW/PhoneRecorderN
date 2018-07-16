@@ -3,6 +3,7 @@ package com.kivsw.phonerecorder.model.error_processor;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.kivsw.phonerecorder.model.metrica.IMetrica;
 import com.kivsw.phonerecorder.model.persistent_data.IJournal;
 import com.kivsw.phonerecorder.ui.main_activity.MainActivityContract;
 
@@ -18,12 +19,15 @@ public class ErrorProcessor implements IErrorProcessor {
 
     private IJournal journal;
     private MainActivityContract.IMainActivityPresenter mainActivityPresenter;
+    private IMetrica metrica;
     private Context appContext;
 
-    ErrorProcessor(Context appContext, IJournal journal, MainActivityContract.IMainActivityPresenter mainActivityPresenter)
+
+    ErrorProcessor(Context appContext, IJournal journal, MainActivityContract.IMainActivityPresenter mainActivityPresenter, IMetrica metrica)
     {
         this.journal = journal;
         this.mainActivityPresenter = mainActivityPresenter;
+        this.metrica = metrica;
         this.appContext = appContext;
     }
 
@@ -66,8 +70,10 @@ public class ErrorProcessor implements IErrorProcessor {
         else
         {
             message.append(exception.getMessage());
-            if(writeToJournal)
+            if(writeToJournal) {
                 journal.journalAdd(exception);
+                metrica.notifyError(exception);
+            }
         }
         if(writeToJournal)
             doShowMessage(message.toString());

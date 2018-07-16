@@ -2,6 +2,7 @@ package com.kivsw.phonerecorder.model.error_processor;
 
 import android.content.Context;
 
+import com.kivsw.phonerecorder.model.metrica.IMetrica;
 import com.kivsw.phonerecorder.model.persistent_data.IJournal;
 import com.kivsw.phonerecorder.ui.main_activity.MainActivityContract;
 
@@ -17,9 +18,9 @@ import dagger.Provides;
 public class ErrorProcessorModule {
     @Provides
     @Singleton
-    IErrorProcessor provideErrorProcessor(Context context, IJournal data, MainActivityContract.IMainActivityPresenter mainActivityPresenter)
+    IErrorProcessor provideErrorProcessor(Context context, IJournal data, MainActivityContract.IMainActivityPresenter mainActivityPresenter, IMetrica metrica)
     {
-        IErrorProcessor res= new ErrorProcessor(context, data, mainActivityPresenter);
+        IErrorProcessor res= new ErrorProcessor(context, data, mainActivityPresenter, metrica);
         data.setErrorProcessor(res);
         return res;
     }

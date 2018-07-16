@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.kivsw.mvprxdialog.Contract;
 import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor;
+import com.kivsw.phonerecorder.model.error_processor.InsignificantException;
 import com.kivsw.phonerecorder.model.player.AndroidPlayer;
 import com.kivsw.phonerecorder.model.settings.ISettings;
 import com.kivsw.phonerecorder.model.utils.RecordFileNameData;
@@ -157,7 +158,7 @@ public class PlayerPresenter
             mplayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                 @Override
                 public boolean onError(MediaPlayer mp, int what, int extra) {
-                    errorProcessor.onError(new Exception("Player error ("+what+")"));
+                    errorProcessor.onError(new InsignificantException("Player error ("+what+")"));
                     return false;
                 }
             });

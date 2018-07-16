@@ -8,4 +8,5 @@ import com.kivsw.phonerecorder.model.settings.ISettings;
 
 public interface IMetrica {
     void onSettingsCreate(ISettings settings);
+    void notifyError(Throwable throwable);
 }

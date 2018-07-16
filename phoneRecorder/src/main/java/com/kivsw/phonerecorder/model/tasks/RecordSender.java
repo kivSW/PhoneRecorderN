@@ -8,6 +8,7 @@ import android.os.SystemClock;
 import com.kivsw.cloud.DiskContainer;
 import com.kivsw.cloud.disk.IDiskIO;
 import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor;
+import com.kivsw.phonerecorder.model.error_processor.InsignificantException;
 import com.kivsw.phonerecorder.model.internal_filelist.IInternalFiles;
 import com.kivsw.phonerecorder.model.persistent_data.IJournal;
 import com.kivsw.phonerecorder.model.settings.ISettings;
@@ -279,7 +280,7 @@ public class RecordSender implements ITask {
     protected Observable<Integer> createUploadObservable(final String source, String destination)
     {
         if(!checkSendCondition(destination))
-            return Observable.error(new Exception("No allowed connection to send"));
+            return Observable.error(new InsignificantException("No allowed connection to send"));
 
         return
             disks.uploadFile(destination, source)

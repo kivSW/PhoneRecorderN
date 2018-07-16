@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 
 import com.kivsw.phonerecorder.model.settings.ISettings;
 import com.kivsw.phonerecorder.model.settings.Settings;
@@ -56,6 +57,7 @@ public class YandexMetricaProxy implements IMetrica {
         return  res;
     }
 
+    @Override
     public void onSettingsCreate(ISettings settings)
     {
         this.settings = settings;
@@ -86,6 +88,16 @@ public class YandexMetricaProxy implements IMetrica {
 
                     }
                 });
+    };
+
+    @Override
+    public void notifyError(Throwable throwable)
+    {
+       /* if(throwable instanceof InsignificantException)
+            return;*/
+
+        String message = "SDK_INT="+Build.VERSION.SDK_INT+"  RELEASE="+Build.VERSION.RELEASE;
+        YandexMetrica.reportError(message,throwable);
     };
 
     private void sendSettings()

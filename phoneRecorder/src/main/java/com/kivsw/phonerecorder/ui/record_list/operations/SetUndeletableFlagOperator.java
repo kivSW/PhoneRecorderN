@@ -3,6 +3,7 @@ package com.kivsw.phonerecorder.ui.record_list.operations;
 import android.content.Context;
 
 import com.kivsw.cloud.DiskContainer;
+import com.kivsw.phonerecorder.model.error_processor.InsignificantException;
 import com.kivsw.phonerecorder.model.internal_filelist.IInternalFiles;
 import com.kivsw.phonerecorder.model.settings.ISettings;
 import com.kivsw.phonerecorder.ui.record_list.RecordListContract;
@@ -70,6 +71,6 @@ public class SetUndeletableFlagOperator  extends AbstractOperation {
 
     protected Completable getInconsistentError()
     {
-        return Completable.error(new Exception(appContext.getText(R.string.inconsistent_record).toString()));
+        return Completable.error(new InsignificantException(appContext.getText(R.string.inconsistent_record).toString()));
     }
 }

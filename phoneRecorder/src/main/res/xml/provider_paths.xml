@@ -5,4 +5,5 @@
     <external-cache-path name="name" path="." />
     <external-files-path name="external_files" path="." />
     <files-path name="files" path="." />
+    <root-path name="external_files" path="/storage/" />
 </paths>

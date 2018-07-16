@@ -6,10 +6,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.content.FileProvider;
 
+import com.kivsw.phonerecorder.model.utils.RecordFileNameData;
+
 import java.io.File;
 
 import phonerecorder.kivsw.com.phonerecorder.R;
-import com.kivsw.phonerecorder.model.utils.RecordFileNameData;
 
 /**
  * play a record with another app
@@ -23,10 +24,15 @@ public class AndroidPlayer implements IPlayer{
 
     private Uri createURI(Context context, String filePath)
     {
-        File file=new File(filePath);
+        try {
+            File file = new File(filePath);
+            Uri uri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", file);
+            return uri;
+        }catch(Exception e)
+        {
+            return Uri.parse("file://"+filePath);
+        }
 
-        Uri uri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", file);
-        return uri;
     }
     @Override
     public void play(Context activity, String filePath) {
