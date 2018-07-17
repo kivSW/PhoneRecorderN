@@ -1,4 +1,4 @@
-package com.kivsw.phonerecorder.model.tasks;
+package com.kivsw.phonerecorder.model.task_executor.tasks;
 
 /**
  * class represents a phone task

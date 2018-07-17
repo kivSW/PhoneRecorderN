@@ -117,13 +117,13 @@ public class RecordFileNameData implements Comparable{
             return fd;
         }
 
-        private  String correctStr(String str)
+        private  String correctFileNameStr(String str)
         {
            char ch;
            ch='_';
            String res= str;
            //res = res.replaceAll("_", String.format("\\\\u%04X", (int)ch));
-           res = res.replaceAll("[\\x00-\\x1F_\\:\\/\\\\]", "");
+           res = res.replaceAll("[\\*\\?\\x00-\\x1F_\\:\\/\\\\]", "");
            return res;
         }
         private static String decodeStr(String str)
@@ -150,7 +150,7 @@ public class RecordFileNameData implements Comparable{
             if(outgoing) sb.append("outgoing_");//2
             else sb.append("income_");
 
-            sb.append(correctStr(phoneNumber));sb.append("_"); //3
+            sb.append(correctFileNameStr(phoneNumber));sb.append("_"); //3
 
             sb.append(soundSource);//4
             sb.append("_");
