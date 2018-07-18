@@ -3,6 +3,7 @@ package com.kivsw.phonerecorder.os;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.support.annotation.Nullable;
 
 import com.kivsw.phonerecorder.model.task_executor.tasks.ITask;
@@ -103,8 +104,27 @@ public class AppService extends android.app.Service {
         if(activeActions.isEmpty())
         {
             stopSelfResult(lastStartId);
+            releaseWakeLock();
         }
     };
+
+    private static PowerManager.WakeLock wl=null;
+    protected static void aquireWakeLock(Context context)
+    {
+        if(wl==null) {
+            PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+            wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "appService");
+            wl.acquire();
+
+        }
+    }
+    protected static void releaseWakeLock()
+    {
+        if(wl!=null) {
+            wl.release();
+            wl = null;
+        }
+    }
 
     protected static void startService(Context context, String action, boolean start)
     {
@@ -112,6 +132,8 @@ public class AppService extends android.app.Service {
         intent.setAction(action);
         intent.putExtra(EXTRA_START, start);
         context.startService(intent);
+        if(start)
+            aquireWakeLock(context);
     }
 
     final static public String TASK_CALL_RECORDING ="TASK_CALL_RECORDING",

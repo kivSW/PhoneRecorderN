@@ -61,10 +61,11 @@ public class CallRecorder implements ITask {
         boolean newTask=true;
         notification.show(context.getText(R.string.recording_call).toString());
         if(isRecording()) {
-            stopRecording();
             newTask=false;
         }
-        startRecording();
+        else {
+            startRecording();
+        }
 
         return newTask;
     }

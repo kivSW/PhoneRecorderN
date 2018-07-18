@@ -271,6 +271,7 @@ public class SettingsFragment extends Fragment
                     int v = Integer.parseInt(s.toString());
                     if ((v < 1) || (v > settings.maxKeptFileAmount())) throw new Exception();
                     settings.setKeptFileAmount(v);
+                    editMaxFileNumber.setError(null);
                 } catch (Exception e) {
                     editMaxFileNumber.setError(getText(R.string.incorrect_value));
                 }
@@ -369,6 +370,7 @@ public class SettingsFragment extends Fragment
             if ( (bytes < 1) || ( bytes> maxSize))
                 throw new Exception();
             settings.setFileDataSize(dataSize);
+            editMaxDataSize.setError(null);
         } catch (Exception e) {
             editMaxDataSize.setError(getText(R.string.incorrect_value));
         }

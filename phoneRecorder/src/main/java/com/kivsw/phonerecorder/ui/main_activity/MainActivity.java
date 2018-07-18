@@ -166,7 +166,8 @@ public class MainActivity extends AppCompatActivity
                          Manifest.permission.PROCESS_OUTGOING_CALLS,
                          Manifest.permission.ACCESS_NETWORK_STATE,
                          Manifest.permission.READ_SMS,
-                         Manifest.permission.RECEIVE_SMS
+                         Manifest.permission.RECEIVE_SMS,
+                         Manifest.permission.WAKE_LOCK
                         )
                 .subscribe(new Consumer<Boolean>() {
                         @Override
