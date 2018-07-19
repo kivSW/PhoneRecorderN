@@ -15,6 +15,7 @@ import com.kivsw.phonerecorder.model.settings.ISettings;
 import com.kivsw.phonerecorder.model.settings.Settings;
 import com.kivsw.phonerecorder.model.task_executor.tasks.CallRecorder;
 import com.kivsw.phonerecorder.model.task_executor.tasks.RecordSender;
+import com.kivsw.phonerecorder.model.task_executor.tasks.SmsReader;
 import com.kivsw.phonerecorder.model.utils.RecordFileNameData;
 import com.kivsw.phonerecorder.model.utils.SimpleFileIO;
 import com.kivsw.phonerecorder.os.MyApplication;
@@ -71,7 +72,7 @@ public class RecordListPresenter
     @Inject
     RecordListPresenter(Context appContext, ISettings settings, DiskContainer disks, CloudCache cloudCache,
                         ReadRecordListOperation readRecordListOperation, DeleteRecordsOperation deleteRecordsOperation, SetUndeletableFlagOperator setUndeletableFlagOperator,
-                        IErrorProcessor errorProcessor, RecordSender recordSender, CallRecorder callRecorder)
+                        IErrorProcessor errorProcessor, RecordSender recordSender, CallRecorder callRecorder, SmsReader smsReader)
     {
         this.settings = settings;
         this.disks = disks;
@@ -129,6 +130,10 @@ public class RecordListPresenter
             callRecorder.getOnRecordObservable()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(updateObserver);
+        if(smsReader!=null)
+            smsReader.getOnNewSmsReadObservable()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(updateObserver);
     }
 
     protected IPlayer providePlayerInstance()

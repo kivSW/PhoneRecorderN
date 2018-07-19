@@ -115,7 +115,6 @@ public class AppService extends android.app.Service {
             PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
             wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "appService");
             wl.acquire();
-
         }
     }
     protected static void releaseWakeLock()
