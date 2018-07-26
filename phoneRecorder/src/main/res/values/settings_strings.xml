@@ -37,8 +37,8 @@
     <string name="journal_export">Export journal</string>
     <string name="use_internal_player">Use internal player</string>
 
-    <string name="view_data_path">Data path:</string>
-    <string name="data_file_path">Data path:</string>
+
+    <string name="data_file_path">Save to:</string>
     <string name="sound_source">Sound source:</string>
     <string name="limit_file_amount">Limiting file amount</string>
     <string name="max_file_amount">Max file amount:</string>

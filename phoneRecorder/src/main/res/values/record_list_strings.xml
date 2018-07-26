@@ -10,4 +10,7 @@
 
     <string name="retry_later">Retry this operation later. Data has not been loaded yet.</string>
     <string name="inconsistent_record">This record is only accessible in the local cache.</string>
+
+    <string name="view_data_path">Data path:</string>
+    <string name="no_records">no records</string>
 </resources>

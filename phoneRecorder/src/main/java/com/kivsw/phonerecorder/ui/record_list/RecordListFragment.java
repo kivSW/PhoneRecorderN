@@ -41,7 +41,7 @@ public class RecordListFragment extends Fragment
 
     private Menu menu;
     private View rootView;
-    private TextView pathTextView;
+    private TextView pathTextView, noItemTextView;
     private Spinner spinnerPath;
 
     private ImageView buttonSelDir;
@@ -102,7 +102,8 @@ public class RecordListFragment extends Fragment
     };
 
     private void findViews() {
-        pathTextView = (TextView) rootView.findViewById(R.id.checkBoxCallEnabled);
+        pathTextView = (TextView) rootView.findViewById(R.id.pathTextView);
+        noItemTextView = (TextView) rootView.findViewById(R.id.noItemTextView);
         spinnerPath=(Spinner)rootView.findViewById(R.id.spinnerPath);
         buttonSelDir=(ImageView)rootView.findViewById(R.id.buttonSelDir);
         recordList=(RecyclerView)rootView.findViewById(R.id.recordList);
@@ -192,6 +193,9 @@ public class RecordListFragment extends Fragment
 
     @Override
     public void setRecordList(List<RecordListContract.RecordFileInfo> fileList, boolean scrollToBegin) {
+      if(fileList.size()>0) noItemTextView.setVisibility(View.GONE);
+      else                  noItemTextView.setVisibility(View.VISIBLE);
+
       recordListAdapter.setData(fileList);
       if(scrollToBegin)
           recordList.scrollToPosition(0);

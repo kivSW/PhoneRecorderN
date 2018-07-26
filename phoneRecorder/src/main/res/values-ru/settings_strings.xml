@@ -12,7 +12,7 @@
     <string name="journal_export">Выгружать журнал событий</string>
     <string name="use_internal_player">Использовать внутренний плеер</string>
 
-    <string name="view_data_path">Путь:</string>
+
     <string name="data_file_path">Сохранять:</string>
     <string name="sound_source">Источник звука:</string>
     <string name="limit_file_amount">Ограничить количество записей</string>
