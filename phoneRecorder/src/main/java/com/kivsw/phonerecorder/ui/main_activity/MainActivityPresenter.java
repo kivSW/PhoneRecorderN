@@ -42,10 +42,14 @@ public class MainActivityPresenter implements MainActivityContract.IMainActivity
     }
 
     @Override
-    public void showErrorMessage(String msg) {
+    public void showErrorMessage(String msg, boolean alwaysShow) {
            if(settings.getHiddenMode() && view==null)
                return;
+           if(!alwaysShow && view==null)
+               return;
+
            MainActivity.showErrorMessage(context, msg);
+
     }
 
     @Override

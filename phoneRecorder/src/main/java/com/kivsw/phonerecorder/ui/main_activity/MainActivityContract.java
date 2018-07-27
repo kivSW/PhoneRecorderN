@@ -7,7 +7,7 @@ package com.kivsw.phonerecorder.ui.main_activity;
 public interface MainActivityContract {
     interface IMainActivityPresenter  extends com.kivsw.mvprxdialog.Contract.IPresenter
     {
-        void showErrorMessage(String msg);
+        void showErrorMessage(String msg, boolean alwaysShow);
         void showActivity();
     }
 

@@ -5,8 +5,11 @@ package com.kivsw.phonerecorder.model.internal_filelist;
  */
 
 public interface IInternalFiles {
+
     String[] getRecordFileList();
     String[] getFileListToSend();
+
+    boolean isOverflow();
 
     void markFileAsSent(String fileName);
     boolean isSent(String fileName);

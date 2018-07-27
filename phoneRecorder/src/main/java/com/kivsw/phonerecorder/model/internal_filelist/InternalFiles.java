@@ -63,6 +63,17 @@ public class InternalFiles implements IInternalFiles {
     };
 
     @Override
+    public boolean isOverflow() {
+        try {
+            int size = getFileListToSend().length;
+            return size > 2 * MAX_FILES_NUM;
+        } catch (Exception e)
+        {
+            return true;
+        }
+    };
+
+    @Override
     public void markFileAsSent(String fileName) {
         fileName = SimpleFileIO.extractFileName(fileName);
         if(fileName.indexOf(Journal.JOURNAL_FILE_NAME)==0)

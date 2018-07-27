@@ -31,28 +31,27 @@ public class ErrorProcessor implements IErrorProcessor {
         this.appContext = appContext;
     }
 
-    protected void doShowMessage(String message)
-    {
-        mainActivityPresenter.showErrorMessage(message);
-    }
-    protected void doShowToast(String message)
-    {
-        Toast.makeText(appContext, message, Toast.LENGTH_LONG)
-                .show();
-    }
     @Override
     public void onError(Throwable exception)
     {
         onError(exception, true);
     };
+
+    @Override
+    public void onError(Throwable exception, boolean alwaysShowMessage)
+    {
+        processError(exception, true,
+                alwaysShowMessage?ErrorIndication.ShowMessageAlways:ErrorIndication.ShowMessageIfActivityIsVisible);
+    };
     @Override
     public void onSmallError(Throwable exception)
     {
-        onError(exception, false);
+        processError(exception, false, ErrorIndication.ShowToast);
     };
 
+    public enum ErrorIndication {ShowMessageAlways, ShowMessageIfActivityIsVisible, ShowToast}
 
-    public void onError(Throwable exception, boolean writeToJournal)
+    public void processError(Throwable exception, boolean writeToJournal, ErrorIndication indication)
     {
         StringBuilder message=new StringBuilder();
 
@@ -75,10 +74,33 @@ public class ErrorProcessor implements IErrorProcessor {
                 metrica.notifyError(exception);
             }
         }
-        if(writeToJournal)
-            doShowMessage(message.toString());
-        else
-            doShowToast(message.toString());
+
+        doIndicateError(message.toString(), indication);
 
     };
+
+    protected void doIndicateError(String message, ErrorIndication indication)
+    {
+        switch(indication) {
+            case ShowMessageAlways:
+                doShowMessage(message.toString(), true);
+                break;
+            case ShowMessageIfActivityIsVisible:
+                doShowMessage(message.toString(), false);
+                break;
+            case ShowToast:
+                doShowToast(message.toString());
+                break;
+        }
+    }
+
+    protected void doShowMessage(String message, boolean alwaysShow)
+    {
+        mainActivityPresenter.showErrorMessage(message, alwaysShow);
+    }
+    protected void doShowToast(String message)
+    {
+        Toast.makeText(appContext, message, Toast.LENGTH_LONG)
+                .show();
+    }
 }

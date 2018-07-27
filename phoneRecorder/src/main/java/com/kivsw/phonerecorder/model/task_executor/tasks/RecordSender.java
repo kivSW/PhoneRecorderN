@@ -78,7 +78,7 @@ public class RecordSender implements ITask {
         private long lastUpdateTime=0;
         final long MIN_UPDATE_INTERVAL=2000;
 
-        public int errorCount=0;
+        //public int errorCount=0;
 
         void updateNotification()
         {
@@ -207,7 +207,7 @@ public class RecordSender implements ITask {
             @Override
             public void onError(Throwable e) {
                 isSending=false;
-                errorProcessor.onError(e);
+                errorProcessor.onError(e, internalFiles.isOverflow());
                 taskExecutor.stopFileSending();
                 checkForStartAgain();
 
@@ -219,7 +219,6 @@ public class RecordSender implements ITask {
                 taskExecutor.stopFileSending();
                 checkForStartAgain();
 
-                //WatchdogTimer.cancelTimer(context);
             }
         });
 
@@ -242,41 +241,6 @@ public class RecordSender implements ITask {
            onCopyObservable.onNext("");
     }
 
-/*    protected String[] getRecordFileList(String localDir)
-    {
-        File dir=new File(localDir);
-        String pattern;
-        if(settings.getAllowExportingJournal()) pattern = "("+RecordFileNameData.RECORD_PATTERN+"|^"+Journal.JOURNAL_FILE_NAME+")";
-        else            pattern = RecordFileNameData.RECORD_PATTERN;
-
-        final Pattern p = Pattern.compile(pattern);
-        String[] fileList = dir.list(new FilenameFilter(){
-            @Override
-            public boolean accept(File dir, String name) {
-                Matcher m = p.matcher(name);
-                return m.find();
-            }
-        });
-        if(fileList==null)
-            fileList = new String[0];
-
-        return removeEmptyFiles(localDir, fileList);
-    }
-
-    protected String[] removeEmptyFiles(String localDir, String[] fileList)
-    {
-        ArrayList<String> res = new ArrayList(fileList.length);
-        for(String fileName:fileList)
-        {
-            File file=new File(localDir, fileName);
-            if(!file.exists() || file.length()<1)
-                file.deleteRecord();
-            else
-                res.add(fileName);
-        };
-        return res.toArray(new String[res.size()]);
-    };*/
-
     protected Observable<Integer> createUploadObservable(final String source, String destination)
     {
         if(!checkSendCondition(destination))
@@ -288,19 +252,10 @@ public class RecordSender implements ITask {
                         @Override
                         public void run() throws Exception {
                             internalFiles.markFileAsSent(source);
-/*                            if(source.contains(Journal.JOURNAL_FILE_NAME)) // do not deleteRecord journal file
-                                return;
-                            File file = new File(source);
-                            file.deleteRecord();*/
+
                         }
                     });
-                    /*.onErrorResumeNext(new Function<Throwable, Observable<Integer>>(){
-                        @Override
-                        public Observable<Integer> apply(Throwable throwable) throws Exception {
-                            errorProcessor.onError(throwable);
-                            return Observable.empty();
-                        }
-                    });*/
+
     };
 
     protected Completable createDeleteOldFilesCompletable(final String dstPath)

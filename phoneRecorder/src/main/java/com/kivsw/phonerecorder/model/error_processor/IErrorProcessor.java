@@ -6,6 +6,7 @@ package com.kivsw.phonerecorder.model.error_processor;
 
 public interface IErrorProcessor {
     void onError(Throwable exception);
+    void onError(Throwable exception, boolean alwaysShowMessage );
     void onSmallError(Throwable exception);
     //void onError(Throwable exception, boolean writeToJournal);
 }
