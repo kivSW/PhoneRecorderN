@@ -12,6 +12,7 @@ import dagger.Provides;
  */
 @Module
 public class PlayerPresenterModule {
+
     @Provides
     PlayerPresenter  provideInnerPlayer(ISettings settings, AndroidPlayer androidPlayer, IErrorProcessor errorProcessor)
     {

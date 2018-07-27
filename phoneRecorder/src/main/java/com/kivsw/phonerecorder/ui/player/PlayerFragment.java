@@ -81,7 +81,7 @@ implements PlayerContract.IPlayerView {
         imageViewPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getPresenter().pause();
+                getPresenter().pausePlaying();
             }
         });
 

@@ -3,6 +3,7 @@ package com.kivsw.phonerecorder.ui.player;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 
@@ -93,7 +94,7 @@ public class PlayerPresenter
 
                     @Override
                     public void onSuccess(Long aLong) {
-                        pause();
+                        pausePlaying();
                     }
 
                     @Override
@@ -139,7 +140,7 @@ public class PlayerPresenter
     {
         trackDuration=0;
         if(mplayer!=null)
-            stop();
+            stopPlaying();
 
         try {
             mplayer = new MediaPlayer();
@@ -165,7 +166,7 @@ public class PlayerPresenter
             mplayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
-                    stop();
+                    stopPlaying();
                 }
             });
             mplayer.prepareAsync();
@@ -173,7 +174,7 @@ public class PlayerPresenter
         }catch(Exception e)
         {
             errorProcessor.onError(e);
-            stop();
+            stopPlaying();
             deletePresenter();
             if(view!=null)
                 view.dismiss();
@@ -181,7 +182,7 @@ public class PlayerPresenter
 
     };
     @Override
-    void stop()
+    void stopPlaying()
     {
         if(mplayer!=null) {
             mplayer.stop();
@@ -204,7 +205,7 @@ public class PlayerPresenter
     }
 
     @Override
-    void pause() {
+    void pausePlaying() {
        if(mplayer!=null)
            mplayer.pause();
        stopPositionUpdating();
@@ -226,15 +227,20 @@ public class PlayerPresenter
     protected void deletePresenter()
     {
         super.deletePresenter();
-        stop();
+        stopPlaying();
     }
 
+    private final String FRAGMENT_TAG="PlayerFragmentTag";
     protected void createUI(Context activity)
     {
         FragmentManager fragmentManager=((AppCompatActivity)activity).getSupportFragmentManager();
+        DialogFragment previousFragment=(DialogFragment)fragmentManager.findFragmentByTag(FRAGMENT_TAG);
+        if(previousFragment!=null)
+            previousFragment.dismiss();
+
         long id=getDialogPresenterId();
         PlayerFragment fragment = PlayerFragment.newInstance(id);
-        fragment.show(fragmentManager, String.valueOf(id));
+        fragment.show(fragmentManager, FRAGMENT_TAG);
     }
     protected void setUiParam()
     {
@@ -267,8 +273,8 @@ public class PlayerPresenter
                 .subscribe(new FlowableSubscriber<Long>(){
                     @Override
                     public void onSubscribe(final Subscription s) {
-                        s.request(1);
                         updatePositionSubscription =s;
+                        s.request(1);
                     }
 
                     @Override

@@ -12,9 +12,9 @@ public class PlayerContract {
        abstract static class IPlayerPresenter  extends BaseMvpPresenter
                 implements IPlayer
        {
-           abstract void stop();
+           abstract void stopPlaying();
            abstract void resumePlaying();
-           abstract void pause();
+           abstract void pausePlaying();
            abstract void setPosition(int pos);
        }
        interface IPlayerView extends com.kivsw.mvprxdialog.Contract.IView
