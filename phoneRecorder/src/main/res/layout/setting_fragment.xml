@@ -54,6 +54,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/enable_call_recording"/>
+            <!-- android:buttonTint="#FFFF0000"-->
 
             <CheckBox
                 android:id="@+id/checkBoxSmsEnabled"

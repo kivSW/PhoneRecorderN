@@ -19,8 +19,6 @@ import com.kivsw.phonerecorder.ui.notification.AntiTaskKillerNotification;
 
 import javax.inject.Inject;
 
-import phonerecorder.kivsw.com.phonerecorder.BuildConfig;
-
 /**
  * Receives intents
  */
@@ -123,8 +121,8 @@ public class AppReceiver extends android.content.BroadcastReceiver{
             case TelephonyManager.CALL_STATE_RINGING: // saves the income phone number
                 String phoneNumber=intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER );
                 callInfoKeeper.setCallInfo(phoneNumber, true);
-                if(BuildConfig.DEBUG)
-                   startRecording(context);
+                /*if(BuildConfig.DEBUG)
+                   startRecording(context);*/
 
                 break;
         }

@@ -59,7 +59,7 @@ public class CallRecorder implements ITask {
     @Override
     public boolean startTask() {
         boolean newTask=true;
-        notification.show(context.getText(R.string.recording_call).toString());
+        notification.show(context.getText(R.string.recording_call).toString(), false);
         if(isRecording()) {
             newTask=false;
         }

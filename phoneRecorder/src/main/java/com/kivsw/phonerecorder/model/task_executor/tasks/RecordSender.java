@@ -91,7 +91,7 @@ public class RecordSender implements ITask {
             if(totalFileCount>0)
                 percent = currentFileNumber*100/totalFileCount;
             String txt=String.format(Locale.US, name, currentFileNumber, totalFileCount);
-            notification.show(txt, percent);
+            notification.show(txt, percent, true);
         };
 
         FileEmitter fileEmmiter;
@@ -268,7 +268,7 @@ public class RecordSender implements ITask {
         final SendingParam notificationInfo=new SendingParam();
         notificationInfo.name = context.getText(R.string.rec_deleting).toString();
 
-        notification.show(context.getText(R.string.prepare_rec_deleting).toString());
+        notification.show(context.getText(R.string.prepare_rec_deleting).toString(), true);
 
         return
         disks.getResourceInfo(dstPath)

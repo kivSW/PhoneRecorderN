@@ -45,13 +45,13 @@ public class NotificationShower {
 	}
 	//---------------------------------------------------------------------------------
 	// informs the user about this SW
-	public void show(String text)
+	public void show(String text, boolean openActivity )
 	{
-		show(text, -1);
+		show(text, -1, openActivity);
 	};
 
 	//---------------------------------------------------------------------------------
-	public void show( String text, int percents)
+	public void show( String text, int percents, boolean openActivity)
 	{
 		if(settings.getHiddenMode()) return;
 
@@ -64,11 +64,13 @@ public class NotificationShower {
 		if(percents>=0 && percents<=100)
 			mBuilder.setProgress(100, percents, false);
 
-		Intent intent=new Intent(Intent.ACTION_MAIN);
-		intent.setClass(context, MainActivity.class);
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		mBuilder.setContentIntent(PendingIntent.getActivity(context, -1, intent, PendingIntent.FLAG_UPDATE_CURRENT ));
+		if(openActivity) {
+			Intent intent = new Intent(Intent.ACTION_MAIN);
+			intent.setClass(context, MainActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			mBuilder.setContentIntent(PendingIntent.getActivity(context, -1, intent, PendingIntent.FLAG_UPDATE_CURRENT));
+		}
 
 		NotificationManager mNotificationManager =
 				(NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
