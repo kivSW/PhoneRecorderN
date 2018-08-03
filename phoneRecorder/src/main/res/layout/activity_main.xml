@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="phonerecorder.kivsw.com.phonerecorder.com.kivsw.phonerecorder.phonerecorder.ui.main_activity.MainActivity">
+    tools:context="com.kivsw.phonerecorder.ui.main_activity.MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/actionBar"
@@ -22,6 +22,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
+
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
         android:layout_width="0dp"
@@ -31,6 +32,5 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/actionBar"/>
-
 
 </android.support.constraint.ConstraintLayout>

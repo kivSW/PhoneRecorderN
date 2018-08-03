@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity
     {
         super.onStart();
         presenter.setUI(this);
+
     };
     @Override
     protected void onStop()

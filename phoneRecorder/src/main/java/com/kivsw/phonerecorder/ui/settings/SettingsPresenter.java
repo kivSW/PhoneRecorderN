@@ -72,9 +72,8 @@ public class SettingsPresenter implements SettingsContract.ISettingsPresenter {
     {
         if(view instanceof SettingsFragment) {
             this.view = (SettingsContract.ISettingsView) view;
-            this.view.setSettings(settings);
-            subscribeSettings();
         }
+        subscribeSettings();
     }
 
     @Override

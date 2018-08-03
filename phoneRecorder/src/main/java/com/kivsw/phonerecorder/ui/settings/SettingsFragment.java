@@ -17,9 +17,9 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.kivsw.phonerecorder.model.settings.ISettings;
 import com.kivsw.phonerecorder.model.settings.types.AntiTaskKillerNotificationParam;
 import com.kivsw.phonerecorder.model.settings.types.DataSize;
-import com.kivsw.phonerecorder.model.settings.ISettings;
 import com.kivsw.phonerecorder.model.settings.types.SoundSource;
 import com.kivsw.phonerecorder.os.MyApplication;
 import com.kivsw.phonerecorder.ui.notification.AntiTaskKillerNotification;
@@ -35,8 +35,7 @@ public class SettingsFragment extends Fragment
     implements SettingsContract.ISettingsView {
 
     @Inject protected SettingsContract.ISettingsPresenter presenter;
-
-    private ISettings settings;
+    @Inject protected ISettings settings;
 
     private View rootView;
     private CheckBox checkBoxCallEnabled,
@@ -84,6 +83,7 @@ public class SettingsFragment extends Fragment
         initViews();
 
         injectDependancy();
+        readAllSettings();
 
         return rootView;
     }
@@ -102,20 +102,31 @@ public class SettingsFragment extends Fragment
     {
         super.onViewStateRestored(bundle);
     }
+
     @Override
     public void onStart()
     {
+        presenter.setUI(SettingsFragment.this);
+        readAllSettings();
         super.onStart();
-        presenter.setUI(this);
     }
     @Override
     public void onStop()
     {
         presenter.removeUI();
         super.onStop();
-
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+    }
     @Override
     public void onDestroyView() {
         presenter.removeUI();
@@ -130,8 +141,10 @@ public class SettingsFragment extends Fragment
 
     private void findViews() {
         checkBoxCallEnabled = (CheckBox) rootView.findViewById(R.id.checkBoxCallEnabled);
+        checkBoxCallEnabled.setId(View.NO_ID);
         checkBoxSmsEnabled = (CheckBox) rootView.findViewById(R.id.checkBoxSmsEnabled);
         checkHiddenMode = (CheckBox) rootView.findViewById(R.id.checkHiddenMode);
+        checkHiddenMode.setVisibility(View.GONE);
         checkShowFileExtension = (CheckBox) rootView.findViewById(R.id.checkShowFileExtension);
         checkAllowMobileInternet = (CheckBox) rootView.findViewById(R.id.checkAllowMobileInternet);
         checkAllowRoaming = (CheckBox) rootView.findViewById(R.id.checkAllowRoaming);
@@ -151,7 +164,7 @@ public class SettingsFragment extends Fragment
         spinnerNotificationIcon = (Spinner) rootView.findViewById(R.id.spinnerNotificationIcon);
         //editNotificationTitle = (EditText) rootView.findViewById(R.id.editNotificationTitle);
     }
-    ;
+
 
     private boolean ignoreChanges=false;
     private void initViews() {
@@ -338,7 +351,6 @@ public class SettingsFragment extends Fragment
 
             @Override public void onNothingSelected(AdapterView<?> parent) { }
         });
-
     }
 
 
@@ -387,13 +399,6 @@ public class SettingsFragment extends Fragment
 
         spinnerNotificationIcon.setEnabled(checkBoxShowNotification.isChecked());
     };
-
-
-    @Override
-    public void setSettings(ISettings settings) {
-        this.settings = settings;
-        readAllSettings();
-    }
 
 
     @Override
