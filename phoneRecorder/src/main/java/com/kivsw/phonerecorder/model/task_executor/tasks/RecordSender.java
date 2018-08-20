@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -73,8 +72,22 @@ public class RecordSender implements ITask {
     }
 
     class SendingParam {
-        public String name;
-        public int totalFileCount=0, currentFileNumber=0;
+        public String srcPath, dstPath;
+        public String notificationText;
+        public int totalFileQuantity=0, currentFileCount =0;
+
+
+        public SendingParam( String notificationText)
+        {
+            this(null, null, notificationText);
+        }
+        public SendingParam(String srcPath, String dstPath, String notificationText)
+        {
+           this.srcPath=srcPath;
+           this.dstPath=dstPath;
+           this.notificationText=notificationText;
+        };
+
         private long lastUpdateTime=0;
         final long MIN_UPDATE_INTERVAL=2000;
 
@@ -88,9 +101,9 @@ public class RecordSender implements ITask {
             lastUpdateTime=currentTime;
 
             int percent=-1;
-            if(totalFileCount>0)
-                percent = currentFileNumber*100/totalFileCount;
-            String txt=String.format(Locale.US, name, currentFileNumber, totalFileCount);
+            if(totalFileQuantity >0)
+                percent = currentFileCount *100/ totalFileQuantity;
+            String txt=String.format(Locale.US, notificationText, currentFileCount, totalFileQuantity);
             notification.show(txt, percent, true);
         };
 
@@ -143,84 +156,43 @@ public class RecordSender implements ITask {
         if(!checkSendCondition(dstPath))
             return false;
 
-        final SendingParam sendingParam=new SendingParam();
-        sendingParam.name = context.getText(R.string.rec_sending).toString();
+        final SendingParam sendingParam=new SendingParam(srcPath, dstPath, context.getText(R.string.rec_sending).toString());
 
-        isSending=true;
-        sentFileCount=0;
+       createCopyRecordsObservables(sendingParam)
+           .concatWith(Observable.just("").flatMap(new Function<Object, ObservableSource<Integer>>() {
+                        @Override
+                        public ObservableSource<Integer> apply(Object v) throws Exception {
+                            if(sendingParam.currentFileCount==0)
+                                return Observable.empty();
+                            return createDeleteOldFilesCompletable(dstPath).toObservable();
+                        }
+                    }))
 
-        Single.fromCallable(new Callable<String[]>() {
-            @Override
-            public String[] call() throws Exception {
-                internalFiles.deleteOldFiles();
-                String[] fileList = internalFiles.getFileListToSend();//getRecordFileList(srcPath);
-                sendingParam.totalFileCount = fileList.length;
-                sendingParam.currentFileNumber=0;
-                sendingParam.updateNotification();
-                return fileList;
-            }
-        })
-        .subscribeOn(Schedulers.io())
-        //.subscribeOn(Schedulers.newThread())
-        .flatMapObservable(new Function<String[], ObservableSource<String> >(){
-            @Override
-            public ObservableSource<String> apply(String[] fileList) throws Exception {
-            sendingParam.fileEmmiter = new FileEmitter(fileList);
-            return sendingParam.fileEmmiter;//Observable.fromArray(fileList);
-            }
-        })
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Observer<Object>() {
+                @Override
+                public void onSubscribe(Disposable d) {}
 
-        .flatMap(new Function<String, ObservableSource<Integer>>(){
-            @Override
-            public ObservableSource<Integer> apply(String file) throws Exception {
-                sendingParam.currentFileNumber++;
-                sendingParam.updateNotification();
+                @Override
+                public void onNext(Object v) {}
 
-                final String source =srcPath + file;
-                String destination = dstPath + file;
-                return createUploadObservable(source, destination)
-                        .doOnComplete(new Action() {
-                            @Override
-                            public void run() throws Exception {
-                                sentFileCount++;
-                                sendingParam.fileEmmiter.emitNext();
-                            }
-                        });
-            };
-        })
+                @Override
+                public void onError(Throwable e) {
+                    isSending=false;
+                    errorProcessor.onError(e, internalFiles.isOverflow());
+                    taskExecutor.stopFileSending();
+                    checkForStartAgain();
 
-       .concatWith(Observable.just("").flatMap(new Function<Object, ObservableSource<Integer>>() {
-                    @Override
-                    public ObservableSource<Integer> apply(Object v) throws Exception {
-                        return createDeleteOldFilesCompletable(dstPath).toObservable();
-                    }
-                }))
+                }
 
-        .subscribeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Observer<Object>() {
-            @Override
-            public void onSubscribe(Disposable d) {}
+                @Override
+                public void onComplete() {
+                    isSending=false;
+                    taskExecutor.stopFileSending();
+                    checkForStartAgain();
 
-            @Override
-            public void onNext(Object v) {}
-
-            @Override
-            public void onError(Throwable e) {
-                isSending=false;
-                errorProcessor.onError(e, internalFiles.isOverflow());
-                taskExecutor.stopFileSending();
-                checkForStartAgain();
-
-            }
-
-            @Override
-            public void onComplete() {
-                isSending=false;
-                taskExecutor.stopFileSending();
-                checkForStartAgain();
-
-            }
-        });
+                }
+            });
 
         return true;
     }
@@ -252,12 +224,52 @@ public class RecordSender implements ITask {
                         @Override
                         public void run() throws Exception {
                             internalFiles.markFileAsSent(source);
-
                         }
                     });
 
     };
+    protected Observable<Integer> createCopyRecordsObservables(final SendingParam sendingParam/*, final String srcPath, final String dstPath*/)
+    {
+        isSending=true;
+        sentFileCount=0;
 
+        return
+        Single.fromCallable( ()-> {
+                internalFiles.deleteOldFiles();
+                String[] fileList = internalFiles.getFileListToSend();//getRecordFileList(srcPath);
+                sendingParam.totalFileQuantity = fileList.length;
+                sendingParam.currentFileCount =0;
+                sendingParam.updateNotification();
+                return fileList;
+        })
+        .subscribeOn(Schedulers.io())
+        .flatMapObservable(new Function<String[], ObservableSource<String> >(){
+            @Override
+            public ObservableSource<String> apply(String[] fileList) throws Exception {
+                sendingParam.fileEmmiter = new FileEmitter(fileList);
+                return sendingParam.fileEmmiter;
+            }
+        })
+
+        .flatMap(new Function<String, ObservableSource<Integer>>(){
+            @Override
+            public ObservableSource<Integer> apply(String file) throws Exception {
+                sendingParam.currentFileCount++;
+                sendingParam.updateNotification();
+
+                final String source =sendingParam.srcPath + file;
+                String destination = sendingParam.dstPath + file;
+                return createUploadObservable(source, destination)
+                        .doOnComplete(new Action() {
+                            @Override
+                            public void run() throws Exception {
+                                sentFileCount++;
+                                sendingParam.fileEmmiter.emitNext();
+                            }
+                        });
+            };
+        });
+    }
     protected Completable createDeleteOldFilesCompletable(final String dstPath)
     {
         boolean hasDataSizeLimit = settings.getDataSizeLimitation();
@@ -265,35 +277,34 @@ public class RecordSender implements ITask {
         if(!hasDataSizeLimit && !hasFileAmountLimit)
             return Completable.complete();
 
-        final SendingParam notificationInfo=new SendingParam();
-        notificationInfo.name = context.getText(R.string.rec_deleting).toString();
+        final SendingParam notificationInfo=new SendingParam( context.getText(R.string.rec_deleting).toString());
 
         notification.show(context.getText(R.string.prepare_rec_deleting).toString(), true);
 
         return
-        disks.getResourceInfo(dstPath)
-        .observeOn(Schedulers.io())
-        .flatMapObservable(new Function<IDiskIO.ResourceInfo, Observable<String>>(){
+            disks.getResourceInfo(dstPath)
+            .observeOn(Schedulers.io())
+            .flatMapObservable(new Function<IDiskIO.ResourceInfo, Observable<String>>(){
 
-                @Override
-                public Observable<String> apply(IDiskIO.ResourceInfo resourceInfo) throws Exception {
-                    List<IDiskIO.ResourceInfo> recordList=filterRecordFileList(resourceInfo);
-                    List<String> deletableFileList = getDeletableList(recordList);
-                    notificationInfo.totalFileCount = deletableFileList.size();
+                    @Override
+                    public Observable<String> apply(IDiskIO.ResourceInfo resourceInfo) throws Exception {
+                        List<IDiskIO.ResourceInfo> recordList=filterRecordFileList(resourceInfo);
+                        List<String> deletableFileList = getDeletableList(recordList);
+                        notificationInfo.totalFileQuantity = deletableFileList.size();
 
-                    return Observable.fromIterable(deletableFileList);
-            }
-            })
-            .flatMapCompletable(new Function<String, CompletableSource>() {
-                @Override
-                public CompletableSource apply(String fileName) throws Exception {
-                    notificationInfo.currentFileNumber++;
-                    notificationInfo.updateNotification();
-
-                    return disks.deleteFile(dstPath+fileName);
+                        return Observable.fromIterable(deletableFileList);
                 }
-            })
-            .observeOn(AndroidSchedulers.mainThread());
+                })
+                .flatMapCompletable(new Function<String, CompletableSource>() {
+                    @Override
+                    public CompletableSource apply(String fileName) throws Exception {
+                        notificationInfo.currentFileCount++;
+                        notificationInfo.updateNotification();
+
+                        return disks.deleteFile(dstPath+fileName);
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread());
 
     };
 
