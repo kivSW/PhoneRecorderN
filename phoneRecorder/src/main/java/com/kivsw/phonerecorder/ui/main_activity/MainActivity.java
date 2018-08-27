@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -21,6 +23,8 @@ import com.kivsw.phonerecorder.ui.ErrorMessage.MvpErrorMessageBuilder;
 import com.kivsw.phonerecorder.ui.record_list.RecordListFragment;
 import com.kivsw.phonerecorder.ui.settings.SettingsFragment;
 import com.tbruyelle.rxpermissions2.RxPermissions;
+
+import java.nio.charset.Charset;
 
 import javax.inject.Inject;
 
@@ -107,6 +111,50 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
         processIntent();
     }
+    @Override
+    protected void onPause()
+    {
+       super.onPause();
+    }
+    @Override
+    protected void onSaveInstanceState(Bundle outState)
+    {
+        super.onSaveInstanceState(outState);
+
+        int ds=getBundleSize(outState);
+        if(ds>1042*1024)
+          outState.clear();
+    }
+    public static int getBundleSize(Bundle b)
+    {
+        Parcel parcel = Parcel.obtain(); //new Parcel();
+        b.writeToParcel(parcel, 0);
+        int ds=parcel.dataSize();
+        return ds;
+    }
+    public static int getParcelableSize(Parcelable p)
+    {
+        Bundle b=new Bundle();
+        b.putParcelable("v", p);
+
+        return getBundleSize(b);
+    }
+
+    public static String BundleToString(Bundle b)
+    {
+
+        Parcel parcel = Parcel.obtain(); // i make an empty one here, but you can use yours
+        b.writeToParcel(parcel, 0);
+
+        try {
+            byte d[]=parcel.marshall();
+            String str = new String(d, Charset.forName("cp1251"));
+            return str;
+
+        }catch (Exception e){};
+        return "err";
+    }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();

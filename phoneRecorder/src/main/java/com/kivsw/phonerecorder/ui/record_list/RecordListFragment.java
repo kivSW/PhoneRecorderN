@@ -95,6 +95,13 @@ public class RecordListFragment extends Fragment
         super.onStop();
 
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState)
+    {
+        super.onSaveInstanceState(outState);
+    }
+
     @Override
     public void onDestroyView() {
         presenter.removeUI();

@@ -117,6 +117,7 @@ public class SettingsFragment extends Fragment
         super.onStop();
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
@@ -126,6 +127,11 @@ public class SettingsFragment extends Fragment
     public void onPause()
     {
         super.onPause();
+    }
+    @Override
+    public void onSaveInstanceState(Bundle outState)
+    {
+        super.onSaveInstanceState(outState);
     }
     @Override
     public void onDestroyView() {

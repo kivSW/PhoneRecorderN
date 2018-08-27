@@ -6,7 +6,7 @@ android {
     defaultConfig {
         applicationId 'com.kivSW.phonerecorder'
         minSdkVersion 15
-        targetSdkVersion 26
+        targetSdkVersion 25
         versionCode 32
         versionName '3.0.2'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -38,8 +38,6 @@ dependencies {
     dependencies {
         compile 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.5@aar'
     }
-    compile project(path: ':mvprxdialog')
-    compile project(path: ':mvprxfiledialog')
     compile project(path: ':cloud_disk')
     compile 'com.google.code.gson:gson:2.8.5'
     compile 'io.reactivex.rxjava2:rxjava:2.1.1'
@@ -51,4 +49,7 @@ dependencies {
     implementation 'com.yandex.android:mobmetricalib:3.1.0'
     // Optional. Play Install Referrer library for better attribution.
     //implementation 'com.android.installreferrer:installreferrer:1.0'
+    implementation project(':cloud_disk')
+    implementation project(':mvprxdialog')
+    implementation project(':mvprxfiledialog')
 }

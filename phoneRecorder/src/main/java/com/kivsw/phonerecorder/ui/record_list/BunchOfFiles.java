@@ -2,6 +2,7 @@ package com.kivsw.phonerecorder.ui.record_list;
 
 import com.kivsw.cloud.disk.IDiskIO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,4 +20,8 @@ public class BunchOfFiles {
         this.content = content;
         this.cache = cache;
     };
+    public static BunchOfFiles getEmptyInstance()
+    {
+        return new BunchOfFiles("", new ArrayList(), false);
+    }
 }

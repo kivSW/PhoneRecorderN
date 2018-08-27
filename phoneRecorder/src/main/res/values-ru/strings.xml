@@ -15,4 +15,6 @@
     <string name="rec_deleting">Удаление старых записей: %d из %d </string>
     <string name="prepare_rec_deleting">Подготовка удаления старых записей</string>
     <string name="recording_call">Звонок записывается</string>
+
+    <string name="auth_cancelled">Авторизация отменена</string>
 </resources>

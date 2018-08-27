@@ -17,4 +17,6 @@
     <string name="prepare_rec_deleting">Preparing to delete old records</string>
     <string name="recording_call">Recording call</string>
 
+    <string name="auth_cancelled">authorization was cancelled</string>
+
 </resources>

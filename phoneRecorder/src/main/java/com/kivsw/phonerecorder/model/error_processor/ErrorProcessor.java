@@ -3,6 +3,7 @@ package com.kivsw.phonerecorder.model.error_processor;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.kivsw.cloud.OAuth.OAuthCancelledException;
 import com.kivsw.phonerecorder.model.metrica.IMetrica;
 import com.kivsw.phonerecorder.model.persistent_data.IJournal;
 import com.kivsw.phonerecorder.ui.main_activity.MainActivityContract;
@@ -10,6 +11,7 @@ import com.kivsw.phonerecorder.ui.main_activity.MainActivityContract;
 import java.util.List;
 
 import io.reactivex.exceptions.CompositeException;
+import phonerecorder.kivsw.com.phonerecorder.R;
 
 /**
  * Created by ivan on 5/7/18.
@@ -55,6 +57,11 @@ public class ErrorProcessor implements IErrorProcessor {
     {
         StringBuilder message=new StringBuilder();
 
+        if(exception instanceof OAuthCancelledException)
+        {
+            exception = new Exception(appContext.getString(R.string.auth_cancelled));
+        }
+
         if(exception instanceof CompositeException)
         {
             List<Throwable> exceptions=((CompositeException)exception).getExceptions();
@@ -81,17 +88,18 @@ public class ErrorProcessor implements IErrorProcessor {
 
     protected void doIndicateError(String message, ErrorIndication indication)
     {
-        switch(indication) {
-            case ShowMessageAlways:
-                doShowMessage(message.toString(), true);
-                break;
-            case ShowMessageIfActivityIsVisible:
-                doShowMessage(message.toString(), false);
-                break;
-            case ShowToast:
-                doShowToast(message.toString());
-                break;
-        }
+        if(message!=null && !message.isEmpty())
+            switch(indication) {
+                case ShowMessageAlways:
+                    doShowMessage(message.toString(), true);
+                    break;
+                case ShowMessageIfActivityIsVisible:
+                    doShowMessage(message.toString(), false);
+                    break;
+                case ShowToast:
+                    doShowToast(message.toString());
+                    break;
+            }
     }
 
     protected void doShowMessage(String message, boolean alwaysShow)

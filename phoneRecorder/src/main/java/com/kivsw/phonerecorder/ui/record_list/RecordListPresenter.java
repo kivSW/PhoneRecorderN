@@ -267,6 +267,7 @@ public class RecordListPresenter
 
                         @Override
                         public void onError(Throwable e) {
+                            recListContainer.addFileList(BunchOfFiles.getEmptyInstance());
                             errorProcessor.onSmallError(e);
                             setProgressBarVisible(false);
                             isFileListLoading=false;
