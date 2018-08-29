@@ -11,10 +11,9 @@ import com.kivsw.phonerecorder.model.player.AndroidPlayer;
 import com.kivsw.phonerecorder.model.player.AndroidPlayerModule;
 import com.kivsw.phonerecorder.model.settings.SettingsModule;
 import com.kivsw.phonerecorder.model.task_executor.TaskExecutorModule;
-import com.kivsw.phonerecorder.model.task_executor.tasks.CallRecorder;
-import com.kivsw.phonerecorder.model.task_executor.tasks.RecordSender;
-import com.kivsw.phonerecorder.model.task_executor.tasks.SmsReader;
 import com.kivsw.phonerecorder.model.task_executor.tasks.TaskModule;
+import com.kivsw.phonerecorder.os.jobs.AppJobService;
+import com.kivsw.phonerecorder.os.jobs.AppService;
 import com.kivsw.phonerecorder.ui.ErrorMessage.MvpErrorMessageBuilderModule;
 import com.kivsw.phonerecorder.ui.main_activity.MainActivity;
 import com.kivsw.phonerecorder.ui.main_activity.MainActivityModule;
@@ -48,11 +47,13 @@ public interface ApplicationComponent {
     void inject(RecordListFragment fragment);
     void inject(AppReceiver receiver);
     void inject(AppService service);
+    void inject(AppJobService service);
     void inject(MyApplication app);
 
-    CallRecorder getCallRecorder();
+    /*CallRecorder getCallRecorder();
     RecordSender getRecordSender();
-    SmsReader getSmsReader();
+    SmsReader getSmsReader();*/
+    //ITaskProvider getTaskProvider();
     PlayerPresenter getInnerPlayer();
     AndroidPlayer getAndroidPlayer();
     IMetrica getMetrica();

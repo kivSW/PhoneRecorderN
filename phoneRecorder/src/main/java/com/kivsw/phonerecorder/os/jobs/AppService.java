@@ -1,4 +1,4 @@
-package com.kivsw.phonerecorder.os;
+package com.kivsw.phonerecorder.os.jobs;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,9 +7,13 @@ import android.os.PowerManager;
 import android.support.annotation.Nullable;
 
 import com.kivsw.phonerecorder.model.task_executor.tasks.ITask;
+import com.kivsw.phonerecorder.model.task_executor.tasks.ITaskProvider;
+import com.kivsw.phonerecorder.os.MyApplication;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.inject.Inject;
 
 /**
  * this service is used just to indicate to the framework that we have some background work
@@ -22,13 +26,16 @@ public class AppService extends android.app.Service {
         return null;
     }
 
-    int lastStartId;
-    private Map<String, Integer> activeActions;
+    private int lastStartId;
+    private Map<String, Integer> activeTasks;
+    @Inject
+    public ITaskProvider taskProvider;
     final static String EXTRA_START="EXTRA_START";
 
     public void onCreate() {
         super.onCreate();
-        activeActions = new HashMap<>();
+        activeTasks = new HashMap<>();
+        MyApplication.getComponent().inject(this);
     };
 
     public void onDestroy()
@@ -37,7 +44,7 @@ public class AppService extends android.app.Service {
     };
 
 
-    ITask getTask(String task)
+   /* ITask getTask(String task)
     {
         switch(task)
         {
@@ -50,31 +57,31 @@ public class AppService extends android.app.Service {
         };
 
         return null;
-    }
+    }*/
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         lastStartId = startId;
-        String action = intent.getAction();
+        String taskId = intent.getAction();
         boolean start=intent.getBooleanExtra(EXTRA_START,false);
 
 
-        ITask task=getTask(action);
+        ITask task=taskProvider.getTask(taskId);
         if(task!=null)
         {
             if(start)
             {
                 if(task.startTask())
-                  addTask(action);
+                  addTask(taskId);
             }
             else
             {
                 task.stopTask();
-                removeTask(action);
+                removeTask(taskId);
             }
         }
         else
-            removeTask(action);
+            removeTask(taskId);
 
 
         return START_NOT_STICKY;
@@ -82,26 +89,26 @@ public class AppService extends android.app.Service {
 
     protected void addTask(String action)
     {
-        Integer count=activeActions.get(action);
+        Integer count= activeTasks.get(action);
         int newCount;
         if(count!=null)
             newCount = count.intValue()+1;
         else
             newCount = 1;
 
-        activeActions.put(action, Integer.valueOf(newCount) );
+        activeTasks.put(action, Integer.valueOf(newCount) );
     };
 
     protected void removeTask(String action)
     {
-        Integer count=activeActions.get(action);
+        Integer count= activeTasks.get(action);
         if(count!=null) {
             int newCount = count.intValue()-1;
-            if(newCount<=0) activeActions.remove(action);
-            else activeActions.put(action, Integer.valueOf(newCount) );
+            if(newCount<=0) activeTasks.remove(action);
+            else activeTasks.put(action, Integer.valueOf(newCount) );
         }
 
-        if(activeActions.isEmpty())
+        if(activeTasks.isEmpty())
         {
             stopSelfResult(lastStartId);
             releaseWakeLock();
@@ -135,9 +142,7 @@ public class AppService extends android.app.Service {
             aquireWakeLock(context);
     }
 
-    final static public String TASK_CALL_RECORDING ="TASK_CALL_RECORDING",
-            TASK_SEND_FILES ="TASK_SEND_FILES",
-            TASK_SMS_READING="TASK_SMS_READING";
+
 
     synchronized public static void startTask(Context context, String action)
     {

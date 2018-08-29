@@ -1,6 +1,7 @@
 package com.kivsw.phonerecorder.model.task_executor;
 
 import android.content.Context;
+import android.os.Build;
 
 import javax.inject.Singleton;
 
@@ -16,6 +17,8 @@ public class TaskExecutorModule {
     @Provides
     ITaskExecutor provideTaskExecutor(Context context)
     {
-            return new TaskExecutor(context);
+        if(Build.VERSION.SDK_INT<22)
+              return new TaskExecutor(context);
+        return new TaskExecutorJobService(context);
     };
 }

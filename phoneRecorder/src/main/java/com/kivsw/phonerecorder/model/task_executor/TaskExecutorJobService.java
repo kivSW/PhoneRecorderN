@@ -3,16 +3,16 @@ package com.kivsw.phonerecorder.model.task_executor;
 import android.content.Context;
 
 import com.kivsw.phonerecorder.model.task_executor.tasks.ITaskProvider;
-import com.kivsw.phonerecorder.os.jobs.AppService;
+import com.kivsw.phonerecorder.os.jobs.AppJobService;
 
 /**
  * Created by ivan on 4/26/18.
  */
 
-class TaskExecutor implements ITaskExecutor{
+class TaskExecutorJobService implements ITaskExecutor{
 
     Context context;
-    TaskExecutor(Context context)
+    TaskExecutorJobService(Context context)
     {
         this.context = context;
     }
@@ -20,34 +20,34 @@ class TaskExecutor implements ITaskExecutor{
     @Override
     public void startCallRecording()
     {
-        AppService.startTask(context, ITaskProvider.TASK_CALL_RECORDING);
+        AppJobService.startTask(context, ITaskProvider.TASK_CALL_RECORDING);
     }
     @Override
     public void stopCallRecording()
     {
-        AppService.stopTask(context, ITaskProvider.TASK_CALL_RECORDING);
+        AppJobService.stopTask(context, ITaskProvider.TASK_CALL_RECORDING);
     }
 
     @Override
     public void startFileSending()
     {
-        AppService.startTask(context, ITaskProvider.TASK_SEND_FILES);
+        AppJobService.startTask(context, ITaskProvider.TASK_SEND_FILES);
     }
     @Override
     public void stopFileSending()
     {
-        AppService.stopTask(context, ITaskProvider.TASK_SEND_FILES);
+        AppJobService.stopTask(context, ITaskProvider.TASK_SEND_FILES);
     }
 
     @Override
     public void startSMSreading()
     {
-        AppService.startTask(context, ITaskProvider.TASK_SMS_READING);
+        AppJobService.startTask(context, ITaskProvider.TASK_SMS_READING);
     }
     @Override
     public void stopSMSreading()
     {
-        AppService.stopTask(context, ITaskProvider.TASK_SMS_READING);
+        AppJobService.stopTask(context, ITaskProvider.TASK_SMS_READING);
     }
 
 }

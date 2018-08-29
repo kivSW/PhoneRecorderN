@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity
 
     protected void processIntent()
     {
-        if(intentToBeProcessed==null) return;
+        if(intentToBeProcessed==null || intentToBeProcessed.getAction()==null) return;
 
         if(intentToBeProcessed.getAction().equals(ACTION_SHOW_ERROR_MESSAGE)) {
             String msg = intentToBeProcessed.getStringExtra(MESSAGE);

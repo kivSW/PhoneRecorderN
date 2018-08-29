@@ -150,7 +150,6 @@ public class SettingsFragment extends Fragment
         checkBoxCallEnabled.setId(View.NO_ID);
         checkBoxSmsEnabled = (CheckBox) rootView.findViewById(R.id.checkBoxSmsEnabled);
         checkHiddenMode = (CheckBox) rootView.findViewById(R.id.checkHiddenMode);
-        checkHiddenMode.setVisibility(View.GONE);
         checkShowFileExtension = (CheckBox) rootView.findViewById(R.id.checkShowFileExtension);
         checkAllowMobileInternet = (CheckBox) rootView.findViewById(R.id.checkAllowMobileInternet);
         checkAllowRoaming = (CheckBox) rootView.findViewById(R.id.checkAllowRoaming);

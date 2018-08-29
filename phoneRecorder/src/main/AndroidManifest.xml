@@ -53,8 +53,12 @@
             </intent-filter>
         </receiver>
 
-        <service android:name="com.kivsw.phonerecorder.os.AppService"
+        <service android:name="com.kivsw.phonerecorder.os.jobs.AppService"
             android:exported="false"/>
+        <service android:name="com.kivsw.phonerecorder.os.jobs.AppJobService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            />
 
         <activity
             android:name="com.kivsw.phonerecorder.ui.main_activity.MainActivity"

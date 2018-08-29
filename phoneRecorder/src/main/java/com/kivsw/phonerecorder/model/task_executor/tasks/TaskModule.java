@@ -42,6 +42,33 @@ public class TaskModule {
     {
         return new SmsReader(context,settings,journal, persistentData, taskExecutor, notification, errorProcessor);
     };
+
+    @Provides
+    @Singleton
+    ITaskProvider provideTaskProvider(final SmsReader smsReader, final RecordSender recordSender, final CallRecorder callRecorder)
+    {
+        return new ITaskProvider() {
+         /*   @Override
+            public int getTaskId(String taskId) {
+                ITask task= getTask(taskId);
+                if(task==null) return -1;
+                return task.getTaskId();
+            }*/
+
+            @Override
+            public ITask getTask(String taskId) {
+                switch(taskId)
+                {
+                    case TASK_CALL_RECORDING: return callRecorder;
+                    case TASK_SEND_FILES:     return recordSender;
+                    case TASK_SMS_READING:    return  smsReader;
+                };
+                return null;
+            }
+        };
+    }
+
+
 }
 
 
