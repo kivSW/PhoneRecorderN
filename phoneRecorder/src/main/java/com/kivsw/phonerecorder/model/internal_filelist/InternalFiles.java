@@ -1,6 +1,7 @@
 package com.kivsw.phonerecorder.model.internal_filelist;
 
 import com.google.gson.Gson;
+import com.kivsw.phonerecorder.model.addrbook.FileAddrBook;
 import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor;
 import com.kivsw.phonerecorder.model.persistent_data.Journal;
 import com.kivsw.phonerecorder.model.settings.ISettings;
@@ -28,17 +29,22 @@ public class InternalFiles implements IInternalFiles {
     private ISettings settings;
     private IErrorProcessor errorProcessor;
     private Map<RecordFileNameData, String> sentFiles;
-    private String filePath;
+    private String sentFileListPath;
+    FileAddrBook fileAddrBook;
 
     private static final int MAX_FILES_NUM = 20;
 
 
-    InternalFiles( ISettings settings, IErrorProcessor errorProcessor)
+    InternalFiles( ISettings settings, FileAddrBook fileAddrBook, IErrorProcessor errorProcessor)
     {
         this.settings = settings;
         this.errorProcessor = errorProcessor;
-        filePath = settings.getInternalTempPath() + "sentFileList";
+        sentFileListPath = settings.getInternalTempPath() + "sentFileList";
+
+
         loadSentFileList();
+
+        this.fileAddrBook = fileAddrBook;
 
     };
 
@@ -49,23 +55,30 @@ public class InternalFiles implements IInternalFiles {
     };
 
     @Override
-    public String[] getFileListToSend()
+    public String[] getFileListToSend(boolean allowExportingJournal)
     {
         String pattern;
-        if(settings.getAllowExportingJournal())
+        if(allowExportingJournal)
             pattern = "("+ RecordFileNameData.RECORD_PATTERN+"|^"+ Journal.JOURNAL_FILE_NAME+")";
         else
             pattern = RecordFileNameData.RECORD_PATTERN;
 
         String fileList[] = getFileList(settings.getInternalTempPath(), pattern);
         String res[] = removeSentFiles(fileList);
+
+        if(res.length>0)
+        {
+            res = Arrays.copyOf(res, res.length+1);
+            res[res.length-1] = fileAddrBook.getFileName();
+        };
+
         return res;
     };
 
     @Override
     public boolean isOverflow() {
         try {
-            int size = getFileListToSend().length;
+            int size = getFileListToSend(false).length;
             return size > 2 * MAX_FILES_NUM;
         } catch (Exception e)
         {
@@ -120,13 +133,19 @@ public class InternalFiles implements IInternalFiles {
 
     }
 
+    @Override
+    public FileAddrBook getInternalAddrBook()
+    {
+        return fileAddrBook;
+    };
+
     private void loadSentFileList()
     {
         Set<String> availableFiles = new HashSet(Arrays.asList(getRecordFileList()));
 
         String sentFilesList;
         synchronized (this) {
-            sentFilesList = SimpleFileIO.readFile(filePath);
+            sentFilesList = SimpleFileIO.readFile(sentFileListPath);
         }
 
         //Set<String> sentFiles = Collections.newSetFromMap(new ConcurrentHashMap());
@@ -159,7 +178,7 @@ public class InternalFiles implements IInternalFiles {
         String data=gson.toJson(files);
         synchronized (this) {
             try {
-                SimpleFileIO.writeFile(filePath, data);
+                SimpleFileIO.writeFile(sentFileListPath, data);
             } catch (Exception e) {
                 errorProcessor.onError(e);
             }

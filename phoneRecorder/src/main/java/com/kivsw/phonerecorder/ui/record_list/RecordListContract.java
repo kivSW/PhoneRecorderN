@@ -22,6 +22,7 @@ public class RecordListContract {
 
         public String parentDir;
         public boolean selected;
+        public boolean isCallerNameFromLocalAddrBook=false;
         public String callerName;
         //int duration;
         public boolean isDownloading;

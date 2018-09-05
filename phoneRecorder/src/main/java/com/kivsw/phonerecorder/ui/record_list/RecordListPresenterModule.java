@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.kivsw.cloud.DiskContainer;
 import com.kivsw.cloudcache.CloudCache;
+import com.kivsw.phonerecorder.model.addrbook.PhoneAddrBook;
 import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor;
 import com.kivsw.phonerecorder.model.settings.ISettings;
 import com.kivsw.phonerecorder.model.task_executor.tasks.CallRecorder;
@@ -29,10 +30,10 @@ public class RecordListPresenterModule {
     @Singleton
     public RecordListContract.IRecordListPresenter providePresenter(Context appContext, ISettings settings, DiskContainer disks, CloudCache cloudCache,
                                                                     ReadRecordListOperation readRecordListOperation, DeleteRecordsOperation deleteRecordsOperation, SetUndeletableFlagOperator setUndeletableFlagOperator,
-                                                                    IErrorProcessor errorProcessor, RecordSender recordSender, CallRecorder callRecorder, SmsReader smsReader)
+                                                                    IErrorProcessor errorProcessor, RecordSender recordSender, CallRecorder callRecorder, SmsReader smsReader, PhoneAddrBook phoneAddrBook)
     {
         return new RecordListPresenter(appContext, settings, disks, cloudCache,
                 readRecordListOperation, deleteRecordsOperation, setUndeletableFlagOperator,
-                errorProcessor, recordSender, callRecorder,smsReader);
+                errorProcessor, recordSender, callRecorder,smsReader, phoneAddrBook);
     }
 }

@@ -5,6 +5,7 @@ import android.media.MediaRecorder;
 import android.os.SystemClock;
 
 import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor;
+import com.kivsw.phonerecorder.model.internal_filelist.IInternalFiles;
 import com.kivsw.phonerecorder.model.persistent_data.IPersistentDataKeeper;
 import com.kivsw.phonerecorder.model.settings.ISettings;
 import com.kivsw.phonerecorder.model.settings.types.SoundSource;
@@ -33,6 +34,8 @@ public class CallRecorder implements ITask {
     private IPersistentDataKeeper callInfoKeeper;
     private IErrorProcessor errorProcessor;
     private ITaskExecutor taskExecutor;
+    private IInternalFiles internalFiles;
+
     private NotificationShower notification;
     private MediaRecorder recorder = null;
     private String tempFileName;
@@ -41,12 +44,14 @@ public class CallRecorder implements ITask {
     private RecordFileNameData recordFileNameData;
 
     @Inject
-    public CallRecorder(Context context, ISettings settings, IPersistentDataKeeper callInfoKeeper, ITaskExecutor taskExecutor, NotificationShower notification, IErrorProcessor errorProcessor) {
+    public CallRecorder(Context context, ISettings settings, IPersistentDataKeeper callInfoKeeper, ITaskExecutor taskExecutor,
+                        IInternalFiles internalFiles, NotificationShower notification, IErrorProcessor errorProcessor) {
         this.context = context;
         this.settings = settings;
         this.callInfoKeeper = callInfoKeeper;
         this.taskExecutor = taskExecutor;
         this.notification = notification;
+        this.internalFiles = internalFiles;
         this.errorProcessor = errorProcessor;
     }
 
@@ -114,6 +119,12 @@ public class CallRecorder implements ITask {
             errorProcessor.onError(e);
             stopRecording();
         }
+
+        try {
+            internalFiles.getInternalAddrBook().addItem(callInfoKeeper.getCallInfo().number);
+            internalFiles.getInternalAddrBook().save();
+        }catch(Exception e)
+        {};
 
         return isRecording();
     };

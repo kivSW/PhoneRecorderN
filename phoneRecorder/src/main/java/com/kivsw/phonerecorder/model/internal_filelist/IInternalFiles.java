@@ -1,5 +1,7 @@
 package com.kivsw.phonerecorder.model.internal_filelist;
 
+import com.kivsw.phonerecorder.model.addrbook.FileAddrBook;
+
 /**
  * this interface to access record files in the private directory
  */
@@ -7,11 +9,13 @@ package com.kivsw.phonerecorder.model.internal_filelist;
 public interface IInternalFiles {
 
     String[] getRecordFileList();
-    String[] getFileListToSend();
+    String[] getFileListToSend(boolean includeJournal);
 
     boolean isOverflow();
 
     void markFileAsSent(String fileName);
     boolean isSent(String fileName);
     void deleteOldFiles();
+
+    FileAddrBook getInternalAddrBook();
 }

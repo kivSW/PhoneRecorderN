@@ -1,14 +1,12 @@
 package com.kivsw.phonerecorder.ui.record_list;
 
-import android.content.ContentResolver;
 import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Looper;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 
 import com.kivsw.cloud.disk.IDiskIO;
+import com.kivsw.phonerecorder.model.addrbook.IAddrBook;
+import com.kivsw.phonerecorder.model.addrbook.PhoneAddrBook;
 import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor;
 import com.kivsw.phonerecorder.model.utils.RecordFileNameData;
 
@@ -50,14 +48,17 @@ class RecListContainer {
     private RecListFilter recListFilter;
     private Disposable filterDisposable;
     private boolean hasData;
+    private IAddrBook addrBook;
+    private PhoneAddrBook localPhoneAddrBook;
 
     private Subject<RecListContainer> contentReadyObservable;
     private AtomicInteger processingCount=new AtomicInteger(0);
 
-    public RecListContainer(Context appContext, IErrorProcessor errorProcessor)
+    public RecListContainer(Context appContext, IErrorProcessor errorProcessor, PhoneAddrBook phoneAddrBook)
     {
         this.appContext = appContext;
         this.errorProcessor = errorProcessor;
+        this.localPhoneAddrBook = phoneAddrBook;
         dirContent = new ArrayList<>();
         cacheDirContent = new ArrayList<>();
         cacheDirContentMap = new HashMap<>();
@@ -124,6 +125,7 @@ class RecListContainer {
         hasData=false;
         processingCount.set(0);
         recListFilter.clearData();
+        addrBook = null;
 
         initFileEmmiter();
         // i DO NOT invoke onChange here by intent
@@ -174,6 +176,12 @@ class RecListContainer {
                     public void onComplete() {
                     }
                 });
+    }
+
+    public void  setAddrBook(IAddrBook addrBook)
+    {
+        if(this.addrBook==null)
+            this.addrBook = addrBook;
     }
 
     public void addFileList(BunchOfFiles bunchOfFiles)
@@ -318,7 +326,15 @@ class RecListContainer {
     {
         RecordListContract.RecordFileInfo item=new RecordListContract.RecordFileInfo();
         item.recordFileNameData = RecordFileNameData.decipherFileName(fileName);
-        item. callerName = getNameFromNumber(item.recordFileNameData.phoneNumber);
+        //item. callerName = getNameFromNumber(item.recordFileNameData.phoneNumber);
+        if(addrBook!=null)
+            item.callerName = addrBook.getNameFromPhone(item.recordFileNameData.phoneNumber);
+        if(item.callerName==null || item.callerName.isEmpty())
+        {
+            item.isCallerNameFromLocalAddrBook=true;
+            item.callerName = localPhoneAddrBook.getNameFromPhone(item.recordFileNameData.phoneNumber);
+        }
+
         item.fromInternalDir =fromInternalDir;
         item.parentDir = parentDir;
         return item;
@@ -328,9 +344,11 @@ class RecListContainer {
     /** finds and returns name that corresponds phoneNumber
      * @return name or null
      * */
-    public String getNameFromNumber(String phoneNumber)
+    /* public String getNameFromNumber(String phoneNumber)
     {
-        String res = null;
+
+
+       String res = null;
         try {
             Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
             ContentResolver resolver = appContext.getContentResolver();
@@ -348,7 +366,7 @@ class RecListContainer {
         }
         if (res == null) res = "";
         return res;
-    }
+    }*/
 
 
 }

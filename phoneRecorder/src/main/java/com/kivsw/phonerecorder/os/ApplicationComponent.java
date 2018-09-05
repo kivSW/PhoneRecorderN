@@ -2,6 +2,7 @@ package com.kivsw.phonerecorder.os;
 
 import com.kivsw.phonerecorder.model.CloudCacheModule;
 import com.kivsw.phonerecorder.model.DiskRepresentativeModule;
+import com.kivsw.phonerecorder.model.addrbook.AddrBookModule;
 import com.kivsw.phonerecorder.model.error_processor.ErrorProcessorModule;
 import com.kivsw.phonerecorder.model.internal_filelist.InternalFilesModule;
 import com.kivsw.phonerecorder.model.metrica.IMetrica;
@@ -37,7 +38,7 @@ import dagger.Component;
 @Component(modules={SettingsPresenterModule.class, RecordListPresenterModule.class, SettingsModule.class,
            ApplicationModule.class, DiskRepresentativeModule.class, AndroidPlayerModule.class, PlayerPresenterModule.class,
            CloudCacheModule.class, PersistentDataModule.class, TaskExecutorModule.class, InternalFilesModule.class,
-           MvpErrorMessageBuilderModule.class, MetricaModule.class, OperationsModule.class,
+           MvpErrorMessageBuilderModule.class, MetricaModule.class, OperationsModule.class, AddrBookModule.class,
            TaskModule.class, NotificationShowerModule.class, ErrorProcessorModule.class, MainActivityModule.class,
            })
 @Singleton
@@ -56,6 +57,7 @@ public interface ApplicationComponent {
     //ITaskProvider getTaskProvider();
     PlayerPresenter getInnerPlayer();
     AndroidPlayer getAndroidPlayer();
+
     IMetrica getMetrica();
 
 

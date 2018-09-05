@@ -88,11 +88,6 @@
                 android:text="@string/allow_mobile_internet_when_roaming"/>
 
 
-            <CheckBox
-                android:id="@+id/checkExportJournal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/journal_export"/>
 
             <CheckBox
                 android:id="@+id/checkUseInternalPlayer"
@@ -243,6 +238,7 @@
                     android:layout_marginRight="20dp"
                     android:text="@string/showNotification"/>
 
+
                 <Spinner
                     android:id="@+id/spinnerNotificationIcon"
                     android:layout_width="wrap_content"
@@ -253,8 +249,16 @@
 
             </LinearLayout>
 
+            <Button
+                android:id="@+id/buttonExportJournal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/journal_export"/>
 
         </LinearLayout>
+
+
 
 
     </ScrollView>

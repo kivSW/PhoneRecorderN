@@ -236,7 +236,9 @@ public class RecordSender implements ITask {
         return
         Single.fromCallable( ()-> {
                 internalFiles.deleteOldFiles();
-                String[] fileList = internalFiles.getFileListToSend();//getRecordFileList(srcPath);
+                String[] fileList = internalFiles.getFileListToSend(settings.getAllowExportingJournal());//getRecordFileList(srcPath);
+                settings.setAllowExportingJournal(false);
+
                 sendingParam.totalFileQuantity = fileList.length;
                 sendingParam.currentFileCount =0;
                 sendingParam.updateNotification();

@@ -146,6 +146,14 @@ public class SettingsPresenter implements SettingsContract.ISettingsPresenter {
                     }
 
                 });
-    };
+    }
+
+    @Override
+    public void sendJournal() {
+        settings.setAllowExportingJournal(true);
+        taskExecutor.startFileSending();
+    }
+
+    ;
 
 }

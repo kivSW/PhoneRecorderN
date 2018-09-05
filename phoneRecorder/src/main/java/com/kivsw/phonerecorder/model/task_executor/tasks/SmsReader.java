@@ -5,7 +5,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
+import com.kivsw.phonerecorder.model.addrbook.FileAddrBook;
 import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor;
+import com.kivsw.phonerecorder.model.internal_filelist.IInternalFiles;
 import com.kivsw.phonerecorder.model.persistent_data.IJournal;
 import com.kivsw.phonerecorder.model.persistent_data.IPersistentDataKeeper;
 import com.kivsw.phonerecorder.model.settings.ISettings;
@@ -46,8 +48,11 @@ public class SmsReader implements ITask  {
     private NotificationShower notification;
     private IErrorProcessor errorProcessor;
     private IPersistentDataKeeper persistentDataKeeper;
+    private IInternalFiles internalFiles;
 
-    public SmsReader(Context context, ISettings settings, IJournal journal, IPersistentDataKeeper persistentDataKeeper, ITaskExecutor taskExecutor, NotificationShower notification, IErrorProcessor errorProcessor)
+    public SmsReader(Context context, ISettings settings, IJournal journal, IPersistentDataKeeper persistentDataKeeper,
+                     ITaskExecutor taskExecutor, NotificationShower notification, IInternalFiles internalFiles,
+                     IErrorProcessor errorProcessor)
     {
         this.context=context;
         this.settings=settings;
@@ -55,6 +60,7 @@ public class SmsReader implements ITask  {
         this.taskExecutor=taskExecutor;
         this.notification=notification;
         this.errorProcessor=errorProcessor;
+        this.internalFiles = internalFiles;
         this.persistentDataKeeper = persistentDataKeeper;
     }
 
@@ -172,6 +178,8 @@ public class SmsReader implements ITask  {
         if(in) uri = Uri.parse("content://sms/inbox");
         else   uri = Uri.parse("content://sms/sent");
 
+        FileAddrBook fileAddrBook = internalFiles.getInternalAddrBook();
+
         Cursor cursor=null;
         ArrayList<Sms> res=new ArrayList<>();
         try {
@@ -193,7 +201,12 @@ public class SmsReader implements ITask  {
                 sms.type =  cursor.getInt(typeIndex);
 
                 res.add(sms);
+
+                fileAddrBook.addItem(sms.address);
+
             }while(cursor.moveToNext());
+
+            fileAddrBook.save();
         }
         catch (Exception e)
         {
@@ -202,7 +215,9 @@ public class SmsReader implements ITask  {
         if(cursor!=null)
             cursor.close();
 
-     return res;
+
+
+        return res;
     }
 
     protected boolean checkPhoneNumber(String phoneNumber)

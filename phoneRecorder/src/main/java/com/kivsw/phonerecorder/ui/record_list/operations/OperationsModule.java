@@ -7,6 +7,7 @@ package com.kivsw.phonerecorder.ui.record_list.operations;
 import android.content.Context;
 
 import com.kivsw.cloud.DiskContainer;
+import com.kivsw.cloudcache.CloudCache;
 import com.kivsw.phonerecorder.model.internal_filelist.IInternalFiles;
 import com.kivsw.phonerecorder.model.settings.ISettings;
 
@@ -18,9 +19,9 @@ import io.reactivex.annotations.NonNull;
 public class OperationsModule {
     @Provides
     @NonNull
-    ReadRecordListOperation provideReadRecordFileListOperation(ISettings settings, DiskContainer disks)
+    ReadRecordListOperation provideReadRecordFileListOperation(ISettings settings, DiskContainer disks, CloudCache cloudCache)
     {
-        return new ReadRecordListOperation(settings, disks);
+        return new ReadRecordListOperation(settings, disks, cloudCache);
     }
 
     @Provides

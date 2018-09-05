@@ -144,17 +144,20 @@ implements ISettings {
     }
 
     private final static String JOURNAL_EXPORTING= "JOURNAL_EXPORTING";
+    private boolean allowExportingJournal=false;
     @Override
     public boolean getAllowExportingJournal() {
         //return false;
-        return preferences.getBoolean(JOURNAL_EXPORTING,false);
+        //return preferences.getBoolean(JOURNAL_EXPORTING,false);
+        return allowExportingJournal;
     }
 
     @Override
     public void setAllowExportingJournal(boolean value) {
-        preferences.edit()
+        allowExportingJournal = value;
+        /*preferences.edit()
                 .putBoolean(JOURNAL_EXPORTING, value)
-                .apply();
+                .apply();*/
         emitOnChange(JOURNAL_EXPORTING);
     }
 

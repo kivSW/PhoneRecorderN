@@ -9,6 +9,8 @@ import com.kivsw.mvprxdialog.Contract;
 import com.kivsw.mvprxdialog.messagebox.MvpMessageBoxBuilder;
 import com.kivsw.mvprxdialog.messagebox.MvpMessageBoxPresenter;
 import com.kivsw.mvprxfiledialog.MvpRxSelectDirDialogPresenter;
+import com.kivsw.phonerecorder.model.addrbook.IAddrBook;
+import com.kivsw.phonerecorder.model.addrbook.PhoneAddrBook;
 import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor;
 import com.kivsw.phonerecorder.model.player.IPlayer;
 import com.kivsw.phonerecorder.model.settings.ISettings;
@@ -72,7 +74,7 @@ public class RecordListPresenter
     @Inject
     RecordListPresenter(Context appContext, ISettings settings, DiskContainer disks, CloudCache cloudCache,
                         ReadRecordListOperation readRecordListOperation, DeleteRecordsOperation deleteRecordsOperation, SetUndeletableFlagOperator setUndeletableFlagOperator,
-                        IErrorProcessor errorProcessor, RecordSender recordSender, CallRecorder callRecorder, SmsReader smsReader)
+                        IErrorProcessor errorProcessor, RecordSender recordSender, CallRecorder callRecorder, SmsReader smsReader, PhoneAddrBook phoneAddrBook)
     {
         this.settings = settings;
         this.disks = disks;
@@ -86,7 +88,7 @@ public class RecordListPresenter
         settingsDisposable=null;
         lastUpdatedDir = "";
 
-        recListContainer = new RecListContainer(appContext, errorProcessor);
+        recListContainer = new RecListContainer(appContext, errorProcessor, phoneAddrBook);
         recListContainer.getContentReadyObservable()
                 .sample(333, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -253,16 +255,19 @@ public class RecordListPresenter
         }
 
         recListContainer.clear();
-        readRecordListOperation.getCallRecordList(lastUpdatedDir)
+        readRecordListOperation.getAllDirectoryContent(lastUpdatedDir)
               .observeOn(AndroidSchedulers.mainThread())
-              .subscribe(new Observer<BunchOfFiles>(){
+              .subscribe(new Observer<Object>(){
                         @Override public void onSubscribe(Disposable d) {
                             updateDirDisposable = d;
                         }
 
                         @Override
-                        public void onNext(BunchOfFiles bunchOfFiles) {
-                           recListContainer.addFileList(bunchOfFiles);
+                        public void onNext(Object data) {
+                            if(data instanceof IAddrBook)
+                                recListContainer.setAddrBook((IAddrBook)data);
+                            if(data instanceof BunchOfFiles)
+                                recListContainer.addFileList((BunchOfFiles)data);
                         }
 
                         @Override

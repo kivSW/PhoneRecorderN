@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -44,7 +45,6 @@ public class SettingsFragment extends Fragment
                     checkShowFileExtension,
                     checkAllowMobileInternet,
                     checkAllowRoaming,
-                    checkExportJournal,
                     checkUseInternalPlayer;
     private TextView textViewPath;
     private ImageView buttonSelDir;
@@ -58,6 +58,7 @@ public class SettingsFragment extends Fragment
 
     private CheckBox checkBoxShowNotification;
     private Spinner spinnerNotificationIcon;
+    private Button buttonExportJournal;
     //private EditText editNotificationTitle;
 
 
@@ -153,7 +154,6 @@ public class SettingsFragment extends Fragment
         checkShowFileExtension = (CheckBox) rootView.findViewById(R.id.checkShowFileExtension);
         checkAllowMobileInternet = (CheckBox) rootView.findViewById(R.id.checkAllowMobileInternet);
         checkAllowRoaming = (CheckBox) rootView.findViewById(R.id.checkAllowRoaming);
-        checkExportJournal = (CheckBox) rootView.findViewById(R.id.checkExportJournal);
         checkUseInternalPlayer = (CheckBox) rootView.findViewById(R.id.checkUseInternalPlayer);
 
         textViewPath = (TextView) rootView.findViewById(R.id.textViewPath);
@@ -167,6 +167,8 @@ public class SettingsFragment extends Fragment
         editPhoneSecretNumber = (EditText) rootView.findViewById(R.id.editPhoneSecretNumber);
         checkBoxShowNotification = (CheckBox) rootView.findViewById(R.id.checkBoxShowNotification);
         spinnerNotificationIcon = (Spinner) rootView.findViewById(R.id.spinnerNotificationIcon);
+
+        buttonExportJournal = (Button)rootView.findViewById(R.id.buttonExportJournal);
         //editNotificationTitle = (EditText) rootView.findViewById(R.id.editNotificationTitle);
     }
 
@@ -227,14 +229,7 @@ public class SettingsFragment extends Fragment
                 settings.setSendInRoaming(checkAllowRoaming.isChecked());
             }
         });
-        checkExportJournal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(ignoreChanges) return;
-                if(settings==null) return;
-                settings.setAllowExportingJournal(checkExportJournal.isChecked());
-            }
-        });
+
         checkUseInternalPlayer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -356,6 +351,10 @@ public class SettingsFragment extends Fragment
 
             @Override public void onNothingSelected(AdapterView<?> parent) { }
         });
+
+        buttonExportJournal.setOnClickListener((View v)->{
+            presenter.sendJournal();
+        });
     }
 
 
@@ -422,7 +421,6 @@ public class SettingsFragment extends Fragment
         checkAllowRoaming.setChecked(settings.getAllowSendingInRoaming());
         checkAllowRoaming.setEnabled(checkAllowMobileInternet.isChecked());
 
-        checkExportJournal.setChecked(settings.getAllowExportingJournal());
         checkUseInternalPlayer.setChecked(settings.getUseInternalPlayer());
         updateSavePath();
 

@@ -23,9 +23,9 @@ import dagger.Provides;
 public class TaskModule {
     @Provides
     @Singleton
-    CallRecorder provideCallRecorder(Context context, ISettings settings, IPersistentDataKeeper callInfoKeeper, ITaskExecutor taskExecutor, NotificationShower notification, IErrorProcessor errorProcessor)
+    CallRecorder provideCallRecorder(Context context, ISettings settings, IPersistentDataKeeper callInfoKeeper, ITaskExecutor taskExecutor, IInternalFiles internalFiles,NotificationShower notification, IErrorProcessor errorProcessor)
     {
-        return new CallRecorder(context,settings, callInfoKeeper, taskExecutor, notification, errorProcessor);
+        return new CallRecorder(context,settings, callInfoKeeper, taskExecutor, internalFiles, notification, errorProcessor);
     };
 
 
@@ -38,9 +38,10 @@ public class TaskModule {
 
     @Provides
     @Singleton
-    SmsReader provideSmsReader(Context context, ISettings settings, IJournal journal, IPersistentDataKeeper persistentData, ITaskExecutor taskExecutor, NotificationShower notification, IErrorProcessor errorProcessor)
+    SmsReader provideSmsReader(Context context, ISettings settings, IJournal journal, IPersistentDataKeeper persistentData,
+                               ITaskExecutor taskExecutor, NotificationShower notification, IInternalFiles internalFiles, IErrorProcessor errorProcessor)
     {
-        return new SmsReader(context,settings,journal, persistentData, taskExecutor, notification, errorProcessor);
+        return new SmsReader(context,settings,journal, persistentData, taskExecutor, notification, internalFiles, errorProcessor);
     };
 
     @Provides

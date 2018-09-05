@@ -128,6 +128,11 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.It
         RecordListContract.RecordFileInfo data = dataSet.get(position);
 
         holder.nameText.setText(data.callerName);
+        if(data.isCallerNameFromLocalAddrBook)
+            holder.nameText.setTextColor(0xA0000000);
+        else
+            holder.nameText.setTextColor(0xFF000000);
+
         holder.phonenumberText.setText(data.recordFileNameData.phoneNumber);
         if(data.fromInternalDir)
             holder.fromInternalDirTextView.setBackgroundResource(R.drawable.shape_blue_rectangle);//setVisibility(View.VISIBLE);

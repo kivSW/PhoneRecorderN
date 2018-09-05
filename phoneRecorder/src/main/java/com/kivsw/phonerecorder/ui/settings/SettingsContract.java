@@ -12,6 +12,7 @@ public class SettingsContract {
     interface ISettingsPresenter  extends com.kivsw.mvprxdialog.Contract.IPresenter
     {
        void chooseDataDir();
+       void sendJournal();
     };
 
     interface ISettingsView extends com.kivsw.mvprxdialog.Contract.IView
