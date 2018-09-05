@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="settings">Настройки</string>
+
+    <string name="recording">Записывать</string>
+    <string-array name="recording_data">
+        <item>ничего не записывать</item>
+        <item>только звонки</item>
+        <item>только SMS</item>
+        <item>звонки и SMS</item>
+    </string-array>
 
     <string name="enable_call_recording">Записывать разговоры</string>
     <string name="enable_sms_recording">Записывать SMS</string>

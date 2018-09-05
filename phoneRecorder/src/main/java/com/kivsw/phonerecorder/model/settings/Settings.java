@@ -62,6 +62,8 @@ implements ISettings {
 
     @Override
     public void setEnableCallRecording(boolean value) {
+        if(value==getEnableCallRecording())
+            return;
         preferences.edit()
                 .putBoolean(ENABLE_CALL_RECORDING, value)
                 .apply();
@@ -77,6 +79,8 @@ implements ISettings {
 
     @Override
     public void setEnableSmsRecording(boolean value) {
+        if(value==getEnableSmsRecording())
+            return;
         preferences.edit()
                 .putBoolean(ENABLE_SMS_RECORDING, value)
                 .apply();

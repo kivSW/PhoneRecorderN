@@ -39,8 +39,9 @@ public class SettingsFragment extends Fragment
     @Inject protected ISettings settings;
 
     private View rootView;
-    private CheckBox checkBoxCallEnabled,
-                    checkBoxSmsEnabled,
+    private Spinner spinnerRecording;
+    private CheckBox /*checkBoxCallEnabled,
+                    checkBoxSmsEnabled,*/
                     checkHiddenMode,
                     checkShowFileExtension,
                     checkAllowMobileInternet,
@@ -147,9 +148,12 @@ public class SettingsFragment extends Fragment
 
 
     private void findViews() {
-        checkBoxCallEnabled = (CheckBox) rootView.findViewById(R.id.checkBoxCallEnabled);
+        /*checkBoxCallEnabled = (CheckBox) rootView.findViewById(R.id.checkBoxCallEnabled);
         checkBoxCallEnabled.setId(View.NO_ID);
-        checkBoxSmsEnabled = (CheckBox) rootView.findViewById(R.id.checkBoxSmsEnabled);
+        checkBoxSmsEnabled = (CheckBox) rootView.findViewById(R.id.checkBoxSmsEnabled);*/
+
+        spinnerRecording = (Spinner) rootView.findViewById(R.id.spinnerRecording);
+
         checkHiddenMode = (CheckBox) rootView.findViewById(R.id.checkHiddenMode);
         checkShowFileExtension = (CheckBox) rootView.findViewById(R.id.checkShowFileExtension);
         checkAllowMobileInternet = (CheckBox) rootView.findViewById(R.id.checkAllowMobileInternet);
@@ -174,8 +178,26 @@ public class SettingsFragment extends Fragment
 
 
     private boolean ignoreChanges=false;
+    private final int CALL_RECORDING=1, SMS_RECORDING=2;
     private void initViews() {
-        checkBoxCallEnabled.setOnClickListener(new View.OnClickListener() {
+        ArrayAdapter<CharSequence> recordingAdapter = ArrayAdapter.createFromResource(getActivity(),
+                R.array.recording_data, android.R.layout.simple_spinner_item);
+        recordingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerRecording.setAdapter(recordingAdapter);
+        spinnerRecording.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(ignoreChanges) return;
+                if(settings!=null) {
+                    settings.setEnableCallRecording((position&CALL_RECORDING)!=0);
+                    settings.setEnableSmsRecording((position&SMS_RECORDING)!=0);
+                }
+            }
+
+            @Override public void onNothingSelected(AdapterView<?> parent) { }
+        });
+
+        /*checkBoxCallEnabled.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(ignoreChanges) return;
@@ -191,7 +213,7 @@ public class SettingsFragment extends Fragment
                 if(settings==null) return;
                 settings.setEnableSmsRecording(checkBoxSmsEnabled.isChecked());
             }
-        });
+        });*/
 
         checkHiddenMode.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -413,8 +435,13 @@ public class SettingsFragment extends Fragment
     protected void readAllSettings()
     {
         ignoreChanges=true;
-        checkBoxCallEnabled.setChecked(settings.getEnableCallRecording());
-        checkBoxSmsEnabled.setChecked(settings.getEnableSmsRecording());
+        int pos=0;
+        if(settings.getEnableCallRecording()) pos = pos|CALL_RECORDING;
+        if(settings.getEnableSmsRecording()) pos = pos|SMS_RECORDING;
+        spinnerRecording.setSelection(pos);
+
+        /*checkBoxCallEnabled.setChecked(settings.getEnableCallRecording());
+        checkBoxSmsEnabled.setChecked(settings.getEnableSmsRecording());*/
         checkHiddenMode.setChecked(settings.getHiddenMode());
         checkShowFileExtension.setChecked(settings.getUseFileExtension());
         checkAllowMobileInternet.setChecked(settings.getUsingMobileInternet());
