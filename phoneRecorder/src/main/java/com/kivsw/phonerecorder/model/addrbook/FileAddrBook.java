@@ -69,7 +69,7 @@ public class FileAddrBook implements IAddrBook {
                         addrBookMap.put( ((AddrBookItem)item).phoneNum, ((AddrBookItem)item).name);
                 }
             }catch(Exception e){
-
+                e.toString();
             };
 
             synchronized (this) {
