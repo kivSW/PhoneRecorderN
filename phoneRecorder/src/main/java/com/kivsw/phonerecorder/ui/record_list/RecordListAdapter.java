@@ -1,5 +1,7 @@
 package com.kivsw.phonerecorder.ui.record_list;
 
+import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +42,7 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.It
         ImageView imageViewCallDirection, imageViewProtected;
         ProgressBar downloadProgress;
         int position;
+
 
         public ItemViewHolder(View view)
         {
@@ -103,6 +106,7 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.It
     };
 
 
+    private int callerNameDarkText=0,callerNameLightText=0,darkItemBackground=0;
 
     public RecordListAdapter()
     {
@@ -110,12 +114,18 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.It
     };
 
     @Override
-    public ItemViewHolder onCreateViewHolder(ViewGroup parent,
-                                             int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
+    public ItemViewHolder onCreateViewHolder(ViewGroup parent,int viewType) {
+        Context context =parent.getContext();
+                View view = LayoutInflater.from(context)
                 .inflate(R.layout.callinfo, parent, false);
 
         ItemViewHolder vh = new ItemViewHolder(view);
+        if(callerNameDarkText==0)
+        {
+            callerNameDarkText=ContextCompat.getColor(context, R.color.callerNameDarkText);
+            callerNameLightText=ContextCompat.getColor(context, R.color.callerNameLightText);
+            darkItemBackground=ContextCompat.getColor(context, R.color.darkItemBackground);
+        }
         return vh;
     };
 
@@ -129,9 +139,9 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.It
 
         holder.nameText.setText(data.callerName);
         if(data.isCallerNameFromLocalAddrBook)
-            holder.nameText.setTextColor(0xA0000000);
+            holder.nameText.setTextColor(callerNameLightText);
         else
-            holder.nameText.setTextColor(0xFF000000);
+            holder.nameText.setTextColor(callerNameDarkText);
 
         holder.phonenumberText.setText(data.recordFileNameData.phoneNumber);
         if(data.fromInternalDir)
@@ -162,8 +172,9 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.It
         int color=0;
         if((position&1)!=0)
         {
-            color=holder.nameText.getCurrentTextColor();
-            color = (color & 0x00FFFFFF) | 0x11000000;
+            /*color=holder.nameText.getCurrentTextColor();
+            color = (color & 0x00FFFFFF) | 0x11000000;*/
+            color = darkItemBackground;
         }
 
         holder.itemView.setBackgroundColor(color);

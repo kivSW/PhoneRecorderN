@@ -17,7 +17,16 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textViewMainSection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/sectionTitle"
+                android:text="@string/main_section"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -28,6 +37,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:paddingLeft="3dp"
                     android:text="@string/data_file_path"/>
 
                 <TextView
@@ -51,6 +61,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/darkItemBackground"
                 android:paddingTop="5dp">
 
                 <TextView
@@ -59,6 +70,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:layout_weight="1"
+                    android:paddingLeft="3dp"
                     android:text="@string/recording"/>
 
                 <Spinner
@@ -68,6 +80,37 @@
                     android:layout_weight="2"/>
 
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp">
+
+                <TextView
+                    android:id="@+id/SoundSourcetext"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_weight="1"
+                    android:paddingLeft="3dp"
+                    android:text="@string/sound_source"/>
+
+                <Spinner
+                    android:id="@+id/spinnerSoundSource"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textViewSecuritySection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_marginTop="10dp"
+                android:text="@string/security_section"
+                android:theme="@style/sectionTitle"/>
 
             <!-- <CheckBox
                  android:id="@+id/checkBoxCallEnabled"
@@ -87,19 +130,45 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/hidden_mode"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/darkItemBackground">
+
+                <TextView
+                    android:id="@+id/phoneSecrenNumberText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+
+                    android:layout_weight="1"
+                    android:paddingLeft="3dp"
+                    android:text="@string/phoneSecretNumber"/>
+
+                <EditText
+                    android:id="@+id/editPhoneSecretNumber"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:phoneNumber="true"
+                    />
+            </LinearLayout>
 
             <CheckBox
                 android:id="@+id/checkShowFileExtension"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+
                 android:hint="@string/show_file_extension_hint"
                 android:text="@string/show_file_extension"/>
 
             <CheckBox
                 android:id="@+id/checkAllowMobileInternet"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/allow_mobile_internet"/>
+                android:text="@string/allow_mobile_internet"
+                android:background="@color/darkItemBackground"
+                />
 
             <CheckBox
                 android:id="@+id/checkAllowRoaming"
@@ -110,46 +179,28 @@
 
 
 
-            <CheckBox
-                android:id="@+id/checkUseInternalPlayer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/use_internal_player"/>
-
-
-            <LinearLayout
+            <TextView
+                android:id="@+id/textViewAutodelSection"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="5dp">
-
-                <TextView
-                    android:id="@+id/SoundSourcetext"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:layout_weight="1"
-                    android:text="@string/sound_source"/>
-
-                <Spinner
-                    android:id="@+id/spinnerSoundSource"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"/>
-
-            </LinearLayout>
-
+                android:theme="@style/sectionTitle"
+                android:text="@string/autodel_section"
+                android:layout_marginTop="10dp"
+                />
 
             <CheckBox
                 android:id="@+id/checkFileNumberLimitation"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
+
                 android:text="@string/limit_file_amount"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp">
+
+                android:paddingLeft="15dp">
 
                 <TextView
                     android:id="@+id/maxFileNumberText"
@@ -157,6 +208,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:layout_weight="1"
+                    android:paddingBottom="3dp"
+                    android:paddingLeft="3dp"
                     android:text="@string/max_file_amount"/>
 
                 <EditText
@@ -165,22 +218,26 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:ems="10"
-                    android:maxLength="6"
-                    android:inputType="number"/>
+                    android:inputType="number"
+                    android:maxLength="6"/>
 
             </LinearLayout>
 
             <CheckBox
                 android:id="@+id/checkDataSizeLimitation"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="@string/limit_data_size"/>
+                android:text="@string/limit_data_size"
+                android:background="@color/darkItemBackground"
+                />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp">
+                android:paddingLeft="15dp"
+                android:background="@color/darkItemBackground"
+                >
 
                 <TextView
                     android:id="@+id/textView4"
@@ -188,6 +245,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:layout_weight="3"
+                    android:paddingBottom="3dp"
+                    android:paddingLeft="3dp"
                     android:text="@string/max_data_size"/>
 
                 <EditText
@@ -196,8 +255,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
                     android:ems="10"
-                    android:maxLength="6"
-                    android:inputType="number"/>
+                    android:inputType="number"
+                    android:maxLength="6"/>
 
                 <Spinner
                     android:id="@+id/spinnerDataUnit"
@@ -226,38 +285,34 @@
 
             </LinearLayout>-->
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/textViewExtraSection"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:theme="@style/sectionTitle"
+                android:text="@string/extra_section"
+                android:layout_marginTop="10dp"
+                />
 
-                <TextView
-                    android:id="@+id/phoneSecrenNumberText"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
+            <CheckBox
+                android:id="@+id/checkUseInternalPlayer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
 
-                    android:layout_weight="1"
-                    android:text="@string/phoneSecretNumber"/>
-
-                <EditText
-                    android:id="@+id/editPhoneSecretNumber"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:phoneNumber="true"
-                    />
-            </LinearLayout>
+                android:text="@string/use_internal_player"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="@color/darkItemBackground"
+                >
 
                 <CheckBox
                     android:id="@+id/checkBoxShowNotification"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="20dp"
-                    android:text="@string/showNotification"/>
+                    android:text="@string/show_notification"/>
 
 
                 <Spinner
@@ -275,6 +330,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
                 android:text="@string/journal_export"/>
 
         </LinearLayout>

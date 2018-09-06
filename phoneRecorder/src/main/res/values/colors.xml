@@ -4,4 +4,10 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="darkTransparent">#80808080</color>
+
+    <color name="callerNameDarkText">#FF000000</color>
+    <color name="callerNameLightText">#A0000000</color>
+    <color name="darkItemBackground">#11000000</color>
+    <color name="darkSectionBackground">#60002770</color>
+
 </resources>

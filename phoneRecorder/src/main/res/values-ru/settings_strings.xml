@@ -32,5 +32,11 @@
     <string name="journal">Journal</string>
     <string name="incorrect_value">Некорректное значение</string>
 
-    <string name="showNotification">Постоянное уведомление</string>
+    <string name="show_notification">Постоянное уведомление</string>
+
+    <string name="main_section">Основные</string>
+    <string name="security_section">Безопасность</string>
+    <string name="autodel_section">Автоудаление</string>
+    <string name="extra_section">Дополнительные</string>
+
 </resources>

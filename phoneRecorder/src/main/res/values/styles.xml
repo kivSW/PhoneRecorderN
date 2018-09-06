@@ -18,4 +18,13 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
+    <style name="sectionTitle" parent="AppTheme">
+        <item name="android:textSize">20sp</item>
+        <item name="android:background">@color/darkSectionBackground</item>
+        <item name="android:colorBackground">@color/darkSectionBackground</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:textColor">@color/callerNameDarkText</item>
+
+    </style>
+
 </resources>
