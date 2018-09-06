@@ -20,4 +20,7 @@ public interface IPersistentDataKeeper {
     void setLastIncomeSms(long v);
     long getLastOutgoingSms();
     void setLastOutgoingSms(long v);
+
+    long getLastTimeOfReadingAddrBook();
+    void setLastTimeOfReadingAddrBook(long time);
 }

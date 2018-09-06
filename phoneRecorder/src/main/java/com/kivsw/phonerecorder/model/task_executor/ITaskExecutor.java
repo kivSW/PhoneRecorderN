@@ -13,4 +13,7 @@ public interface ITaskExecutor {
 
     void startSMSreading();
     void stopSMSreading();
+
+    void startAddrBookReading();
+    void stopAddrBookReading();
 }

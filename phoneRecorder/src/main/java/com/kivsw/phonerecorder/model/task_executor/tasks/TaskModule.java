@@ -46,7 +46,16 @@ public class TaskModule {
 
     @Provides
     @Singleton
-    ITaskProvider provideTaskProvider(final SmsReader smsReader, final RecordSender recordSender, final CallRecorder callRecorder)
+    AddrBookReader provideAddrBookReader(Context context, ISettings settings, IPersistentDataKeeper persistentData, ITaskExecutor taskExecutor,
+                                         NotificationShower notification, IInternalFiles internalFiles, IErrorProcessor errorProcessor)
+    {
+        return new AddrBookReader(context,settings, persistentData, taskExecutor, notification, internalFiles, errorProcessor);
+    };
+
+    @Provides
+    @Singleton
+    ITaskProvider provideTaskProvider(final SmsReader smsReader, final RecordSender recordSender,
+                                      final CallRecorder callRecorder, final AddrBookReader addrBookReader)
     {
         return new ITaskProvider() {
          /*   @Override
@@ -63,6 +72,7 @@ public class TaskModule {
                     case TASK_CALL_RECORDING: return callRecorder;
                     case TASK_SEND_FILES:     return recordSender;
                     case TASK_SMS_READING:    return  smsReader;
+                    case TASK_ADDRBOOK_READING: return addrBookReader;
                 };
                 return null;
             }

@@ -9,6 +9,7 @@ import android.content.Context;
 import com.kivsw.cloud.DiskContainer;
 import com.kivsw.cloudcache.CloudCache;
 import com.kivsw.phonerecorder.model.internal_filelist.IInternalFiles;
+import com.kivsw.phonerecorder.model.internal_filelist.InternalFiles;
 import com.kivsw.phonerecorder.model.settings.ISettings;
 
 import dagger.Module;
@@ -19,9 +20,9 @@ import io.reactivex.annotations.NonNull;
 public class OperationsModule {
     @Provides
     @NonNull
-    ReadRecordListOperation provideReadRecordFileListOperation(ISettings settings, DiskContainer disks, CloudCache cloudCache)
+    ReadRecordListOperation provideReadRecordFileListOperation(ISettings settings, DiskContainer disks, CloudCache cloudCache, IInternalFiles internalFiles)
     {
-        return new ReadRecordListOperation(settings, disks, cloudCache);
+        return new ReadRecordListOperation(settings, disks, cloudCache, internalFiles);
     }
 
     @Provides

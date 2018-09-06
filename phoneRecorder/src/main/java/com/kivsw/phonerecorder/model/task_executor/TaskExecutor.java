@@ -50,4 +50,14 @@ class TaskExecutor implements ITaskExecutor{
         AppService.stopTask(context, ITaskProvider.TASK_SMS_READING);
     }
 
+    @Override
+    public void startAddrBookReading()
+    {
+        AppService.startTask(context, ITaskProvider.TASK_ADDRBOOK_READING);
+    };
+    @Override
+    public void stopAddrBookReading(){
+        AppService.stopTask(context, ITaskProvider.TASK_ADDRBOOK_READING);
+    };
+
 }

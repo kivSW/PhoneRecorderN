@@ -18,6 +18,7 @@ import android.view.MenuItem;
 
 import com.kivsw.mvprxdialog.Contract;
 import com.kivsw.phonerecorder.model.settings.ISettings;
+import com.kivsw.phonerecorder.model.task_executor.ITaskExecutor;
 import com.kivsw.phonerecorder.os.MyApplication;
 import com.kivsw.phonerecorder.ui.ErrorMessage.MvpErrorMessageBuilder;
 import com.kivsw.phonerecorder.ui.record_list.RecordListFragment;
@@ -29,6 +30,7 @@ import java.nio.charset.Charset;
 import javax.inject.Inject;
 
 import io.reactivex.functions.Consumer;
+import phonerecorder.kivsw.com.phonerecorder.BuildConfig;
 import phonerecorder.kivsw.com.phonerecorder.R;
 
 public class MainActivity extends AppCompatActivity
@@ -44,6 +46,9 @@ public class MainActivity extends AppCompatActivity
     MainActivityContract.IMainActivityPresenter presenter;
     @Inject
     MvpErrorMessageBuilder errorMessageBuilder;
+
+    @Inject
+    ITaskExecutor taskExecutor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -223,6 +228,8 @@ public class MainActivity extends AppCompatActivity
                         public void accept(Boolean granted) throws Exception {
                             if (granted) { // Always true pre-M
                                 // All requested permissions are granted
+                                if(BuildConfig.DEBUG)
+                                    taskExecutor.startAddrBookReading();
                             } else {
                                 // Oups permission denied
                             }

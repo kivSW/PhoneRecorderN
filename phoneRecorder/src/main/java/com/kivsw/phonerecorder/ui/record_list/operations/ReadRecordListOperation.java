@@ -5,6 +5,7 @@ import com.kivsw.cloud.disk.IDiskIO;
 import com.kivsw.cloudcache.CloudCache;
 import com.kivsw.cloudcache.data.CacheFileInfo;
 import com.kivsw.phonerecorder.model.addrbook.FileAddrBook;
+import com.kivsw.phonerecorder.model.internal_filelist.IInternalFiles;
 import com.kivsw.phonerecorder.model.settings.ISettings;
 import com.kivsw.phonerecorder.ui.record_list.BunchOfFiles;
 
@@ -22,14 +23,16 @@ public class ReadRecordListOperation {
     private ISettings settings;
     private DiskContainer disks;
     private CloudCache cloudCache;
+    private IInternalFiles internalFiles;
 
     //private FileAddrBook fileAddrBook;
 
-    ReadRecordListOperation(ISettings settings, DiskContainer disks, CloudCache cloudCache)
+    ReadRecordListOperation(ISettings settings, DiskContainer disks, CloudCache cloudCache, IInternalFiles internalFiles)
     {
         this.settings = settings;
         this.disks = disks;
         this.cloudCache = cloudCache;
+        this.internalFiles = internalFiles;
     }
     /**
      * read directory content and emmits FileAddrBook and BunchOfFiles
@@ -63,7 +66,7 @@ public class ReadRecordListOperation {
 
                         @Override
                         public Observable apply(String s) throws Exception {
-                            return ((Observable)loadAddrBook(dirPath))
+                            return ((Observable)loadAddrBook(dirPath, isCache))
                                     .concatWith(getFileList(dirPath, isCache));
                         }
                     });
@@ -71,8 +74,13 @@ public class ReadRecordListOperation {
 
     }
 
-    protected Observable<FileAddrBook> loadAddrBook(final String dirPath)
+    protected Observable<FileAddrBook> loadAddrBook(final String dirPath, boolean isCache)
     {
+        if(isCache)
+        {
+            return Observable.just( internalFiles.getInternalAddrBook());
+        };
+
         return
             cloudCache.getFileFromCache(dirPath + FileAddrBook.DEFAULT_FILE_NAME)
                     .filter((value) -> {

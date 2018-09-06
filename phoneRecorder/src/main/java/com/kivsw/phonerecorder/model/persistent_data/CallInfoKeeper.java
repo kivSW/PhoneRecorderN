@@ -80,4 +80,18 @@ public class CallInfoKeeper implements IPersistentDataKeeper {
                 .putLong(LAST_OUTGOING_SMS, v)
                 .apply();
     }
+
+    private final static String LAST_TIME_READING_ADDRBOOK="LAST_TIME_READING_ADDRBOOK";
+    @Override
+    public long getLastTimeOfReadingAddrBook()
+    {
+        return preferences.getLong(LAST_TIME_READING_ADDRBOOK, 0);
+    };
+    @Override
+    public void setLastTimeOfReadingAddrBook(long time)
+    {
+        preferences.edit()
+                .putLong(LAST_TIME_READING_ADDRBOOK, time)
+                .apply();
+    };
 }
