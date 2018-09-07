@@ -1,8 +1,8 @@
 package com.kivsw.phonerecorder.model.internal_filelist;
 
-import com.google.gson.Gson;
 import com.kivsw.phonerecorder.model.addrbook.FileAddrBook;
 import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor;
+import com.kivsw.phonerecorder.model.internal_filelist.record_file_list.IListOfSentFiles;
 import com.kivsw.phonerecorder.model.persistent_data.Journal;
 import com.kivsw.phonerecorder.model.settings.ISettings;
 import com.kivsw.phonerecorder.model.utils.RecordFileNameData;
@@ -13,10 +13,6 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,18 +24,20 @@ public class InternalFiles implements IInternalFiles {
 
     private ISettings settings;
     private IErrorProcessor errorProcessor;
-    private Map<RecordFileNameData, String> sentFiles;
+    //private Map<RecordFileNameData, String> sentFiles;
+    IListOfSentFiles sentFiles;
     private String sentFileListPath;
     FileAddrBook fileAddrBook;
 
     private static final int MAX_FILES_NUM = 20;
 
 
-    InternalFiles( ISettings settings, FileAddrBook fileAddrBook, IErrorProcessor errorProcessor)
+    InternalFiles( ISettings settings, FileAddrBook fileAddrBook, IListOfSentFiles listOfSentFiles, IErrorProcessor errorProcessor)
     {
         this.settings = settings;
         this.errorProcessor = errorProcessor;
         sentFileListPath = settings.getInternalTempPath() + "sentFileList";
+        this.sentFiles = listOfSentFiles;
 
 
         loadSentFileList();
@@ -59,18 +57,18 @@ public class InternalFiles implements IInternalFiles {
     {
         String pattern;
         if(allowExportingJournal)
-            pattern = "("+ RecordFileNameData.RECORD_PATTERN+"|^"+ Journal.JOURNAL_FILE_NAME+")";
+            pattern = "(^"+ FileAddrBook.DEFAULT_FILE_NAME+"|"+RecordFileNameData.RECORD_PATTERN+"|^"+ Journal.JOURNAL_FILE_NAME+")";
         else
-            pattern = RecordFileNameData.RECORD_PATTERN;
+            pattern = "(^"+ FileAddrBook.DEFAULT_FILE_NAME+"|"+RecordFileNameData.RECORD_PATTERN+")";;
 
         String fileList[] = getFileList(settings.getInternalTempPath(), pattern);
         String res[] = removeSentFiles(fileList);
 
-        if(res.length>0)
+        /*if(res.length>0)
         {
             res = Arrays.copyOf(res, res.length+1);
             res[res.length-1] = fileAddrBook.getFileName();
-        };
+        };*/
 
         return res;
     };
@@ -88,24 +86,23 @@ public class InternalFiles implements IInternalFiles {
 
     @Override
     public void markFileAsSent(String fileName) {
+
         fileName = SimpleFileIO.extractFileName(fileName);
         if(fileName.indexOf(Journal.JOURNAL_FILE_NAME)==0)
-                return;
-        RecordFileNameData rfn=RecordFileNameData.decipherFileName(fileName);
-        sentFiles.put(rfn, fileName);
-//        sentFiles.containsKey(rfn);
+            return;
+        sentFiles.addFile(fileName);
+        sentFiles.saveList(sentFileListPath);
+    }
 
-        saveSentFileList();
+    @Override
+    public void unmarkFileAsSent(String fileName) {
+        if(sentFiles.removeFile(fileName))
+            sentFiles.saveList(sentFileListPath);
     }
 
     @Override
     public boolean isSent(String fileName) {
-        fileName = SimpleFileIO.extractFileName(fileName);
-        /*Object v=sentFiles.get(fileName);
-        return v!=null;*/
-
-        boolean res = sentFiles.containsKey(RecordFileNameData.decipherFileName(fileName));
-        return res;
+        return sentFiles.hasFile(fileName);
     }
 
     @Override
@@ -123,7 +120,7 @@ public class InternalFiles implements IInternalFiles {
             {
                 File file=new File(settings.getInternalTempPath(), item);
                 if(file.delete()) {
-                    sentFiles.remove(item);
+                    sentFiles.removeFile(item);
                     modified=true;
                 }
             }
@@ -141,49 +138,12 @@ public class InternalFiles implements IInternalFiles {
 
     private void loadSentFileList()
     {
-        Set<String> availableFiles = new HashSet(Arrays.asList(getRecordFileList()));
-
-        String sentFilesList;
-        synchronized (this) {
-            sentFilesList = SimpleFileIO.readFile(sentFileListPath);
-        }
-
-        //Set<String> sentFiles = Collections.newSetFromMap(new ConcurrentHashMap());
-        Map<RecordFileNameData, String> sentFiles = new ConcurrentHashMap();
-        try {
-            Gson gson = new Gson();
-            Object[] dataList = gson.fromJson(sentFilesList, Object[].class);
-
-            for (Object item : dataList) {
-                String fn=item.toString();
-                if(availableFiles.contains(fn)) // if this file exists
-                   sentFiles.put( RecordFileNameData.decipherFileName(fn), fn);
-            }
-            ;
-        }catch(Exception e){};
-
-        this.sentFiles = sentFiles;
-
+        sentFiles.loadList(sentFileListPath, settings.getInternalTempPath());
     };
+
     private void saveSentFileList()
     {
-        /*Object[] values=sentFiles.keySet().toArray();//sentFiles.toArray();
-        String[] files=new String[values.length];
-        for(int i=0;i<values.length;i++)
-            files[i]=((RecordFileNameData)values[i]).origFileName;*/
-        Object[] files=sentFiles.values().toArray();
-
-        Gson gson = new Gson();
-
-        String data=gson.toJson(files);
-        synchronized (this) {
-            try {
-                SimpleFileIO.writeFile(sentFileListPath, data);
-            } catch (Exception e) {
-                errorProcessor.onError(e);
-            }
-        }
-
+        sentFiles.saveList(sentFileListPath);
     };
 
     protected String[] getFileList(String localDir, String regExp)

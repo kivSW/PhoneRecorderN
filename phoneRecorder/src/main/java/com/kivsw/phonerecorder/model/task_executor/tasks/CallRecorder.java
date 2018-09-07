@@ -124,7 +124,9 @@ public class CallRecorder implements ITask {
             internalFiles.getInternalAddrBook().addItem(callInfoKeeper.getCallInfo().number);
             internalFiles.getInternalAddrBook().save();
         }catch(Exception e)
-        {};
+        {
+            errorProcessor.onError(e);
+        };
 
         return isRecording();
     };

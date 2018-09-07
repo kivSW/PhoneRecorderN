@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor;
 import com.kivsw.phonerecorder.model.utils.SimpleFileIO;
 
-import java.io.File;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class FileAddrBook implements IAddrBook {
     private IErrorProcessor errorProcessor;
     private Map<String, String> addrBookMap;
-    private boolean modified;
+    private boolean mustBeSaved;
     private String fileName;
     private PhoneAddrBook phoneAddrBook;
 
@@ -49,6 +48,10 @@ public class FileAddrBook implements IAddrBook {
         load(fileName);
     }
 
+    public boolean isMustBeSaved() {
+        return mustBeSaved;
+    }
+
     synchronized public void load(String fileName)
     {
             String filedata;
@@ -74,7 +77,7 @@ public class FileAddrBook implements IAddrBook {
 
             synchronized (this) {
                 this.addrBookMap = addrBookMap;
-                modified = false;
+                mustBeSaved = false;
             }
 
     };
@@ -84,7 +87,7 @@ public class FileAddrBook implements IAddrBook {
     }
     public void saveTo(String fileName) throws Exception
     {
-        if(!modified) return;
+        if(!mustBeSaved) return;
 
         Iterator<Map.Entry<String, String>> iterator=   addrBookMap.entrySet().iterator();
 
@@ -109,7 +112,7 @@ public class FileAddrBook implements IAddrBook {
                     throw e;
             }
 
-            modified = false;
+            mustBeSaved = false;
         }
     };
     public void addItem(String name, String phoneNumber)
@@ -129,7 +132,7 @@ public class FileAddrBook implements IAddrBook {
                 return;
 
             addrBookMap.put(phoneNumber, name);
-            modified = true;
+            mustBeSaved = true;
         }catch (Exception e)
         {
             errorProcessor.onError(e);
@@ -169,8 +172,6 @@ public class FileAddrBook implements IAddrBook {
     };
     public String getFileName()
     {
-        int i=fileName.lastIndexOf(File.separatorChar);
-        if(i<0) return fileName;
-        return fileName.substring(i+1);
+        return SimpleFileIO.extractFileName(fileName);
     };
 }

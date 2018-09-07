@@ -16,8 +16,8 @@
     <string name="hidden_mode">Скрытый режим</string>
     <string name="show_file_extension">Использовать расширения файлов .3gp</string>
     <string name="show_file_extension_hint">Использовать расширения .3gp</string>
-    <string name="allow_mobile_internet">Использовать мобильный интернет</string>
-    <string name="allow_mobile_internet_when_roaming">Использовать мобильный интернет в роуминге</string>
+    <string name="allow_mobile_internet">Отправлять записи через мобильный интернет</string>
+    <string name="allow_mobile_internet_when_roaming">Отправлять в роуминге</string>
     <string name="journal_export">Выгрузить журнал событий</string>
     <string name="use_internal_player">Использовать внутренний плеер</string>
 

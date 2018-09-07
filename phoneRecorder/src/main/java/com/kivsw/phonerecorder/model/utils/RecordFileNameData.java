@@ -33,8 +33,7 @@ public class RecordFileNameData implements Comparable{
             fd.origFileName = aFileName;
 
             // extracts file name
-            i=aFileName.lastIndexOf("/");
-            if(i>=0)     aFileName = aFileName.substring(i+1);
+            aFileName=SimpleFileIO.extractFileName(aFileName);
 
             try{
                 // deleteRecord a file extension and "_s" flag

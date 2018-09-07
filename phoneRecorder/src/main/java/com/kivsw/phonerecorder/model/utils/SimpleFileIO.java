@@ -43,4 +43,10 @@ public class SimpleFileIO {
         return path.substring(index+1);
     }
 
+    public static boolean fileExists(String fileName)
+    {
+       File file=new File(fileName);
+       return file.exists();
+    }
+
 }

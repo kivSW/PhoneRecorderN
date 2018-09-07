@@ -14,6 +14,7 @@ public interface IInternalFiles {
     boolean isOverflow();
 
     void markFileAsSent(String fileName);
+    void unmarkFileAsSent(String fileName);
     boolean isSent(String fileName);
     void deleteOldFiles();
 

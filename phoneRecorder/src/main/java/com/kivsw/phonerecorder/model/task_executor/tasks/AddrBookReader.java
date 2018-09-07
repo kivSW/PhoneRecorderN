@@ -19,7 +19,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- * reads address book from the phone and save it into interval file of FileAddrBook
+ * reads address book from the phone and saveList it into interval file of FileAddrBook
  */
 public class AddrBookReader implements ITask {
     Context context;
