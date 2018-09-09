@@ -6,6 +6,7 @@ import com.kivsw.cloudcache.CloudCache;
 import com.kivsw.cloudcache.data.CacheFileInfo;
 import com.kivsw.phonerecorder.model.addrbook.FileAddrBook;
 import com.kivsw.phonerecorder.model.internal_filelist.IInternalFiles;
+import com.kivsw.phonerecorder.model.internal_filelist.InternalFileAddrBook;
 import com.kivsw.phonerecorder.model.settings.ISettings;
 import com.kivsw.phonerecorder.ui.record_list.BunchOfFiles;
 
@@ -82,7 +83,7 @@ public class ReadRecordListOperation {
         };
 
         return
-            cloudCache.getFileFromCache(dirPath + FileAddrBook.DEFAULT_FILE_NAME)
+            cloudCache.getFileFromCache(dirPath + InternalFileAddrBook.DEFAULT_FILE_NAME)
                     .filter((value) -> {
                         return value instanceof CacheFileInfo;
                     })

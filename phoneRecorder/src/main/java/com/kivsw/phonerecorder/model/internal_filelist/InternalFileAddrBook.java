@@ -6,6 +6,8 @@ import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor;
 
 public class InternalFileAddrBook extends FileAddrBook {
 
+    public static final String DEFAULT_FILE_NAME="addrbook";
+
     IInternalFiles internalFiles=null;
 
     public InternalFileAddrBook(String fileName, PhoneAddrBook phoneAddrBook, IErrorProcessor errorProcessor)

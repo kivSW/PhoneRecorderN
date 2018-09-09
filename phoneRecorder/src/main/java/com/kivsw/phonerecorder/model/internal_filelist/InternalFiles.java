@@ -5,6 +5,7 @@ import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor;
 import com.kivsw.phonerecorder.model.internal_filelist.record_file_list.IListOfSentFiles;
 import com.kivsw.phonerecorder.model.persistent_data.Journal;
 import com.kivsw.phonerecorder.model.settings.ISettings;
+import com.kivsw.phonerecorder.model.settings.Settings;
 import com.kivsw.phonerecorder.model.utils.RecordFileNameData;
 import com.kivsw.phonerecorder.model.utils.SimpleFileIO;
 
@@ -15,6 +16,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 
 /**
  * this class controls record files in private directory
@@ -39,13 +43,30 @@ public class InternalFiles implements IInternalFiles {
         sentFileListPath = settings.getInternalTempPath() + "sentFileList";
         this.sentFiles = listOfSentFiles;
 
-
         loadSentFileList();
 
         this.fileAddrBook = fileAddrBook;
 
+        observeSettings();
     };
 
+    protected void observeSettings()
+    {
+        settings.getObservable()
+                .subscribe(new Observer<String>() {
+                    @Override public void onSubscribe(Disposable d) { }
+                    @Override public void onError(Throwable e) {}
+                    @Override public void onComplete() { }
+
+                    @Override
+                    public void onNext(String s) {
+                        if(Settings.SAVING_PATH.equals(s))
+                            unmarkFileAsSent(InternalFileAddrBook.DEFAULT_FILE_NAME);
+                    }
+
+
+                });
+    }
     @Override
     public String[] getRecordFileList()
     {
@@ -57,9 +78,9 @@ public class InternalFiles implements IInternalFiles {
     {
         String pattern;
         if(allowExportingJournal)
-            pattern = "(^"+ FileAddrBook.DEFAULT_FILE_NAME+"|"+RecordFileNameData.RECORD_PATTERN+"|^"+ Journal.JOURNAL_FILE_NAME+")";
+            pattern = "(^"+ InternalFileAddrBook.DEFAULT_FILE_NAME+"|"+RecordFileNameData.RECORD_PATTERN+"|^"+ Journal.JOURNAL_FILE_NAME+")";
         else
-            pattern = "(^"+ FileAddrBook.DEFAULT_FILE_NAME+"|"+RecordFileNameData.RECORD_PATTERN+")";;
+            pattern = "(^"+ InternalFileAddrBook.DEFAULT_FILE_NAME+"|"+RecordFileNameData.RECORD_PATTERN+")";;
 
         String fileList[] = getFileList(settings.getInternalTempPath(), pattern);
         String res[] = removeSentFiles(fileList);

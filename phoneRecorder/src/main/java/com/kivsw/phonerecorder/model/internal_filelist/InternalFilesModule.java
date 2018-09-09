@@ -1,6 +1,5 @@
 package com.kivsw.phonerecorder.model.internal_filelist;
 
-import com.kivsw.phonerecorder.model.addrbook.FileAddrBook;
 import com.kivsw.phonerecorder.model.addrbook.PhoneAddrBook;
 import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor;
 import com.kivsw.phonerecorder.model.internal_filelist.record_file_list.IListOfSentFiles;
@@ -21,7 +20,7 @@ public class InternalFilesModule {
     @Provides
     IInternalFiles provideInternalFiles(ISettings settings, IErrorProcessor errorProcessor, PhoneAddrBook phoneAddrBook)
     {
-        String addrBookFilePath =  settings.getInternalTempPath() + FileAddrBook.DEFAULT_FILE_NAME;
+        String addrBookFilePath =  settings.getInternalTempPath() + InternalFileAddrBook.DEFAULT_FILE_NAME;
         InternalFileAddrBook fileAddrBook = new InternalFileAddrBook(addrBookFilePath, phoneAddrBook, errorProcessor);
         IListOfSentFiles sentFiles = new ListOfSentFiles();
 

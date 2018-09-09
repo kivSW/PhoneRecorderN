@@ -181,7 +181,7 @@ implements ISettings {
         emitOnChange(USE_INTERNAL_PLAYER);
     };
 
-    private final static String SAVING_PATH = "SAVING_PATH";
+    public final static String SAVING_PATH = "SAVING_PATH";
     @Override public String getSavingUrlPath()
     {
         String res=preferences.getString(SAVING_PATH, null);
@@ -199,8 +199,9 @@ implements ISettings {
         preferences.edit()
                 .putString(SAVING_PATH, value)
                 .apply();
-        //emitOnChange(); // DO NOT invoke emitOnChange because of using addToViewUrlPathHistory()
+
         addToViewUrlPathHistory(value);
+        emitOnChange(SAVING_PATH);
     }
 
     protected String addLastSeparator(String path)

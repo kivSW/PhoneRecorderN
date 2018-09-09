@@ -15,7 +15,7 @@ public class FileAddrBook implements IAddrBook {
     private String fileName;
     private PhoneAddrBook phoneAddrBook;
 
-    public static final String DEFAULT_FILE_NAME="addrbook";
+
 
 
     protected class AddrBookItem
