@@ -30,7 +30,6 @@ import java.nio.charset.Charset;
 import javax.inject.Inject;
 
 import io.reactivex.functions.Consumer;
-import phonerecorder.kivsw.com.phonerecorder.BuildConfig;
 import phonerecorder.kivsw.com.phonerecorder.R;
 
 public class MainActivity extends AppCompatActivity
@@ -228,7 +227,6 @@ public class MainActivity extends AppCompatActivity
                         public void accept(Boolean granted) throws Exception {
                             if (granted) { // Always true pre-M
                                 // All requested permissions are granted
-                                if(BuildConfig.DEBUG)
                                     taskExecutor.startAddrBookReading();
                             } else {
                                 // Oups permission denied

@@ -141,8 +141,8 @@ public class SettingsPresenter implements SettingsContract.ISettingsPresenter {
                     public void onSuccess(String s) {
                         settings.setSavingUrlPath(s);
                         view.updateSavePath();
-                        taskExecutor.startFileSending();
-                        taskExecutor.startSMSreading(); // FIXME
+                       /* taskExecutor.startFileSending();
+                        taskExecutor.startSMSreading(); // FIXME*/
                     }
 
                 });
