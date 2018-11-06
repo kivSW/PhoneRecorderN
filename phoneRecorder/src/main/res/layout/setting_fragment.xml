@@ -142,6 +142,7 @@
                     android:layout_marginBottom="10dp"
 
                     android:layout_weight="1"
+                    android:paddingBottom="3dp"
                     android:paddingLeft="3dp"
                     android:text="@string/phoneSecretNumber"/>
 
@@ -264,26 +265,6 @@
                     android:layout_height="wrap_content"/>
             </LinearLayout>
 
-            <!--  <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
-
-                <TextView
-                    android:id="@+id/phonrIdText"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/phoneId"
-                    android:layout_marginBottom="10dp"
-                    android:layout_weight="1" />
-
-                <EditText
-                    android:id="@+id/editPhoneId"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:inputType="text" />
-
-            </LinearLayout>-->
 
             <TextView
                 android:id="@+id/textViewExtraSection"
@@ -300,6 +281,13 @@
                 android:layout_height="wrap_content"
 
                 android:text="@string/use_internal_player"/>
+
+            <CheckBox
+                android:id="@+id/checkAbonentToFileName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:text="@string/abonent_to_filename"/>
 
             <LinearLayout
                 android:layout_width="match_parent"

@@ -44,6 +44,7 @@
     <string name="allow_mobile_internet_when_roaming">Allow sending when roaming</string>
     <string name="journal_export">Export journal</string>
     <string name="use_internal_player">Use internal player</string>
+    <string name="abonent_to_filename">Add abonent to file name</string>
 
 
     <string name="data_file_path">Save to:</string>

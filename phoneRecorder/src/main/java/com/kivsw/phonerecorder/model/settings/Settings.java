@@ -181,6 +181,20 @@ implements ISettings {
         emitOnChange(USE_INTERNAL_PLAYER);
     };
 
+    private final static String ABONENT_TO_FILENAME= "ABONENT_TO_FILENAME";
+    @Override
+    public boolean getAbonentToFileName()
+    {
+        return preferences.getBoolean(ABONENT_TO_FILENAME,true);
+    }
+    public void setAbonentToFileName(boolean value)
+    {
+        preferences.edit()
+                .putBoolean(ABONENT_TO_FILENAME, value)
+                .apply();
+        emitOnChange(ABONENT_TO_FILENAME);
+    }
+
     public final static String SAVING_PATH = "SAVING_PATH";
     @Override public String getSavingUrlPath()
     {

@@ -46,7 +46,8 @@ public class SettingsFragment extends Fragment
                     checkShowFileExtension,
                     checkAllowMobileInternet,
                     checkAllowRoaming,
-                    checkUseInternalPlayer;
+                    checkUseInternalPlayer,
+                    checkAbonentToFileName;
     private TextView textViewPath;
     private ImageView buttonSelDir;
     private Spinner spinnerSoundSource;
@@ -159,6 +160,7 @@ public class SettingsFragment extends Fragment
         checkAllowMobileInternet = (CheckBox) rootView.findViewById(R.id.checkAllowMobileInternet);
         checkAllowRoaming = (CheckBox) rootView.findViewById(R.id.checkAllowRoaming);
         checkUseInternalPlayer = (CheckBox) rootView.findViewById(R.id.checkUseInternalPlayer);
+        checkAbonentToFileName = (CheckBox) rootView.findViewById(R.id.checkAbonentToFileName);
 
         textViewPath = (TextView) rootView.findViewById(R.id.textViewPath);
         buttonSelDir = (ImageView) rootView.findViewById(R.id.buttonSelDir);
@@ -258,6 +260,14 @@ public class SettingsFragment extends Fragment
                 if(ignoreChanges) return;
                 if(settings==null) return;
                 settings.setUseInternalPlayer(checkUseInternalPlayer.isChecked());
+            }
+        });
+        checkAbonentToFileName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(ignoreChanges) return;
+                if(settings==null) return;
+                settings.setAbonentToFileName(checkAbonentToFileName.isChecked());
             }
         });
 
@@ -449,6 +459,7 @@ public class SettingsFragment extends Fragment
         checkAllowRoaming.setEnabled(checkAllowMobileInternet.isChecked());
 
         checkUseInternalPlayer.setChecked(settings.getUseInternalPlayer());
+        checkAbonentToFileName.setChecked(settings.getAbonentToFileName());
         updateSavePath();
 
         spinnerSoundSource.setSelection(settings.getSoundSource().ordinal());

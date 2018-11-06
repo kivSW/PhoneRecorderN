@@ -18,7 +18,7 @@ public class RecordFileNameData implements Comparable{
         public String origFileName;
         public int duration;
         public String date ="", time="", phoneNumber="", soundSource="",
-                phoneId="", extension="";
+                      abonentName="", extension="";
         public boolean outgoing=false, income=false,
                 isSent=false, isProtected=false,
                 isSMS=false;
@@ -76,7 +76,7 @@ public class RecordFileNameData implements Comparable{
                 fd.phoneNumber = decodeStr(info[3]);
 
                 fd.soundSource = info[4];
-                fd.phoneId = info[5];
+                fd.abonentName = info[5];
                 fd.isProtected = info[6].equals("1");
                 fd.duration = 0;
                 fd.duration = Integer.parseInt(info[7]);
@@ -90,11 +90,11 @@ public class RecordFileNameData implements Comparable{
             return fd;
         }
 
-        public static RecordFileNameData generateNew(String phoneNumber, boolean income, String soundSource, String extension)
+        public static RecordFileNameData generateNew(String phoneNumber, String abonentName, boolean income, String soundSource, String extension)
         {
-            return generateNew(new Date(), phoneNumber, income, soundSource, extension);
+            return generateNew(new Date(), phoneNumber, abonentName, income, soundSource, extension);
         }
-        public static RecordFileNameData generateNew(Date date, String phoneNumber, boolean income, String soundSource, String extension)
+        public static RecordFileNameData generateNew(Date date, String phoneNumber, String abonentName, boolean income, String soundSource, String extension)
         {
 
             SimpleDateFormat sdfD = new SimpleDateFormat("dd.MM.yyyy"),
@@ -106,7 +106,7 @@ public class RecordFileNameData implements Comparable{
             fd.time=sdfT.format(date);
             fd.phoneNumber=phoneNumber;
             fd.soundSource=soundSource;
-            fd.phoneId=null;
+            fd.abonentName=abonentName;
             fd.extension=extension;
             fd.income = income;
             fd.outgoing = !income;
@@ -116,14 +116,13 @@ public class RecordFileNameData implements Comparable{
             return fd;
         }
 
-        private  String correctFileNameStr(String str)
+        private  String eliminateIllegalChar(String str)
         {
-           char ch;
-           ch='_';
-           String res= str;
-           //res = res.replaceAll("_", String.format("\\\\u%04X", (int)ch));
-           res = res.replaceAll("[\\*\\?\\x00-\\x1F_\\:\\/\\\\]", "");
-           return res;
+            if(str==null) return "";
+            String res= str;
+            //res = res.replaceAll("_", String.format("\\\\u%04X", (int)ch));
+            res = res.replaceAll("[\\*\\?\\x00-\\x1F_\\:\\/\\\\]", ""); // remove symbols: * ? _ : / \ and symbols with codes 00-1F
+            return res;
         }
         private static String decodeStr(String str)
         {
@@ -149,14 +148,14 @@ public class RecordFileNameData implements Comparable{
             if(outgoing) sb.append("outgoing_");//2
             else sb.append("income_");
 
-            sb.append(correctFileNameStr(phoneNumber));sb.append("_"); //3
+            sb.append(eliminateIllegalChar(phoneNumber));sb.append("_"); //3
 
             sb.append(soundSource);//4
             sb.append("_");
 
-            if(phoneId!=null && phoneId.length()>0)//5
+            if(abonentName!=null && abonentName.length()>0)//5
             {
-                sb.append(phoneId);
+                sb.append(eliminateIllegalChar(abonentName));
             };
             sb.append("_");
 

@@ -31,6 +31,7 @@ public interface ISettings {
 
     boolean getUsingMobileInternet();
     void setUsingMobileInternet(boolean value);
+
     boolean getAllowSendingInRoaming();
     void setSendInRoaming(boolean value);
 
@@ -39,6 +40,9 @@ public interface ISettings {
 
     boolean getUseInternalPlayer();
     void setUseInternalPlayer(boolean value);
+
+    boolean getAbonentToFileName();
+    void setAbonentToFileName(boolean value);
 
     String getSavingUrlPath();
     void setSavingUrlPath(String value);
