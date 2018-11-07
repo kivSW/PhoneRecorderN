@@ -4,6 +4,7 @@ import android.content.Context;
 import android.media.MediaRecorder;
 import android.os.SystemClock;
 
+import com.kivsw.phonerecorder.model.addrbook.PhoneAddrBook;
 import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor;
 import com.kivsw.phonerecorder.model.internal_filelist.IInternalFiles;
 import com.kivsw.phonerecorder.model.persistent_data.IPersistentDataKeeper;
@@ -35,6 +36,7 @@ public class CallRecorder implements ITask {
     private IErrorProcessor errorProcessor;
     private ITaskExecutor taskExecutor;
     private IInternalFiles internalFiles;
+    PhoneAddrBook localPhoneAddrBook;
 
     private NotificationShower notification;
     private MediaRecorder recorder = null;
@@ -45,7 +47,8 @@ public class CallRecorder implements ITask {
 
     @Inject
     public CallRecorder(Context context, ISettings settings, IPersistentDataKeeper callInfoKeeper, ITaskExecutor taskExecutor,
-                        IInternalFiles internalFiles, NotificationShower notification, IErrorProcessor errorProcessor) {
+                        IInternalFiles internalFiles,  NotificationShower notification, PhoneAddrBook localPhoneAddrBook,
+                        IErrorProcessor errorProcessor) {
         this.context = context;
         this.settings = settings;
         this.callInfoKeeper = callInfoKeeper;
@@ -53,6 +56,7 @@ public class CallRecorder implements ITask {
         this.notification = notification;
         this.internalFiles = internalFiles;
         this.errorProcessor = errorProcessor;
+        this.localPhoneAddrBook = localPhoneAddrBook;
     }
 
     @Override
@@ -102,7 +106,6 @@ public class CallRecorder implements ITask {
         createRecordFileName();
 
         try{
-
             recorder = new MediaRecorder();
             recorder.reset();
             recorder.setAudioSource(getAudioSource());
@@ -138,12 +141,16 @@ public class CallRecorder implements ITask {
         String recordFileName = generateRecordFileName();
         try{
             recorder.stop();
+        }catch (Exception e)
+        { }
+
+        try{
             File file=new File(tempFileName);
             file.renameTo(new File(recordFileName));
         }catch(Exception e)
         {
             errorProcessor.onError(e);
-        };
+        }
 
         recorder.release();
         recorder=null;
@@ -160,7 +167,12 @@ public class CallRecorder implements ITask {
     protected void createRecordFileName()
     {
         IPersistentDataKeeper.CallInfo callInfo=callInfoKeeper.getCallInfo();
-        recordFileNameData = RecordFileNameData.generateNew(callInfo.number, callInfo.isIncome, soundSourceToStr(), getExtension());
+
+        String abonentName=null;
+        if(settings.getAbonentToFileName())
+            abonentName = localPhoneAddrBook.getNameFromPhone(callInfo.number);
+
+        recordFileNameData = RecordFileNameData.generateNew(callInfo.number, abonentName, callInfo.isIncome, soundSourceToStr(), getExtension());
         startTime = SystemClock.elapsedRealtime();
     };
     protected String generateRecordFileName()

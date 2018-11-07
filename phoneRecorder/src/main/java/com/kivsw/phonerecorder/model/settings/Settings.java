@@ -185,7 +185,7 @@ implements ISettings {
     @Override
     public boolean getAbonentToFileName()
     {
-        return preferences.getBoolean(ABONENT_TO_FILENAME,true);
+        return preferences.getBoolean(ABONENT_TO_FILENAME,false);
     }
     public void setAbonentToFileName(boolean value)
     {

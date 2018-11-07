@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import com.kivsw.phonerecorder.model.addrbook.FileAddrBook;
+import com.kivsw.phonerecorder.model.addrbook.PhoneAddrBook;
 import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor;
 import com.kivsw.phonerecorder.model.internal_filelist.IInternalFiles;
 import com.kivsw.phonerecorder.model.persistent_data.IJournal;
@@ -46,12 +47,14 @@ public class SmsReader implements ITask  {
     private IJournal journal;
     private ITaskExecutor taskExecutor;
     private NotificationShower notification;
+    private PhoneAddrBook localPhoneAddrBook;
     private IErrorProcessor errorProcessor;
     private IPersistentDataKeeper persistentDataKeeper;
     private IInternalFiles internalFiles;
 
     public SmsReader(Context context, ISettings settings, IJournal journal, IPersistentDataKeeper persistentDataKeeper,
-                     ITaskExecutor taskExecutor, NotificationShower notification, IInternalFiles internalFiles,
+                     ITaskExecutor taskExecutor, NotificationShower notification, PhoneAddrBook localPhoneAddrBook,
+                     IInternalFiles internalFiles,
                      IErrorProcessor errorProcessor)
     {
         this.context=context;
@@ -61,6 +64,7 @@ public class SmsReader implements ITask  {
         this.notification=notification;
         this.errorProcessor=errorProcessor;
         this.internalFiles = internalFiles;
+        this.localPhoneAddrBook = localPhoneAddrBook;
         this.persistentDataKeeper = persistentDataKeeper;
     }
 
@@ -249,7 +253,11 @@ public class SmsReader implements ITask  {
     {
         Date date= new Date(sms.date);
 
-        String recordFileNameData = RecordFileNameData.generateNew(date, sms.address, sms.isIncome(), "", "sms")
+        String abonentName=null;
+        if(settings.getAbonentToFileName())
+            abonentName = localPhoneAddrBook.getNameFromPhone(sms.address);
+
+        String recordFileNameData = RecordFileNameData.generateNew(date, sms.address, abonentName, sms.isIncome(), "", "sms")
                 .buildFileName();
         return settings.getInternalTempPath() + recordFileNameData;
     }

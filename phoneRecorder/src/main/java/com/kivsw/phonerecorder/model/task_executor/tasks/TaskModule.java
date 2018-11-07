@@ -3,6 +3,7 @@ package com.kivsw.phonerecorder.model.task_executor.tasks;
 import android.content.Context;
 
 import com.kivsw.cloud.DiskContainer;
+import com.kivsw.phonerecorder.model.addrbook.PhoneAddrBook;
 import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor;
 import com.kivsw.phonerecorder.model.internal_filelist.IInternalFiles;
 import com.kivsw.phonerecorder.model.persistent_data.IJournal;
@@ -23,9 +24,11 @@ import dagger.Provides;
 public class TaskModule {
     @Provides
     @Singleton
-    CallRecorder provideCallRecorder(Context context, ISettings settings, IPersistentDataKeeper callInfoKeeper, ITaskExecutor taskExecutor, IInternalFiles internalFiles,NotificationShower notification, IErrorProcessor errorProcessor)
+    CallRecorder provideCallRecorder(Context context, ISettings settings, IPersistentDataKeeper callInfoKeeper,
+                                     ITaskExecutor taskExecutor, IInternalFiles internalFiles,
+                                     NotificationShower notification, PhoneAddrBook localPhoneAddrBook, IErrorProcessor errorProcessor)
     {
-        return new CallRecorder(context,settings, callInfoKeeper, taskExecutor, internalFiles, notification, errorProcessor);
+        return new CallRecorder(context,settings, callInfoKeeper, taskExecutor, internalFiles, notification, localPhoneAddrBook, errorProcessor);
     };
 
 
@@ -39,9 +42,10 @@ public class TaskModule {
     @Provides
     @Singleton
     SmsReader provideSmsReader(Context context, ISettings settings, IJournal journal, IPersistentDataKeeper persistentData,
-                               ITaskExecutor taskExecutor, NotificationShower notification, IInternalFiles internalFiles, IErrorProcessor errorProcessor)
+                               ITaskExecutor taskExecutor, NotificationShower notification, PhoneAddrBook localPhoneAddrBook,
+                               IInternalFiles internalFiles, IErrorProcessor errorProcessor)
     {
-        return new SmsReader(context,settings,journal, persistentData, taskExecutor, notification, internalFiles, errorProcessor);
+        return new SmsReader(context,settings,journal, persistentData, taskExecutor, notification, localPhoneAddrBook, internalFiles, errorProcessor);
     };
 
     @Provides

@@ -153,10 +153,8 @@ public class RecordFileNameData implements Comparable{
             sb.append(soundSource);//4
             sb.append("_");
 
-            if(abonentName!=null && abonentName.length()>0)//5
-            {
+            if(abonentName!=null)//5
                 sb.append(eliminateIllegalChar(abonentName));
-            };
             sb.append("_");
 
             sb.append(isProtected?"1":"0");//6
