@@ -13,6 +13,7 @@ import com.kivsw.phonerecorder.model.player.AndroidPlayerModule;
 import com.kivsw.phonerecorder.model.settings.SettingsModule;
 import com.kivsw.phonerecorder.model.task_executor.TaskExecutorModule;
 import com.kivsw.phonerecorder.model.task_executor.tasks.TaskModule;
+import com.kivsw.phonerecorder.os.jobs.AntiTaskkillerService;
 import com.kivsw.phonerecorder.os.jobs.AppJobService;
 import com.kivsw.phonerecorder.os.jobs.AppService;
 import com.kivsw.phonerecorder.ui.ErrorMessage.MvpErrorMessageBuilderModule;
@@ -49,6 +50,7 @@ public interface ApplicationComponent {
     void inject(AppReceiver receiver);
     void inject(AppService service);
     void inject(AppJobService service);
+    void inject(AntiTaskkillerService service);
     void inject(MyApplication app);
 
     /*CallRecorder getCallRecorder();

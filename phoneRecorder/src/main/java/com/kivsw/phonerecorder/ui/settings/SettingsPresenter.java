@@ -109,12 +109,12 @@ public class SettingsPresenter implements SettingsContract.ISettingsPresenter {
                 LauncherIcon.setVisibility(context, visible);
                 break;
 
-            case Settings.ANTI_TASKKILLER_NOTOFICATION:
+            /*case Settings.ANTI_TASKKILLER_NOTOFICATION:
                     if (settings.getAntiTaskKillerNotification().visible)
                         antiTaskKillerNotification.show();
                     else
                         antiTaskKillerNotification.hide();
-                    break;
+                    break;*/
 
             case Settings.ENABLE_SMS_RECORDING:
                     if(settings.getEnableSmsRecording())

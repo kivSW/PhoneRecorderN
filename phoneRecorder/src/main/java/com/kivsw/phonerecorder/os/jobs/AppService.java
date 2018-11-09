@@ -120,7 +120,7 @@ public class AppService extends android.app.Service {
     {
         if(wl==null) {
             PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-            wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "appService");
+            wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "phoneRecorder:appService");
             wl.acquire();
         }
     }

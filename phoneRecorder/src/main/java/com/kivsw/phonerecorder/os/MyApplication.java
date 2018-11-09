@@ -3,9 +3,13 @@ package com.kivsw.phonerecorder.os;
 
 import com.kivsw.phonerecorder.model.metrica.IMetrica;
 import com.kivsw.phonerecorder.model.settings.ISettings;
-import com.kivsw.phonerecorder.ui.notification.AntiTaskKillerNotification;
+import com.kivsw.phonerecorder.model.settings.Settings;
+import com.kivsw.phonerecorder.os.jobs.AntiTaskkillerService;
 
 import javax.inject.Inject;
+
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 
 /**
  * Created by ivan on 3/20/18.
@@ -20,8 +24,7 @@ public class MyApplication extends android.app.Application {
 
     @Inject
     ISettings settings;
-    @Inject
-    AntiTaskKillerNotification antiTaskKillerNotification;
+
     @Inject
     IMetrica metrica;
 
@@ -44,9 +47,30 @@ public class MyApplication extends android.app.Application {
 
     protected void init()
     {
+        settings.getObservable().subscribe(new Observer<String>() {
+            @Override
+            public void onSubscribe(Disposable d) {}
+
+            @Override
+            public void onNext(String s) {
+                if(Settings.ANTI_TASKKILLER_NOTOFICATION.equals(s))
+                    onAntitaskkillerChanged();
+            }
+
+            @Override
+            public void onError(Throwable e) {  }
+
+            @Override
+            public void onComplete() {  }
+        });
+
+    }
+
+    protected void onAntitaskkillerChanged()
+    {
         if(settings.getAntiTaskKillerNotification().visible)
-            antiTaskKillerNotification.show();
-        else antiTaskKillerNotification.hide();
+             AntiTaskkillerService.start(this);
+        else AntiTaskkillerService.stop(this);
     }
 
 

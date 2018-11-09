@@ -59,6 +59,10 @@
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE"
             />
+        <service android:name="com.kivsw.phonerecorder.os.jobs.AntiTaskkillerService"
+                 android:process=":AntiTaskkillerService"
+                 android:exported="false"/>
+<!-- android:process=":AntiTaskkillerService" -->
 
         <activity
             android:name="com.kivsw.phonerecorder.ui.main_activity.MainActivity"

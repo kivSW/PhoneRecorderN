@@ -1,5 +1,6 @@
 package com.kivsw.phonerecorder.ui.notification;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -7,12 +8,13 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 
-import com.kivsw.phonerecorder.model.settings.types.AntiTaskKillerNotificationParam;
 import com.kivsw.phonerecorder.model.settings.ISettings;
+import com.kivsw.phonerecorder.model.settings.types.AntiTaskKillerNotificationParam;
 import com.kivsw.phonerecorder.os.AppReceiver;
 
 import javax.inject.Inject;
 
+import io.reactivex.annotations.Nullable;
 import phonerecorder.kivsw.com.phonerecorder.R;
 
 /**
@@ -36,11 +38,16 @@ public class AntiTaskKillerNotification {
         isVisible=false;
     };
 
-    public void show( )
-    {
-        AntiTaskKillerNotificationParam param = settings.getAntiTaskKillerNotification();
+    public int getNotificationId() {
+        return notificationId;
+    }
 
-        if(!param.visible) return;
+    public @Nullable Notification createNotification()
+    {
+        return createNotification(settings.getAntiTaskKillerNotification());
+    }
+    public @Nullable Notification createNotification(AntiTaskKillerNotificationParam param)
+    {
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
         int smallIconResourceId=getSmallIconId(param.iconNum);
@@ -56,10 +63,20 @@ public class AntiTaskKillerNotification {
         intent.setClass(context, AppReceiver.class);
         mBuilder.setContentIntent(PendingIntent.getBroadcast(context, -1, intent, PendingIntent.FLAG_UPDATE_CURRENT ));
 
+        return mBuilder.build();
+    }
+    public void show( )
+    {
+        AntiTaskKillerNotificationParam param = settings.getAntiTaskKillerNotification();
+        if(!param.visible) return ;
+
+        Notification n= createNotification(param);
+        if(n==null) return;
+
         NotificationManager mNotificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         // notificationId allows you to update the notification later on.
-        mNotificationManager.notify(notificationId, mBuilder.build());
+        mNotificationManager.notify(notificationId, n);
         isVisible=true;
 
     }
