@@ -42,10 +42,10 @@ public class AntiTaskKillerNotification {
         return notificationId;
     }
 
-    public @Nullable Notification createNotification()
+    /*public @Nullable Notification createNotification()
     {
         return createNotification(settings.getAntiTaskKillerNotification());
-    }
+    }*/
     public @Nullable Notification createNotification(AntiTaskKillerNotificationParam param)
     {
 

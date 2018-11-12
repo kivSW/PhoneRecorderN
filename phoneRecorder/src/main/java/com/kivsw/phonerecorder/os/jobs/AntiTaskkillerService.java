@@ -6,6 +6,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.kivsw.phonerecorder.model.settings.ISettings;
+import com.kivsw.phonerecorder.model.settings.types.AntiTaskKillerNotificationParam;
 import com.kivsw.phonerecorder.os.MyApplication;
 import com.kivsw.phonerecorder.ui.notification.AntiTaskKillerNotification;
 
@@ -45,7 +46,8 @@ public class AntiTaskkillerService  extends android.app.Service {
 
             if(taskId.equals(START_SERVICE))
             {
-                startForeground(antiTaskKillerNotification.getNotificationId(), antiTaskKillerNotification.createNotification());
+                AntiTaskKillerNotificationParam param=new AntiTaskKillerNotificationParam(true, intent.getIntExtra(ICON_NUMBER, 0));
+                startForeground(antiTaskKillerNotification.getNotificationId(), antiTaskKillerNotification.createNotification(param));
             }
             else
             {
@@ -58,24 +60,29 @@ public class AntiTaskkillerService  extends android.app.Service {
 
 
         static private String START_SERVICE="AntiTaskkillerService.START_SERVICE",
-                STOP_SERVICE="AntiTaskkillerService.STOP_SERVICE";
-        protected static void doStartService(Context context, boolean start)
+                STOP_SERVICE="AntiTaskkillerService.STOP_SERVICE",
+                ICON_NUMBER="AntiTaskkillerService.ICON_INDEX";
+        protected static void doStartService(Context context, boolean start, int iconNum)
         {
             Intent intent=new Intent(context, AntiTaskkillerService.class);
+
+            intent.putExtra(ICON_NUMBER, iconNum);
+
             if(start)  intent.setAction(START_SERVICE);
             else    intent.setAction(STOP_SERVICE);
+
             context.startService(intent);
         }
 
 
 
-        synchronized public static void start(Context context)
+        synchronized public static void start(Context context, int iconNum)
         {
-            doStartService(context, true);
+            doStartService(context, true, iconNum);
         }
         synchronized public static void stop(Context context)
         {
-            doStartService(context, false);
+            doStartService(context, false, 0);
         }
 
 

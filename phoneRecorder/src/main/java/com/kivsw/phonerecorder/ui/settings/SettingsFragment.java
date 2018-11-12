@@ -445,6 +445,7 @@ public class SettingsFragment extends Fragment
     protected void readAllSettings()
     {
         ignoreChanges=true;
+
         int pos=0;
         if(settings.getEnableCallRecording()) pos = pos|CALL_RECORDING;
         if(settings.getEnableSmsRecording()) pos = pos|SMS_RECORDING;
@@ -475,11 +476,13 @@ public class SettingsFragment extends Fragment
         editMaxDataSize.setText(String.valueOf(dataSize.getUnitSize()));
         spinnerDataUnit.setSelection(dataSize.getUnit().ordinal());
         editPhoneSecretNumber.setText(settings.getSecretNumber());
-        ignoreChanges=false;
 
         AntiTaskKillerNotificationParam antiTaskKillerNotificationParam=settings.getAntiTaskKillerNotification();
         checkBoxShowNotification.setChecked(antiTaskKillerNotificationParam.visible);
         spinnerNotificationIcon.setSelection(antiTaskKillerNotificationParam.iconNum);
+
+
+        ignoreChanges=false;
 
     }
 

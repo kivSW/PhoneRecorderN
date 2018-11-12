@@ -4,6 +4,7 @@ package com.kivsw.phonerecorder.os;
 import com.kivsw.phonerecorder.model.metrica.IMetrica;
 import com.kivsw.phonerecorder.model.settings.ISettings;
 import com.kivsw.phonerecorder.model.settings.Settings;
+import com.kivsw.phonerecorder.model.settings.types.AntiTaskKillerNotificationParam;
 import com.kivsw.phonerecorder.os.jobs.AntiTaskkillerService;
 
 import javax.inject.Inject;
@@ -64,12 +65,15 @@ public class MyApplication extends android.app.Application {
             public void onComplete() {  }
         });
 
+        onAntitaskkillerChanged();
+
     }
 
     protected void onAntitaskkillerChanged()
     {
-        if(settings.getAntiTaskKillerNotification().visible)
-             AntiTaskkillerService.start(this);
+        AntiTaskKillerNotificationParam param = settings.getAntiTaskKillerNotification();
+        if(param.visible)
+             AntiTaskkillerService.start(this, param.iconNum);
         else AntiTaskkillerService.stop(this);
     }
 
