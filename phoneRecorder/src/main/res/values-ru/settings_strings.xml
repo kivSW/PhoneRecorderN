@@ -20,7 +20,7 @@
     <string name="allow_mobile_internet_when_roaming">Отправлять в роуминге</string>
     <string name="journal_export">Выгрузить журнал событий</string>
     <string name="use_internal_player">Использовать внутренний плеер</string>
-    <string name="abonent_to_filename">Добавить имя абонента в названии файла</string>
+    <string name="abonent_to_filename">Добавить имя абонента в название файла</string>
 
 
     <string name="data_file_path">Сохранять:</string>

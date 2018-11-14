@@ -65,7 +65,10 @@ public class MyApplication extends android.app.Application {
             public void onComplete() {  }
         });
 
-        onAntitaskkillerChanged();
+        try {
+            onAntitaskkillerChanged();
+        }catch(Throwable t)
+        {}
 
     }
 

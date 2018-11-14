@@ -6,9 +6,9 @@ android {
     defaultConfig {
         applicationId 'com.kivSW.phonerecorder'
         minSdkVersion 15
-        targetSdkVersion 25
-        versionCode 37
-        versionName '3.2.0'
+        targetSdkVersion 26
+        versionCode 38
+        versionName '3.2.1'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
