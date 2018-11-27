@@ -3,6 +3,7 @@ package com.kivsw.phonerecorder.model.internal_filelist;
 import com.kivsw.phonerecorder.model.addrbook.FileAddrBook;
 import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor;
 import com.kivsw.phonerecorder.model.internal_filelist.record_file_list.IListOfSentFiles;
+import com.kivsw.phonerecorder.model.persistent_data.IJournal;
 import com.kivsw.phonerecorder.model.persistent_data.Journal;
 import com.kivsw.phonerecorder.model.settings.ISettings;
 import com.kivsw.phonerecorder.model.settings.Settings;
@@ -31,15 +32,17 @@ public class InternalFiles implements IInternalFiles {
     //private Map<RecordFileNameData, String> sentFiles;
     IListOfSentFiles sentFiles;
     private String sentFileListPath;
-    FileAddrBook fileAddrBook;
+    private FileAddrBook fileAddrBook;
+    private IJournal journal;
 
     private static final int MAX_FILES_NUM = 20;
 
 
-    InternalFiles( ISettings settings, FileAddrBook fileAddrBook, IListOfSentFiles listOfSentFiles, IErrorProcessor errorProcessor)
+    InternalFiles( ISettings settings, FileAddrBook fileAddrBook, IListOfSentFiles listOfSentFiles, IJournal journal, IErrorProcessor errorProcessor)
     {
         this.settings = settings;
         this.errorProcessor = errorProcessor;
+        this.journal = journal;
         sentFileListPath = settings.getInternalTempPath() + "sentFileList";
         this.sentFiles = listOfSentFiles;
 
@@ -139,6 +142,7 @@ public class InternalFiles implements IInternalFiles {
 
             if(filecount>MAX_FILES_NUM)
             {
+                journal.journalAdd("deleting old file "+item);
                 File file=new File(settings.getInternalTempPath(), item);
                 if(file.delete()) {
                     sentFiles.removeFile(item);
@@ -192,8 +196,10 @@ public class InternalFiles implements IInternalFiles {
         for(String fileName:fileList)
         {
             File file=new File(localDir, fileName);
-            if(!file.exists() || file.length()<1)
+            if(!file.exists() || file.length()<1) {
+                journal.journalAdd("deleting empty file "+fileName);
                 file.delete();
+            }
             else
                 res.add(fileName);
         };

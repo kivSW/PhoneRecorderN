@@ -9,7 +9,7 @@ import android.content.Intent;
  * Created by ivan on 5/7/18.
  */
 
-public class WatchdogTimer {
+public class WatchdogTimerToSend {
     public final static String ACTION_WATCHDOG_TIMER = "WatchdogTimer.ACTION_WATCHDOG_TIMER";
 
     private static PendingIntent getAlarmIntent(Context context)

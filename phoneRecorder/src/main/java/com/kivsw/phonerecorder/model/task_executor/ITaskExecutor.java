@@ -16,4 +16,5 @@ public interface ITaskExecutor {
 
     void startAddrBookReading();
     void stopAddrBookReading();
+
 }

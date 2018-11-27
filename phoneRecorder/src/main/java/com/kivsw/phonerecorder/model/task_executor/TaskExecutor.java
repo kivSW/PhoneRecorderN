@@ -58,6 +58,5 @@ class TaskExecutor implements ITaskExecutor{
     @Override
     public void stopAddrBookReading(){
         AppService.stopTask(context, ITaskProvider.TASK_ADDRBOOK_READING);
-    };
-
+    }
 }

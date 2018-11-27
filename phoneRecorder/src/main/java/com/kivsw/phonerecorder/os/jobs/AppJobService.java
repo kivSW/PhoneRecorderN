@@ -9,6 +9,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.os.PersistableBundle;
 
+import com.kivsw.phonerecorder.model.persistent_data.IJournal;
 import com.kivsw.phonerecorder.model.task_executor.tasks.ITask;
 import com.kivsw.phonerecorder.model.task_executor.tasks.ITaskProvider;
 import com.kivsw.phonerecorder.os.MyApplication;
@@ -26,8 +27,8 @@ import javax.inject.Inject;
 public class AppJobService extends JobService {
 
     private Map<String, List<JobParameters>> activeTasks;
-    @Inject
-    public ITaskProvider taskProvider;
+    @Inject  protected ITaskProvider taskProvider;
+    @Inject  protected IJournal journal;
 
     /**
      * Called by the system when the service is first created.  Do not call this method directly.
@@ -43,6 +44,8 @@ public class AppJobService extends JobService {
 
        boolean start =  params.getExtras().getBoolean(EXTRA_START);
        String taskId =    params.getExtras().getString(TASK_NAME);
+
+        journal.journalAdd("AppJobService.onStartJob(): "+taskId+"start="+start);
 
        boolean hasBeenStarted=false;
         ITask task=taskProvider.getTask(taskId);
@@ -69,11 +72,12 @@ public class AppJobService extends JobService {
 
     @Override
     public boolean onStopJob(JobParameters params) {
+        journal.journalAdd("AppJobService.onStopJob() ");
         return false;
     }
 
 
-    protected void addTask(String taskId, JobParameters params)
+    protected void addTask(String taskId, JobParameters job)
     {
         List<JobParameters> jobParamList= activeTasks.get(taskId);
         if(jobParamList==null)
@@ -81,7 +85,8 @@ public class AppJobService extends JobService {
             jobParamList=new LinkedList<>();
             activeTasks.put(taskId, jobParamList);
         }
-        jobParamList.add(params);
+        jobParamList.add(job);
+        journal.journalAdd("AppJobService.addTask(): job.id="+String.valueOf(job.getJobId()) );
 
     };
 
@@ -93,7 +98,7 @@ public class AppJobService extends JobService {
             if(jobParamList.size()==0) activeTasks.remove(taskId);
 
             jobFinished(job, false);
-            //stopSelfResult(-1);
+            journal.journalAdd("AppJobService.removeTask(): job.id="+String.valueOf(job.getJobId()) );
         }
 
 

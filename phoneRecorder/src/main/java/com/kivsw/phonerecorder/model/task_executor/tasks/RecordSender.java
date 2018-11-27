@@ -14,7 +14,7 @@ import com.kivsw.phonerecorder.model.persistent_data.IJournal;
 import com.kivsw.phonerecorder.model.settings.ISettings;
 import com.kivsw.phonerecorder.model.task_executor.ITaskExecutor;
 import com.kivsw.phonerecorder.model.utils.RecordFileNameData;
-import com.kivsw.phonerecorder.os.WatchdogTimer;
+import com.kivsw.phonerecorder.os.WatchdogTimerToSend;
 import com.kivsw.phonerecorder.ui.notification.NotificationShower;
 
 import java.util.ArrayList;
@@ -148,13 +148,15 @@ public class RecordSender implements ITask {
             return false;
         }
 
-        WatchdogTimer.setTimer(context);
+        WatchdogTimerToSend.setTimer(context);
 
         final String srcPath=settings.getInternalTempPath();
         final String dstPath= settings.getSavingUrlPath();
 
         if(!checkSendCondition(dstPath))
             return false;
+
+        journal.journalAdd("RecordSender.startTask()");
 
         final SendingParam sendingParam=new SendingParam(srcPath, dstPath, context.getText(R.string.rec_sending).toString());
 

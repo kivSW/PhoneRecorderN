@@ -12,7 +12,7 @@ public interface IJournal {
 
     void journalAdd(String data);
     void journalAdd(Throwable throwable);
-    void journalAdd(Intent intent);
+    void journalAdd(String data, Intent intent);
 
     void setErrorProcessor(IErrorProcessor errorProcessor);
 

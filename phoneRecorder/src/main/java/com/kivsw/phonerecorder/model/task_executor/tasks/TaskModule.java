@@ -26,9 +26,10 @@ public class TaskModule {
     @Singleton
     CallRecorder provideCallRecorder(Context context, ISettings settings, IPersistentDataKeeper callInfoKeeper,
                                      ITaskExecutor taskExecutor, IInternalFiles internalFiles,
-                                     NotificationShower notification, PhoneAddrBook localPhoneAddrBook, IErrorProcessor errorProcessor)
+                                     NotificationShower notification, PhoneAddrBook localPhoneAddrBook,
+                                     IJournal journal, IErrorProcessor errorProcessor)
     {
-        return new CallRecorder(context,settings, callInfoKeeper, taskExecutor, internalFiles, notification, localPhoneAddrBook, errorProcessor);
+        return new CallRecorder(context,settings, callInfoKeeper, taskExecutor, internalFiles, notification, localPhoneAddrBook, journal, errorProcessor);
     };
 
 

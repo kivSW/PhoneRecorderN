@@ -42,7 +42,7 @@ public class AppReceiver extends android.content.BroadcastReceiver{
         MyConfiguration.waitForDebugger();  // for debugging process
         MyApplication.getComponent().inject(this);
 
-        journal.journalAdd(intent);
+        journal.journalAdd("AppReceiver.onReceive()", intent);
         try {
             processIntent(context, intent);
         }catch(Throwable t)
@@ -69,9 +69,10 @@ public class AppReceiver extends android.content.BroadcastReceiver{
             case TelephonyManager.ACTION_PHONE_STATE_CHANGED:
                 phoneStateChanged(context, intent);
                 break;
-            case WatchdogTimer.ACTION_WATCHDOG_TIMER:
+            case WatchdogTimerToSend.ACTION_WATCHDOG_TIMER:
                 doDataSave(context, intent);
                 break;
+
             case AntiTaskKillerNotification.NOTIFICATION_CLICK_ACTION:
                 onNotificationClick();
                 break;
@@ -91,6 +92,7 @@ public class AppReceiver extends android.content.BroadcastReceiver{
         taskExecutor.startAddrBookReading();
         setWatchdogTimer(context);
     }
+
     protected void setLauncherIcon(Context context, Intent intent)
     {
 
@@ -100,7 +102,7 @@ public class AppReceiver extends android.content.BroadcastReceiver{
 
     protected void setWatchdogTimer(Context context)
     {
-        WatchdogTimer.setTimer(context);
+        WatchdogTimerToSend.setTimer(context);
     }
 
     protected void phoneStateChanged(Context context, Intent intent)

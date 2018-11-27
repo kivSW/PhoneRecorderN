@@ -1,11 +1,14 @@
 package com.kivsw.phonerecorder.os.jobs;
 
+import android.app.Notification;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
 
+import com.kivsw.phonerecorder.model.persistent_data.IJournal;
 import com.kivsw.phonerecorder.model.task_executor.tasks.ITask;
 import com.kivsw.phonerecorder.model.task_executor.tasks.ITaskProvider;
 import com.kivsw.phonerecorder.os.MyApplication;
@@ -15,11 +18,12 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+
 /**
  * this service is used just to indicate to the framework that we have some background work
  */
 
-public class AppService extends android.app.Service {
+public class AppService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -28,42 +32,38 @@ public class AppService extends android.app.Service {
 
     private int lastStartId;
     private Map<String, Integer> activeTasks;
-    @Inject
-    public ITaskProvider taskProvider;
+    @Inject protected ITaskProvider taskProvider;
+    @Inject protected IJournal journal;
     final static String EXTRA_START="EXTRA_START";
+
+    protected static AppService instance;
 
     public void onCreate() {
         super.onCreate();
         activeTasks = new HashMap<>();
         MyApplication.getComponent().inject(this);
+        instance = this;
     };
 
     public void onDestroy()
     {
+        instance = null;
+        journal.journalAdd("AppService.onDestroy()");
         super.onDestroy();
     };
 
 
-   /* ITask getTask(String task)
-    {
-        switch(task)
-        {
-            case TASK_CALL_RECORDING:
-                return MyApplication.getComponent().getCallRecorder();
-            case TASK_SEND_FILES:
-                return MyApplication.getComponent().getRecordSender();
-            case TASK_SMS_READING:
-                 return MyApplication.getComponent().getSmsReader();
-        };
-
-        return null;
-    }*/
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        String taskId="";
+        boolean start=false;
+        journal.journalAdd("AppService.onStartCommand()", intent);
+
         lastStartId = startId;
-        String taskId = intent.getAction();
-        boolean start=intent.getBooleanExtra(EXTRA_START,false);
+        if(intent!=null) {
+            taskId = intent.getAction();
+            start = intent.getBooleanExtra(EXTRA_START, false);
+        }
 
 
         ITask task=taskProvider.getTask(taskId);
@@ -80,11 +80,11 @@ public class AppService extends android.app.Service {
                 removeTask(taskId);
             }
         }
-        else
-            removeTask(taskId);
 
+        startForegroundIfNecessary();
+        stopIfNecessory(); // stops this service
 
-        return START_NOT_STICKY;
+        return START_STICKY;
     }
 
     protected void addTask(String action)
@@ -107,13 +107,28 @@ public class AppService extends android.app.Service {
             if(newCount<=0) activeTasks.remove(action);
             else activeTasks.put(action, Integer.valueOf(newCount) );
         }
+    };
 
+    private boolean isForeground=false;
+    protected void startForegroundIfNecessary()
+    {
+        if(isForeground) return;
+        if(activeTasks.isEmpty()) return;
+
+        isForeground=true;
+        if (startService(new Intent(this, ForegroundEnablingService.class)) == null)
+            journal.journalAdd("can't start service ForegroundEnablingService");
+
+    }
+    protected void stopIfNecessory()
+    {
         if(activeTasks.isEmpty())
         {
+            isForeground = false;
             stopSelfResult(lastStartId);
             releaseWakeLock();
         }
-    };
+    }
 
     private static PowerManager.WakeLock wl=null;
     protected static void aquireWakeLock(Context context)
@@ -151,6 +166,46 @@ public class AppService extends android.app.Service {
     synchronized public static void stopTask(Context context, String action)
     {
         startService(context, action, false);
+    }
+
+
+    /**
+     * this is an auxiliary service to make AppService foreground
+     */
+    public static class ForegroundEnablingService extends Service {
+
+        @Override
+        public int onStartCommand(Intent intent, int flags, int startId) {
+            if (AppService.instance == null)
+                throw new RuntimeException(AppService.class.getSimpleName() + " not running");
+
+            //Set both services to foreground using the same notification id, resulting in just one notification
+            startForeground(AppService.instance);
+            startForeground(this);
+
+            //Cancel this service's notification, resulting in zero notifications
+            stopForeground(true);
+
+            //Stop this service so we don't waste RAM.
+            //Must only be called *after* doing the work or the notification won't be hidden.
+            stopSelf();
+
+            return START_NOT_STICKY;
+        }
+
+        //private static final int NOTIFICATION_ID = 10;
+
+        private void startForeground(Service service) {
+            Notification notification = new Notification.Builder(service).getNotification();
+            int NOTIFICATION_ID=com.kivsw.phonerecorder.ui.notification.NotificationShowerModule.AUXIALIARY_NOTIFICATION_ID;
+            service.startForeground(NOTIFICATION_ID, notification);
+        }
+
+        @Override
+        public IBinder onBind(Intent intent) {
+            return null;
+        }
+
     }
 
 }

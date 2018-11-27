@@ -55,6 +55,9 @@
 
         <service android:name="com.kivsw.phonerecorder.os.jobs.AppService"
             android:exported="false"/>
+        <service android:name="com.kivsw.phonerecorder.os.jobs.AppService$ForegroundEnablingService"
+                 android:exported="false"/>
+
         <service android:name="com.kivsw.phonerecorder.os.jobs.AppJobService"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE"

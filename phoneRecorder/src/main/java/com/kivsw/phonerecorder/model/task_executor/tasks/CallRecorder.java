@@ -7,6 +7,7 @@ import android.os.SystemClock;
 import com.kivsw.phonerecorder.model.addrbook.PhoneAddrBook;
 import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor;
 import com.kivsw.phonerecorder.model.internal_filelist.IInternalFiles;
+import com.kivsw.phonerecorder.model.persistent_data.IJournal;
 import com.kivsw.phonerecorder.model.persistent_data.IPersistentDataKeeper;
 import com.kivsw.phonerecorder.model.settings.ISettings;
 import com.kivsw.phonerecorder.model.settings.types.SoundSource;
@@ -36,7 +37,8 @@ public class CallRecorder implements ITask {
     private IErrorProcessor errorProcessor;
     private ITaskExecutor taskExecutor;
     private IInternalFiles internalFiles;
-    PhoneAddrBook localPhoneAddrBook;
+    private PhoneAddrBook localPhoneAddrBook;
+    private IJournal journal;
 
     private NotificationShower notification;
     private MediaRecorder recorder = null;
@@ -48,6 +50,7 @@ public class CallRecorder implements ITask {
     @Inject
     public CallRecorder(Context context, ISettings settings, IPersistentDataKeeper callInfoKeeper, ITaskExecutor taskExecutor,
                         IInternalFiles internalFiles,  NotificationShower notification, PhoneAddrBook localPhoneAddrBook,
+                        IJournal journal,
                         IErrorProcessor errorProcessor) {
         this.context = context;
         this.settings = settings;
@@ -57,6 +60,8 @@ public class CallRecorder implements ITask {
         this.internalFiles = internalFiles;
         this.errorProcessor = errorProcessor;
         this.localPhoneAddrBook = localPhoneAddrBook;
+        this.journal = journal;
+        journal.journalAdd("CallRecorder.CallRecorder()");
     }
 
     @Override
@@ -70,10 +75,14 @@ public class CallRecorder implements ITask {
         boolean newTask=true;
         notification.show(context.getText(R.string.recording_call).toString(), false);
         if(isRecording()) {
+            journal.journalAdd("CallRecorder.startTask(): it's been already started");
             newTask=false;
         }
         else {
-            startRecording();
+            boolean res = startRecording();
+            journal.journalAdd("CallRecorder.startTask(): "+res);
+            if(null == recorder)
+                journal.journalAdd("CallRecorder.startTask(): recorder==null");
         }
 
         return newTask;
@@ -81,6 +90,7 @@ public class CallRecorder implements ITask {
 
     @Override
     public void stopTask() {
+        journal.journalAdd("CallRecorder.stopTask()");
         notification.hide();
         stopRecording();
         taskExecutor.startFileSending();
@@ -101,7 +111,11 @@ public class CallRecorder implements ITask {
     }
     protected boolean startRecording()
     {
-        if(isRecording()) return true;
+        if(isRecording()) {
+            journal.journalAdd("CallRecorder.startRecording(): isRecording() returned true");
+            return true;
+        }
+
         tempFileName = settings.getInternalTempPath() + "temp~";
         createRecordFileName();
 
@@ -136,7 +150,12 @@ public class CallRecorder implements ITask {
 
     protected void stopRecording()
     {
-        if(recorder==null) return;
+        if(recorder==null) {
+            journal.journalAdd("CallRecorder.stopRecording(): recorder==null");
+            if(recordFileNameData!=null)
+                journal.journalAdd("CallRecorder.stopRecording(): recordFileNameData!=null");
+            return;
+        }
 
         String recordFileName = generateRecordFileName();
         try{
@@ -146,7 +165,9 @@ public class CallRecorder implements ITask {
 
         try{
             File file=new File(tempFileName);
-            file.renameTo(new File(recordFileName));
+            if(!file.renameTo(new File(recordFileName)))
+                throw new Exception("can't create "+recordFileName);
+            journal.journalAdd("created file "+recordFileName);
         }catch(Exception e)
         {
             errorProcessor.onError(e);

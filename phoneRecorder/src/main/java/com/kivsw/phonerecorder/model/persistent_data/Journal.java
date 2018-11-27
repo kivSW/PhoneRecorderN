@@ -53,17 +53,19 @@ public class Journal implements IJournal {
         }
     }
     @Override
-    public void journalAdd(String message)
+    public synchronized void journalAdd(String message)
     {
         try {
             removeOldFile();
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            int pid=android.os.Process.myPid();
             //sdf.format(new Date());
 
             FileWriter writer = new FileWriter(fileName,true);
             writer.append("\n\n");
             writer.append(sdf.format(new Date()));
+            writer.append(" (pid=");  writer.append(String.valueOf(pid));  writer.append(")");
             writer.append('\n');
             writer.append(message);
             writer.close();
@@ -84,28 +86,31 @@ public class Journal implements IJournal {
     };
 
     @Override
-    public void journalAdd(Intent intent)
-    {
-       StringBuilder info=new StringBuilder();
-       info.append("Intent: ");
-       info.append(intent.getAction());
+    public void journalAdd(String data, Intent intent) {
+        StringBuilder info = new StringBuilder();
+        info.append(data);info.append(":\n");
 
-       info.append("\nData: ");
-       if(intent.getData()!=null)  info.append(intent.getData().toString());
-       else   info.append("null");
+        if (intent != null) {
+            info.append("Intent.action: ");
+            info.append(intent.getAction());
 
-       info.append("\nExtras:");
-       Bundle extra=intent.getExtras();
-       if(extra != null) {
+            info.append("\nData: ");
+            if (intent.getData() != null) info.append(intent.getData().toString());
+            else info.append("null");
 
-           Set<String> keys = extra.keySet();
-           for(String key:keys) {
-               info.append(key);
-               info.append(':');
-               info.append(extra.get(key));
-               info.append(" , ");
-           }
-       }
+            info.append("\nExtras:");
+            Bundle extra = intent.getExtras();
+            if (extra != null) {
+
+                Set<String> keys = extra.keySet();
+                for (String key : keys) {
+                    info.append(key);
+                    info.append(':');
+                    info.append(extra.get(key));
+                    info.append(" , ");
+                }
+            }
+        }
 
        journalAdd(info.toString());
     };
