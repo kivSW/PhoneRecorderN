@@ -41,12 +41,18 @@ public class AntiTaskkillerService  extends android.app.Service {
         @Override
         public int onStartCommand(Intent intent, int flags, int startId) {
             lastStartId = startId;
-            String taskId = intent.getAction();
+            String taskId=START_SERVICE;
+            int iconNum=0;
+
+            if(intent!=null) {
+                taskId = intent.getAction();
+                iconNum = intent.getIntExtra(ICON_NUMBER, 0);
+            }
             if(taskId==null) taskId=STOP_SERVICE;
 
             if(taskId.equals(START_SERVICE))
             {
-                AntiTaskKillerNotificationParam param=new AntiTaskKillerNotificationParam(true, intent.getIntExtra(ICON_NUMBER, 0));
+                AntiTaskKillerNotificationParam param=new AntiTaskKillerNotificationParam(true, iconNum);
                 startForeground(antiTaskKillerNotification.getNotificationId(), antiTaskKillerNotification.createNotification(param));
             }
             else
@@ -54,8 +60,7 @@ public class AntiTaskkillerService  extends android.app.Service {
                 stopSelf();
             }
 
-            return START_STICKY;
-
+            return START_REDELIVER_INTENT;
         }
 
 
