@@ -1,6 +1,7 @@
 package com.kivsw.phonerecorder.ui.record_list;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -38,6 +39,22 @@ import phonerecorder.kivsw.com.phonerecorder.R;
 public class RecordListFragment extends Fragment
             implements RecordListContract.IRecordListView, Toolbar.OnMenuItemClickListener
 {
+
+    protected class WrapContentLinearLayoutManager extends LinearLayoutManager {
+        WrapContentLinearLayoutManager(Context context, @RecyclerView.Orientation int orientation,
+                            boolean reverseLayout)
+        {
+            super(context,orientation,reverseLayout);
+        }
+        @Override
+        public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
+            try {
+                super.onLayoutChildren(recycler, state);
+            } catch (IndexOutOfBoundsException e) {
+                
+            }
+        }
+    }
 
     private Menu menu;
     private View rootView;
@@ -158,6 +175,7 @@ public class RecordListFragment extends Fragment
 
         toolbar.setOnMenuItemClickListener(this);
 
+        recordList.setLayoutManager(new WrapContentLinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         recordList.setHasFixedSize(false);
         recordList.setLayoutManager(new LinearLayoutManager(getContext()));
         recordListAdapter = new RecordListAdapter();
