@@ -14,11 +14,11 @@ import io.reactivex.annotations.NonNull;
  */
 @Module
 public class ApplicationModule {
-    private Context context;
+    //private Context context;
     private Application application;
     public ApplicationModule(@NonNull Application application)
     {
-        this.context = context;
+        //this.context = context;
         this.application = application;
     };
 
