@@ -7,6 +7,7 @@ import com.kivsw.cloud.disk.IDiskRepresenter;
 import com.kivsw.cloud.disk.StorageUtils;
 import com.kivsw.cloud.disk.localdisk.LocalDiskRepresenter;
 import com.kivsw.cloud.disk.pcloud.PcloudRepresenter;
+import com.kivsw.cloud.disk.yandex.YandexDiskIo;
 import com.kivsw.cloud.disk.yandex.YandexRepresenter;
 import com.kivsw.phonerecorder.model.keys.keys;
 
@@ -36,7 +37,7 @@ public class DiskRepresentativeModule {
             disks.add(LocalDiskRepresenter.createPrivateStorageFS(context));
 
         disks.add(new PcloudRepresenter(context, keys.getPCloud_clientId()));
-        disks.add(new YandexRepresenter(context, keys.getYandexDiskKey(), null, null));
+        disks.add(new YandexRepresenter(context, keys.getYandexDiskKey(), null, null, YandexDiskIo.FileListOrder.NAME_DESC));
 
         return new DiskContainer(disks);
     }

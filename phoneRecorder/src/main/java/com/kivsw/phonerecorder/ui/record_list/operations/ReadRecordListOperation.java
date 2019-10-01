@@ -108,8 +108,8 @@ public class ReadRecordListOperation {
                     public BunchOfFiles apply(IDiskIO.ResourceInfo resourceInfo) throws Exception {
                         return new BunchOfFiles(dirPath, resourceInfo.content(), isCache);
                     }
-                })
-            .toObservable();
+                });
+            //.toObservable();
 
     }
 }

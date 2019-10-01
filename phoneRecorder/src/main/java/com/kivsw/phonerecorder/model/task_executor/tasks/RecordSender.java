@@ -37,6 +37,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
+import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
@@ -288,16 +289,31 @@ public class RecordSender implements ITask {
         return
             disks.getResourceInfo(dstPath)
             .observeOn(Schedulers.io())
-            .flatMapObservable(new Function<IDiskIO.ResourceInfo, Observable<String>>(){
+                    .map(new Function<IDiskIO.ResourceInfo, List<IDiskIO.ResourceInfo>>() {
+
+                        @Override
+                        public List<IDiskIO.ResourceInfo> apply(IDiskIO.ResourceInfo resourceInfo) throws Exception {
+                            return filterRecordFileList(resourceInfo.content());
+                        }
+                    })
+                    .reduce(new ArrayList<IDiskIO.ResourceInfo>(),
+                            new BiFunction<ArrayList<IDiskIO.ResourceInfo>, List<IDiskIO.ResourceInfo>, ArrayList<IDiskIO.ResourceInfo>>() {
+
+                                @Override
+                                public ArrayList<IDiskIO.ResourceInfo> apply(ArrayList<IDiskIO.ResourceInfo> o, List<IDiskIO.ResourceInfo> o2) throws Exception {
+                                    return null;
+                                }
+                            })
+            .flatMapObservable(new Function<ArrayList<IDiskIO.ResourceInfo>, Observable<String>>(){
 
                     @Override
-                    public Observable<String> apply(IDiskIO.ResourceInfo resourceInfo) throws Exception {
-                        List<IDiskIO.ResourceInfo> recordList=filterRecordFileList(resourceInfo);
+                    public Observable<String> apply(ArrayList<IDiskIO.ResourceInfo> recordList) throws Exception {
+                        //List<IDiskIO.ResourceInfo> recordList=filterRecordFileList(resourceInfo.content());
                         List<String> deletableFileList = getDeletableList(recordList);
                         notificationInfo.totalFileQuantity = deletableFileList.size();
 
                         return Observable.fromIterable(deletableFileList);
-                }
+                    }
                 })
                 .flatMapCompletable(new Function<String, CompletableSource>() {
                     @Override
@@ -312,11 +328,9 @@ public class RecordSender implements ITask {
 
     };
 
-    List<IDiskIO.ResourceInfo> filterRecordFileList(IDiskIO.ResourceInfo resourceInfo)
+    List<IDiskIO.ResourceInfo> filterRecordFileList(List<IDiskIO.ResourceInfo> fileList)
     {
-        List<IDiskIO.ResourceInfo>
-                fileList=resourceInfo.content(),
-                res = new ArrayList<>(fileList.size());
+        List<IDiskIO.ResourceInfo>  res = new ArrayList<>(fileList.size());
 
         Pattern p = Pattern.compile(RecordFileNameData.RECORD_PATTERN);//"^[0-9]{8}_[0-9]{6}_"); // this pattern filters the other app's files
         for(IDiskIO.ResourceInfo file:fileList)
