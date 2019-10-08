@@ -18,7 +18,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-
+//https://www.spiria.com/en/blog/mobile-development/hiding-foreground-services-notifications-in-android/
 /**
  * this service is used just to indicate to the framework that we have some background work
  */
@@ -82,7 +82,7 @@ public class AppService extends Service {
         }
 
         startForegroundIfNecessary();
-        stopIfNecessory(); // stops this service
+        stopIfNecessary(); // stops this service
 
         return START_STICKY;
     }
@@ -120,7 +120,7 @@ public class AppService extends Service {
             journal.journalAdd("can't start service ForegroundEnablingService");
 
     }
-    protected void stopIfNecessory()
+    protected void stopIfNecessary()
     {
         if(activeTasks.isEmpty())
         {
@@ -131,7 +131,7 @@ public class AppService extends Service {
     }
 
     private static PowerManager.WakeLock wl=null;
-    protected static void aquireWakeLock(Context context)
+    protected static void acquireWakeLock(Context context)
     {
         if(wl==null) {
             PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
@@ -154,7 +154,7 @@ public class AppService extends Service {
         intent.putExtra(EXTRA_START, start);
         context.startService(intent);
         if(start)
-            aquireWakeLock(context);
+            acquireWakeLock(context);
     }
 
 
@@ -171,6 +171,7 @@ public class AppService extends Service {
 
     /**
      * this is an auxiliary service to make AppService foreground
+     * https://stackoverflow.com/questions/10962418/how-to-startforeground-without-showing-notification
      */
     public static class ForegroundEnablingService extends Service {
 
