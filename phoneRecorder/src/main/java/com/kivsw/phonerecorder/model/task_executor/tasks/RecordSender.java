@@ -300,11 +300,12 @@ public class RecordSender implements ITask {
                             new BiFunction<ArrayList<IDiskIO.ResourceInfo>, List<IDiskIO.ResourceInfo>, ArrayList<IDiskIO.ResourceInfo>>() {
 
                                 @Override
-                                public ArrayList<IDiskIO.ResourceInfo> apply(ArrayList<IDiskIO.ResourceInfo> o, List<IDiskIO.ResourceInfo> o2) throws Exception {
-                                    return null;
+                                public ArrayList<IDiskIO.ResourceInfo> apply(ArrayList<IDiskIO.ResourceInfo> accumulator, List<IDiskIO.ResourceInfo> data) throws Exception {
+                                    accumulator.addAll(data);
+                                    return accumulator;
                                 }
                             })
-            .flatMapObservable(new Function<ArrayList<IDiskIO.ResourceInfo>, Observable<String>>(){
+                            .flatMapObservable(new Function<ArrayList<IDiskIO.ResourceInfo>, Observable<String>>(){
 
                     @Override
                     public Observable<String> apply(ArrayList<IDiskIO.ResourceInfo> recordList) throws Exception {

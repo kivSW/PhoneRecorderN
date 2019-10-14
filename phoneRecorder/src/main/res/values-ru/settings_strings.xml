@@ -14,6 +14,7 @@
     <string name="enable_call_recording">Записывать разговоры</string>
     <string name="enable_sms_recording">Записывать SMS</string>
     <string name="hidden_mode">Скрытый режим</string>
+    <string name="ask_for_hiding_notification">Вам потребуется дополнительно скрыть уведомления в настройках Андроид.</string>
     <string name="show_file_extension">Использовать расширения файлов .3gp</string>
     <string name="show_file_extension_hint">Использовать расширения .3gp</string>
     <string name="allow_mobile_internet">Отправлять записи через мобильный интернет</string>

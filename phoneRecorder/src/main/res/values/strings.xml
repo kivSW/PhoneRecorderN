@@ -19,4 +19,6 @@
 
     <string name="auth_cancelled">authorization was cancelled</string>
 
+    <string name="notification_channel_name">PhoneRecorder\'s notifications</string>
+
 </resources>

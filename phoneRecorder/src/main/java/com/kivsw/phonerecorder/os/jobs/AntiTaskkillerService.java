@@ -6,7 +6,6 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.kivsw.phonerecorder.model.settings.ISettings;
-import com.kivsw.phonerecorder.model.settings.types.AntiTaskKillerNotificationParam;
 import com.kivsw.phonerecorder.os.MyApplication;
 import com.kivsw.phonerecorder.ui.notification.AntiTaskKillerNotification;
 
@@ -52,8 +51,7 @@ public class AntiTaskkillerService  extends android.app.Service {
 
             if(taskId.equals(START_SERVICE))
             {
-                AntiTaskKillerNotificationParam param=new AntiTaskKillerNotificationParam(true, iconNum);
-                startForeground(antiTaskKillerNotification.getNotificationId(), antiTaskKillerNotification.createNotification(param));
+                startForeground(antiTaskKillerNotification.getNotificationId(), antiTaskKillerNotification.createNotification());
             }
             else
             {

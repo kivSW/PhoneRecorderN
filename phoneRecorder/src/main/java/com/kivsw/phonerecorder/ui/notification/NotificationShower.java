@@ -17,11 +17,14 @@ import javax.inject.Inject;
 
 import phonerecorder.kivsw.com.phonerecorder.R;
 
+import static com.kivsw.phonerecorder.ui.notification.NotificationChannelKt.initNotificationChannel;
+
 public class NotificationShower {
 
 	int notificationId=0;
 	protected Context context;
 	ISettings settings;
+	public static String CHANNEL_ID="com.kivsw.phonerecorder.notification_channel";
 
 	//---------------------------------------------------------------------------------
 	@Inject
@@ -30,6 +33,7 @@ public class NotificationShower {
 		this.notificationId = notificationId;
 		this.context = context;
 		this.settings = settings;
+		initNotificationChannel(context);
 	};
 
 
@@ -55,7 +59,7 @@ public class NotificationShower {
 	{
 		if(settings.getHiddenMode()) return;
 
-		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
+		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, CHANNEL_ID);
 		mBuilder.setSmallIcon(R.drawable.ic_notification_small_horns);
 		mBuilder.setLargeIcon( BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_phonerecorder) );
 		mBuilder.setContentTitle(context.getText(R.string.app_name).toString());

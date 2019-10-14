@@ -16,7 +16,7 @@ import dagger.Provides;
 public class NotificationShowerModule {
     private static int dynamic_id =1000;
     private static final int ANTI_TASK_KILLER_NOTIFICATION_ID =1;
-    public static final int AUXIALIARY_NOTIFICATION_ID =2;
+    public static final int FOREGROUND_SERVICE_NOTIFICATION_ID =2;
 
     @Provides
     static public NotificationShower provideNotification(Context context, ISettings settings)
@@ -30,4 +30,11 @@ public class NotificationShowerModule {
     {
         return new AntiTaskKillerNotification(context, settings, ANTI_TASK_KILLER_NOTIFICATION_ID);
     };
+
+    @Provides
+    @Singleton
+    static public ServiceNotification provideServiceNotification(Context context, ISettings settings)
+    {
+        return new ServiceNotification(context, settings, FOREGROUND_SERVICE_NOTIFICATION_ID);
+    }
 }

@@ -2,7 +2,7 @@ package com.kivsw.phonerecorder.model.utils;
 
 import android.support.annotation.NonNull;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

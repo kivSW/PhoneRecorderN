@@ -17,4 +17,6 @@
     <string name="recording_call">Звонок записывается</string>
 
     <string name="auth_cancelled">Авторизация отменена</string>
+
+    <string name="notification_channel_name">Уведомления PhoneRecorder</string>
 </resources>
