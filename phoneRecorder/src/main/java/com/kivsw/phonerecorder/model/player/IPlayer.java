@@ -9,7 +9,7 @@ import com.kivsw.phonerecorder.model.utils.RecordFileNameData;
  */
 
 public interface IPlayer {
-    void setUiParam(String callerName, RecordFileNameData recordFileNameData);
+    void setUiLabels(String callerName, RecordFileNameData recordFileNameData);
     void play(Context activity, String filePath);
     void playItemWithChooser(Context activity,String filePath);
 }

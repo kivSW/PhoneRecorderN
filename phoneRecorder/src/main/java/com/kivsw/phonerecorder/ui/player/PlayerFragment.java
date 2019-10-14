@@ -141,4 +141,11 @@ implements PlayerContract.IPlayerView {
        textViewCaption.setText(Html.fromHtml(label));
     }
 
+    @Override
+    public void setKeepScreenOn(boolean v)
+    {
+        if(v) getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        else  getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    };
+
 }

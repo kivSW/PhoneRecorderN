@@ -22,6 +22,7 @@ public class PlayerContract {
            void setMaxPosition(int max);
            void setPosition(int pos, String label);
            void setCaption(String label);
+           void setKeepScreenOn(boolean v);
            void dismiss();
        }
 

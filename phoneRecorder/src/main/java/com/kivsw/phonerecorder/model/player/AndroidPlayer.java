@@ -63,7 +63,7 @@ public class AndroidPlayer implements IPlayer{
 
     }
     @Override
-    public void setUiParam(String callerName, RecordFileNameData recordFileNameData)
+    public void setUiLabels(String callerName, RecordFileNameData recordFileNameData)
     {
 
     };

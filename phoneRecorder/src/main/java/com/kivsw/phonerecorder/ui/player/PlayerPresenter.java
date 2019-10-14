@@ -48,6 +48,7 @@ public class PlayerPresenter
     private String callerName;
     private RecordFileNameData recordFileNameData;
     private int currentPos;
+    private boolean isPlaying=false;
     private int trackDuration=0;
 
     @Inject
@@ -114,7 +115,7 @@ public class PlayerPresenter
 
 
     @Override
-    public void setUiParam(String callerName, RecordFileNameData recordFileNameData) {
+    public void setUiLabels(String callerName, RecordFileNameData recordFileNameData) {
         this.callerName = callerName;
         this.recordFileNameData = recordFileNameData;
     }
@@ -153,7 +154,7 @@ public class PlayerPresenter
                                                   mp.seekTo(currentPos);
                                                   setUiParam();
                                                   mp.start();
-                                                  startPositionUpdating();
+                                                  onStartPlaying();
                                               }
                                           });
             mplayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
@@ -189,7 +190,7 @@ public class PlayerPresenter
             mplayer.reset();
             mplayer.release();
         }
-        stopPositionUpdating();
+        onStopPlaying();
         currentPos=0;
         mplayer=null;
     }
@@ -198,7 +199,7 @@ public class PlayerPresenter
     void resumePlaying() {
         if(mplayer!=null) {
             mplayer.start();
-            startPositionUpdating();
+            onStartPlaying();
         }
         else
             startPlaying();
@@ -208,7 +209,7 @@ public class PlayerPresenter
     void pausePlaying() {
        if(mplayer!=null)
            mplayer.pause();
-       stopPositionUpdating();
+       onStopPlaying();
     }
 
     @Override
@@ -254,9 +255,11 @@ public class PlayerPresenter
         if (trackDuration >= 0)
             view.setMaxPosition(trackDuration);
 
-        if(mplayer!=null)
+        if(mplayer!=null) {
             currentPos = mplayer.getCurrentPosition();
+        }
         updatePosition(currentPos);
+        setKeepScreenOn();
     }
     protected void updatePosition(int pos)
     {
@@ -264,11 +267,13 @@ public class PlayerPresenter
         view.setPosition(pos, Utils.timeToStr(pos/1000));
     }
     private Subscription updatePositionSubscription;
-    protected void startPositionUpdating()
+    protected void onStartPlaying()
     {
         final int TIME_PERIOD=50;
 
-         Observable.interval(TIME_PERIOD,TIME_PERIOD, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+        isPlaying=true;
+        setKeepScreenOn();
+        Observable.interval(TIME_PERIOD,TIME_PERIOD, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
                 .toFlowable(BackpressureStrategy.LATEST)
                 .subscribe(new FlowableSubscriber<Long>(){
                     @Override
@@ -292,12 +297,20 @@ public class PlayerPresenter
                 });
 
     }
-    protected void stopPositionUpdating()
+    protected void onStopPlaying()
     {
         if(updatePositionSubscription ==null)
             return;
         updatePositionSubscription.cancel();
         updatePositionSubscription =null;
+
+        isPlaying=false;
+        setKeepScreenOn();
+    }
+
+    protected void setKeepScreenOn()
+    {
+        if(view!=null) view.setKeepScreenOn(isPlaying);
     }
 
 

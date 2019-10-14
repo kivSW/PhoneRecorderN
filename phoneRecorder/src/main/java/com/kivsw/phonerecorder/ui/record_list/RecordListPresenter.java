@@ -385,7 +385,7 @@ public class RecordListPresenter
                                 else
                                     if(view!=null) {
                                         IPlayer player = providePlayerInstance();
-                                        player.setUiParam(recordFileInfo.callerName, recordFileInfo.recordFileNameData);
+                                        player.setUiLabels(recordFileInfo.callerName, recordFileInfo.recordFileNameData);
                                         player.play(view.getContext(), cacheFileInfo.localName);
                                     }
                         }
