@@ -142,7 +142,7 @@ class AppService : Service() {
         internal var instance: AppService? = null
 
         fun mayApplicationHideNotification(): Boolean {
-            return Build.VERSION.SDK_INT < Build.VERSION_CODES.N // ver 7.0
+            return Build.VERSION.SDK_INT <= Build.VERSION_CODES.N // ver 7.0
         }
 
         private var wl: PowerManager.WakeLock? = null
@@ -184,36 +184,4 @@ class AppService : Service() {
     }
 }
 
-/**
- * this is an auxiliary service to make AppService foreground
- * https://stackoverflow.com/questions/10962418/how-to-startforeground-without-showing-notification
- */
-class ForegroundEnablingService : Service() {
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        if (AppService.instance == null)
-            throw RuntimeException(AppService::class.java.simpleName + " not running")
-
-        //Set both services to foreground using the same notification id, resulting in just one notification
-        AppService.instance?.let{
-            val notificationId = it.serviceNotification.notificationId
-            val notification = it.createForegroundNotification()
-            it.startForeground(notificationId, notification)
-            startForeground(notificationId, notification)
-        }
-
-        //Cancel this service's notification, resulting in zero notifications
-        stopForeground(true)
-
-        //Stop this service so we don't waste RAM.
-        //Must only be called *after* doing the work or the notification won't be hidden.
-        stopSelf()
-
-        return START_NOT_STICKY
-    }
-
-    override fun onBind(intent: Intent): IBinder? {
-        return null
-    }
-
-}

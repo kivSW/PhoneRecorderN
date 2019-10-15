@@ -5,5 +5,5 @@ package com.kivsw.phonerecorder.model.settings.types;
  */
 
 public enum SoundSource {
-    MIC, VOICE_CALL, VOICE_COMMUNICATION
+    MIC, VOICE_CALL, VOICE_COMMUNICATION, VOICE_RECOGNITION, UNPROCESSED
 }

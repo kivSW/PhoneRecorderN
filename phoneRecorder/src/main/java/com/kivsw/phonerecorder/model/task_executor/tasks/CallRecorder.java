@@ -105,6 +105,10 @@ public class CallRecorder implements ITask {
                 return MediaRecorder.AudioSource.VOICE_CALL;
             case VOICE_COMMUNICATION:
                 return MediaRecorder.AudioSource.VOICE_COMMUNICATION;
+            case VOICE_RECOGNITION:
+                return MediaRecorder.AudioSource.VOICE_RECOGNITION;
+            case UNPROCESSED:
+                return MediaRecorder.AudioSource.UNPROCESSED;
         };
         return MediaRecorder.AudioSource.MIC;
 

@@ -6,16 +6,11 @@
         <item>MIC</item>
         <item>VOICE-CALL</item>
         <item>VOICE-COMMUNICATION</item>
+        <item>VOICE-RECOGNITION</item>
+        <item>UNPROCESSED</item>
         <!-- <item>VOICE-UPLINK</item>
         <item>VOICE-DOWNLINK</item> -->
     </string-array>
-    <integer-array name="sound_code_array">
-        <item>1</item>
-        <item>4</item>
-        <item>7</item>
-        <item>2</item>
-        <item>3</item>
-    </integer-array>
 
     <string-array name="data_size_units" translatable="false">
         <item>B</item>
