@@ -15,7 +15,6 @@ import com.kivsw.phonerecorder.model.task_executor.ITaskExecutor;
 import com.kivsw.phonerecorder.model.utils.MyConfiguration;
 import com.kivsw.phonerecorder.ui.main_activity.MainActivity;
 import com.kivsw.phonerecorder.ui.main_activity.MainActivityPresenter;
-import com.kivsw.phonerecorder.ui.notification.AntiTaskKillerNotificationKt;
 
 import javax.inject.Inject;
 
@@ -73,9 +72,9 @@ public class AppReceiver extends android.content.BroadcastReceiver{
                 doDataSave(context, intent);
                 break;
 
-            case AntiTaskKillerNotificationKt.NOTIFICATION_CLICK_ACTION:
+            /*case AntiTaskKillerNotificationKt.NOTIFICATION_CLICK_ACTION:
                 onNotificationClick();
-                break;
+                break;*/
 
             case Telephony.Sms.Intents.SMS_RECEIVED_ACTION:
             case Telephony.Sms.Intents.SMS_DELIVER_ACTION:

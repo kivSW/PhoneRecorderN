@@ -15,7 +15,7 @@ internal fun initNotificationChannel(context:Context) {
         val name = context.getString(R.string.notification_channel_name)
         val descriptionText = ""
         val importance = NotificationManager.IMPORTANCE_LOW
-        val channel = NotificationChannel(AntiTaskKillerNotification.CHANNEL_ID, name, importance).apply {
+        val channel = NotificationChannel(NotificationShower.CHANNEL_ID, name, importance).apply {
             description = descriptionText
         }
         // Register the channel with the system

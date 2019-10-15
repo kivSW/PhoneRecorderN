@@ -15,7 +15,6 @@ import com.kivsw.phonerecorder.model.settings.Settings;
 import com.kivsw.phonerecorder.model.task_executor.ITaskExecutor;
 import com.kivsw.phonerecorder.os.LauncherIcon;
 import com.kivsw.phonerecorder.os.jobs.AppService;
-import com.kivsw.phonerecorder.ui.notification.AntiTaskKillerNotification;
 
 import javax.inject.Inject;
 
@@ -39,7 +38,6 @@ public class SettingsPresenter implements SettingsContract.ISettingsPresenter {
     protected DiskContainer disks;
     protected ITaskExecutor taskExecutor;
     protected IErrorProcessor errorProcessor;
-    protected AntiTaskKillerNotification antiTaskKillerNotification;
 
    /* public static SettingsPresenter createDialog(Context context, FragmentManager fragmentManager)
     {
@@ -56,7 +54,8 @@ public class SettingsPresenter implements SettingsContract.ISettingsPresenter {
     }*/
 
     @Inject
-    public SettingsPresenter(Context  context, ISettings settings, DiskContainer disks, ITaskExecutor taskExecutor, IErrorProcessor errorProcessor, AntiTaskKillerNotification antiTaskKillerNotification)
+    public SettingsPresenter(Context  context, ISettings settings, DiskContainer disks,
+                             ITaskExecutor taskExecutor, IErrorProcessor errorProcessor)
     {
         super();
         this.context = context;
@@ -65,7 +64,6 @@ public class SettingsPresenter implements SettingsContract.ISettingsPresenter {
         this.disks = disks;
         this.taskExecutor = taskExecutor;
         this.errorProcessor = errorProcessor;
-        this.antiTaskKillerNotification=antiTaskKillerNotification;
 
     }
     @Override

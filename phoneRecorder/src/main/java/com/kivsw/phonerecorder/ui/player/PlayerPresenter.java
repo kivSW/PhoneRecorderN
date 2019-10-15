@@ -126,7 +126,6 @@ public class PlayerPresenter
         this.filePath = filePath;
         currentPos=0;
         startPlaying();
-
     }
 
     @Override

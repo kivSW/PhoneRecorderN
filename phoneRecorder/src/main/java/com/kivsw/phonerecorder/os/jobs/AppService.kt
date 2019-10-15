@@ -1,8 +1,10 @@
 package com.kivsw.phonerecorder.os.jobs
 
+import android.app.Notification
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
@@ -10,9 +12,11 @@ import com.kivsw.phonerecorder.model.error_processor.IErrorProcessor
 import com.kivsw.phonerecorder.model.persistent_data.IJournal
 import com.kivsw.phonerecorder.model.task_executor.tasks.ITaskProvider
 import com.kivsw.phonerecorder.os.MyApplication
-import com.kivsw.phonerecorder.ui.notification.ServiceNotification
+import com.kivsw.phonerecorder.ui.notification.NotificationShower
+import phonerecorder.kivsw.com.phonerecorder.R
 import java.util.*
 import javax.inject.Inject
+import javax.inject.Named
 
 
 //https://www.spiria.com/en/blog/mobile-development/hiding-foreground-services-notifications-in-android/
@@ -24,19 +28,18 @@ class AppService : Service() {
 
     @Inject
     lateinit var taskProvider: ITaskProvider
+
     @Inject
     lateinit var journal: IJournal
-    @Inject
-    lateinit var serviceNotification: ServiceNotification
+
+    //@Inject
+    @field:[Inject Named("foreground")]//@Named("foreground")
+    lateinit var serviceNotification: NotificationShower
 
     @Inject
     lateinit var errorProcessor: IErrorProcessor
 
     private val activeTasks: MutableMap<String, Int> = HashMap()
-
-    data class CommandDescription(val start:Boolean, val taskId:String)
-    /*private val subject:PublishSubject<CommandDescription> = PublishSubject.create()
-    private val disposable = CompositeDisposable()*/
 
     override fun onBind(intent: Intent): IBinder? =null
 
@@ -44,38 +47,8 @@ class AppService : Service() {
         super.onCreate()
         MyApplication.getComponent().inject(this)
         journal.journalAdd("AppService.onCreate()")
-        //initCmdProcessor()
         instance = this
     }
-/*
-    private fun initCmdProcessor()
-    {
-        subject
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(object:Observer<CommandDescription>{
-            override fun onComplete() {  }
-
-            override fun onSubscribe(d: Disposable){
-                disposable.add(d)
-            }
-
-            override fun onNext(cmd: CommandDescription) {
-                if(cmd.start)
-                    doStartTask(cmd.taskId)
-                else
-                    doStopTask(cmd.taskId)
-            }
-
-            override fun onError(e: Throwable) {
-                errorProcessor.onError(e)
-            }
-        })
-    }
-
-    private fun startCmdProcessing(cmd:CommandDescription)
-    {
-        subject.onNext(cmd)
-    }*/
 
     override fun onDestroy() {
         //disposable.dispose()
@@ -90,7 +63,6 @@ class AppService : Service() {
         var taskId = intent?.action?:""
         var start = intent?.getBooleanExtra(EXTRA_START,false) ?:false
 
-        //subject.onNext(CommandDescription(start, taskId))
         if(start)
             doStartTask(taskId)
         else
@@ -146,8 +118,14 @@ class AppService : Service() {
             if (startService(Intent(this, ForegroundEnablingService::class.java)) == null)
                 journal!!.journalAdd("can't start service ForegroundEnablingService")
         } else {
-            startForeground(serviceNotification!!.notificationId, serviceNotification!!.createNotification())
+            startForeground(serviceNotification!!.notificationId, createForegroundNotification())
         }
+    }
+    internal fun createForegroundNotification(): Notification
+    {
+        return serviceNotification.createNotification("","",
+                R.drawable.ic_notification_small_android,
+                BitmapFactory.decodeResource(resources, R.drawable.ic_notification_android))
     }
 
     private fun stopServiceIfNecessary() {
@@ -218,8 +196,8 @@ class ForegroundEnablingService : Service() {
 
         //Set both services to foreground using the same notification id, resulting in just one notification
         AppService.instance?.let{
-            val notificationId = it.serviceNotification!!.notificationId
-            val notification = it.serviceNotification!!.createNotification()
+            val notificationId = it.serviceNotification.notificationId
+            val notification = it.createForegroundNotification()
             it.startForeground(notificationId, notification)
             startForeground(notificationId, notification)
         }

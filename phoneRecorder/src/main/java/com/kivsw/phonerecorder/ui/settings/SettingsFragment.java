@@ -23,7 +23,6 @@ import com.kivsw.phonerecorder.model.settings.types.AntiTaskKillerNotificationPa
 import com.kivsw.phonerecorder.model.settings.types.DataSize;
 import com.kivsw.phonerecorder.model.settings.types.SoundSource;
 import com.kivsw.phonerecorder.os.MyApplication;
-import com.kivsw.phonerecorder.ui.notification.AntiTaskKillerNotification;
 
 import javax.inject.Inject;
 
@@ -58,8 +57,8 @@ public class SettingsFragment extends Fragment
     private Spinner spinnerDataUnit;
     private EditText editPhoneSecretNumber;
 
-    private CheckBox checkBoxShowNotification;
-    private Spinner spinnerNotificationIcon;
+    /*private CheckBox checkBoxShowNotification;
+    private Spinner spinnerNotificationIcon;*/
     private Button buttonExportJournal;
     //private EditText editNotificationTitle;
 
@@ -171,8 +170,8 @@ public class SettingsFragment extends Fragment
         editMaxDataSize = (EditText) rootView.findViewById(R.id.editMaxDataSize);
         spinnerDataUnit = (Spinner) rootView.findViewById(R.id.spinnerDataUnit);
         editPhoneSecretNumber = (EditText) rootView.findViewById(R.id.editPhoneSecretNumber);
-        checkBoxShowNotification = (CheckBox) rootView.findViewById(R.id.checkBoxShowNotification);
-        spinnerNotificationIcon = (Spinner) rootView.findViewById(R.id.spinnerNotificationIcon);
+        /*checkBoxShowNotification = (CheckBox) rootView.findViewById(R.id.checkBoxShowNotification);
+        spinnerNotificationIcon = (Spinner) rootView.findViewById(R.id.spinnerNotificationIcon);*/
 
         buttonExportJournal = (Button)rootView.findViewById(R.id.buttonExportJournal);
         //editNotificationTitle = (EditText) rootView.findViewById(R.id.editNotificationTitle);
@@ -366,7 +365,7 @@ public class SettingsFragment extends Fragment
             }
         });
 
-        checkBoxShowNotification.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+        /*checkBoxShowNotification.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 userChangedPermanentNotification();
@@ -382,7 +381,7 @@ public class SettingsFragment extends Fragment
             }
 
             @Override public void onNothingSelected(AdapterView<?> parent) { }
-        });
+        });*/
 
         buttonExportJournal.setOnClickListener((View v)->{
             presenter.sendJournal();
@@ -424,7 +423,7 @@ public class SettingsFragment extends Fragment
         }
     }
 
-    private void userChangedPermanentNotification()
+    /*private void userChangedPermanentNotification()
     {
         if(ignoreChanges) return;
         if(settings==null) return;
@@ -434,7 +433,7 @@ public class SettingsFragment extends Fragment
                 spinnerNotificationIcon.getSelectedItemPosition()  ));
 
         spinnerNotificationIcon.setEnabled(checkBoxShowNotification.isChecked());
-    };
+    };*/
 
 
     @Override
@@ -478,8 +477,8 @@ public class SettingsFragment extends Fragment
         editPhoneSecretNumber.setText(settings.getSecretNumber());
 
         AntiTaskKillerNotificationParam antiTaskKillerNotificationParam=settings.getAntiTaskKillerNotification();
-        checkBoxShowNotification.setChecked(antiTaskKillerNotificationParam.visible);
-        spinnerNotificationIcon.setSelection(antiTaskKillerNotificationParam.iconNum);
+        /*checkBoxShowNotification.setChecked(antiTaskKillerNotificationParam.visible);
+        spinnerNotificationIcon.setSelection(antiTaskKillerNotificationParam.iconNum);*/
 
 
         ignoreChanges=false;
