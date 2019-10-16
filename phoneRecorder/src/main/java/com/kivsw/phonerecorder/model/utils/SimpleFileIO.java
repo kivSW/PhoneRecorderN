@@ -9,7 +9,7 @@ import java.io.IOException;
  */
 
 public class SimpleFileIO {
-    static final long MAX_LENGTH = 100 * 1024;
+    static final long MAX_LENGTH = 200 * 1024;
 
     public static String readFile(String fileName) {
         try {
