@@ -142,7 +142,8 @@ class AppService : Service() {
         internal var instance: AppService? = null
 
         fun mayApplicationHideNotification(): Boolean {
-            return Build.VERSION.SDK_INT <= Build.VERSION_CODES.N // ver 7.0
+            val r= Build.VERSION.SDK_INT <= Build.VERSION_CODES.N // ver 7.0
+            return r
         }
 
         private var wl: PowerManager.WakeLock? = null
