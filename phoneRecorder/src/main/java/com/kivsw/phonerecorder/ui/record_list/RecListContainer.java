@@ -3,6 +3,7 @@ package com.kivsw.phonerecorder.ui.record_list;
 import android.content.Context;
 import android.os.Looper;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.kivsw.cloud.disk.IDiskIO;
 import com.kivsw.phonerecorder.model.addrbook.IAddrBook;
@@ -308,7 +309,7 @@ class RecListContainer {
                 };
 
       return Observable.fromIterable(itarableFromIterator(iterator))
-         .subscribeOn(Schedulers.io());
+         .subscribeOn(Schedulers.single()/*io()*/);
 
     }
 
