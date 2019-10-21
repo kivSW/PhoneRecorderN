@@ -121,8 +121,10 @@ public class AppReceiver extends android.content.BroadcastReceiver{
                 break;
 
             case TelephonyManager.CALL_STATE_RINGING: // saves the income phone number
-                String phoneNumber=intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER );
-                callInfoKeeper.setCallInfo(phoneNumber, true);
+                if(intent.hasExtra(TelephonyManager.EXTRA_INCOMING_NUMBER)) {
+                    String phoneNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
+                    callInfoKeeper.setCallInfo(phoneNumber, true);
+                }
                 /*if(BuildConfig.DEBUG)
                    startRecording(context);*/
 
@@ -161,8 +163,9 @@ public class AppReceiver extends android.content.BroadcastReceiver{
     protected void stopRecording(Context context)
     {
         IPersistentDataKeeper.CallInfo callInfo = callInfoKeeper.getCallInfo();
-
         taskExecutor.stopCallRecording();
+
+        callInfoKeeper.setCallInfo("", callInfo.isIncome);
     }
 
     protected void onNotificationClick()
