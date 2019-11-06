@@ -83,9 +83,9 @@ public class ReadRecordListOperation {
         };
 
         return
-            cloudCache.getFileFromCache(dirPath + InternalFileAddrBook.DEFAULT_FILE_NAME)
+            cloudCache.getFileFromCacheOrDownload(dirPath + InternalFileAddrBook.DEFAULT_FILE_NAME)
                     .filter((value) -> {
-                        return value instanceof CacheFileInfo;
+                        return value.localName!=null;
                     })
                     .observeOn(Schedulers.io())
                     .map((Object v) -> {
@@ -100,7 +100,6 @@ public class ReadRecordListOperation {
     };
     protected Observable<BunchOfFiles> getFileList(final String dirPath, final boolean isCache)
     {
-
         return
             disks.getResourceInfo(dirPath)
             .map(new Function<IDiskIO.ResourceInfo, BunchOfFiles>() {

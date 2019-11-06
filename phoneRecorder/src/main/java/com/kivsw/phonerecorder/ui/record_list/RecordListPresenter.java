@@ -437,15 +437,15 @@ public class RecordListPresenter
         recordFileInfo.isDownloading=true;
         notifyRecordChange(recordFileInfo);
 
-        Observable res= cloudCache.getFileFromCache(filePath)
-                .filter(new Predicate() {
+        Observable<CacheFileInfo> res= cloudCache.getFileFromCacheOrDownload(filePath)
+                .filter(new Predicate<CacheFileInfo>() {
                     @Override
-                    public boolean test(Object event) throws Exception {
-                        if(event instanceof Integer) {
-                            recordFileInfo.percentage=(((Integer) event).intValue());
+                    public boolean test(CacheFileInfo cacheFileInfo) throws Exception {
+                        if(cacheFileInfo.localName==null) {
+                            recordFileInfo.percentage=cacheFileInfo.progress;
                             //notifyRecordChange(recordFileInfo);
                         }
-                        return event instanceof CacheFileInfo;
+                        return cacheFileInfo.localName!=null;
                     }
                 })
                 .doOnComplete(new Action() {
