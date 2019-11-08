@@ -8,9 +8,6 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/cloud_disk" />
-            <option value="$PROJECT_DIR$/mvprxdialog" />
-            <option value="$PROJECT_DIR$/mvprxfiledialog" />
             <option value="$PROJECT_DIR$/phoneRecorder" />
           </set>
         </option>

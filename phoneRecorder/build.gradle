@@ -42,7 +42,7 @@ dependencies {
     dependencies {
         implementation 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.5@aar'
     }
-    implementation project(path: ':cloud_disk')
+
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.13'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
@@ -54,7 +54,10 @@ dependencies {
     implementation 'com.yandex.android:mobmetricalib:3.8.0'
     // Optional. Play Install Referrer library for better attribution.
     //implementation 'com.android.installreferrer:installreferrer:1.0'
-    implementation project(':cloud_disk')
-    implementation project(':mvprxdialog')
-    implementation project(':mvprxfiledialog')
+    //implementation project(':cloud_disk')
+    //implementation project(':mvprxdialog')
+    //implementation project(':mvprxfiledialog')
+    implementation 'com.github.kivSW.MvpRxLibraries:cloud_disk:1.0.2'
+    implementation 'com.github.kivSW.MvpRxLibraries:mvprxdialog:1.0.2'
+    implementation 'com.github.kivSW.MvpRxLibraries:mvprxfiledialog:1.0.2'
 }

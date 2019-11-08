@@ -3,9 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/FaithPhoneRecorder.iml" filepath="$PROJECT_DIR$/FaithPhoneRecorder.iml" />
-      <module fileurl="file://$PROJECT_DIR$/cloud_disk/cloud_disk.iml" filepath="$PROJECT_DIR$/cloud_disk/cloud_disk.iml" />
-      <module fileurl="file://$PROJECT_DIR$/mvprxdialog/mvprxdialog.iml" filepath="$PROJECT_DIR$/mvprxdialog/mvprxdialog.iml" />
-      <module fileurl="file://$PROJECT_DIR$/mvprxfiledialog/mvprxfiledialog.iml" filepath="$PROJECT_DIR$/mvprxfiledialog/mvprxfiledialog.iml" />
       <module fileurl="file://$PROJECT_DIR$/phoneRecorder/phoneRecorder.iml" filepath="$PROJECT_DIR$/phoneRecorder/phoneRecorder.iml" />
     </modules>
   </component>

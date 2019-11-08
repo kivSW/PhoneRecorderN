@@ -1,1 +1,1 @@
-include ':phoneRecorder', ':cloud_disk', ':mvprxdialog', ':mvprxfiledialog'
+include ':phoneRecorder'
