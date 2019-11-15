@@ -94,7 +94,7 @@ public class RecordListFragment extends Fragment
         rootView = inflater.inflate(R.layout.record_list_fragment, container, false);
         findViews();
         initViews();
-        injectDependancy();
+        injectDependency();
         return rootView;
     }
 
@@ -175,7 +175,7 @@ public class RecordListFragment extends Fragment
 
         toolbar.setOnMenuItemClickListener(this);
 
-        recordList.setLayoutManager(new WrapContentLinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        //recordList.setLayoutManager(new WrapContentLinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         recordList.setHasFixedSize(false);
         recordList.setLayoutManager(new LinearLayoutManager(getContext()));
         recordListAdapter = new RecordListAdapter();
@@ -198,13 +198,13 @@ public class RecordListFragment extends Fragment
 
             @Override
             public void protectItem(int position, boolean select) {
-                presenter.setUndelitable(position, select);
+                presenter.setUndeletable(position, select);
             }
         });
         recordList.setAdapter(recordListAdapter);
 
     }
-    private void injectDependancy()
+    private void injectDependency()
     {
         MyApplication.getComponent()
                 .inject(this);

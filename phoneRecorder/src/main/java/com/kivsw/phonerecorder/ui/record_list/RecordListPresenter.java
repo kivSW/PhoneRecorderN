@@ -334,7 +334,7 @@ public class RecordListPresenter
     }
 
     @Override
-    public void setUndelitable(int pos, boolean isProtected) {
+    public void setUndeletable(int pos, boolean isProtected) {
         try {
             final RecordListContract.RecordFileInfo recordFileInfo = recListContainer.getVisibleDirContent().get(pos);//visibleDirContent.get(pos);
 

@@ -52,7 +52,7 @@ public class RecordListContract {
 
         void updateDir(boolean scrollToBegin);
         void setFilter(String filter);
-        void setUndelitable(int pos, boolean isProtected);
+        void setUndeletable(int pos, boolean isProtected);
         void playItem(int pos);
         void playItemWithPlayerChoosing(int pos);
         boolean hasSelectedItem(boolean excludeProtected);
